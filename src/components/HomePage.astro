@@ -1,0 +1,555 @@
+---
+/**
+ * CelestPlume — Home Page Body（EN / ZH 共用，locale 驱动）
+ * - Hero: 粒子文字（reactbits particle-text 移植）+ slogan + CTA 按钮
+ * - Projects: 项目卡片（数据来自 HeavenlySpeculum YAML，单层 hover）
+ * - Philosophy / CTA
+ */
+import { Icon } from 'astro-icon/components';
+import {
+  PILLARS,
+  getFeaturedProjects,
+  getOtherProjects,
+  getUI,
+  resolveProjectLink,
+  type Locale,
+} from '../styles/celestial-tokens.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = getUI(locale);
+
+const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
+---
+
+<!-- ============================================================
+     HERO — 粒子文字 + slogan + CTA
+     ============================================================ -->
+<section class="cp-hero" aria-label={t.hero.particleText}>
+  <img
+    class="cp-hero-bg-image"
+    src="/images/hero_background.jpg"
+    alt=""
+    loading="eager"
+    decoding="async"
+  />
+  <div class="cp-hero-vignette" aria-hidden="true"></div>
+
+  <div class="cp-particle-wrap" id="cp-particle-wrap">
+    <canvas id="cp-particle-canvas" role="img" aria-label={t.hero.particleText}></canvas>
+  </div>
+
+  <p class="cp-hero-sub">{t.hero.tagline}</p>
+
+  <div class="cp-hero-ctas">
+    <a href={t.hero.ctaPrimaryHref} class="cp-btn cp-btn-primary">
+      <span>{t.hero.ctaPrimary}</span>
+      <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
+    </a>
+    <a
+      href={t.hero.ctaSecondaryHref}
+      class="cp-btn cp-btn-ghost"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Icon name="lucide:github" size={18} aria-hidden="true" />
+      <span>{t.hero.ctaSecondary}</span>
+    </a>
+  </div>
+</section>
+
+<!-- ============================================================
+     PROJECTS — 项目卡片
+     ============================================================ -->
+<section class="cp-section cp-projects" id="projects" aria-label={t.projects.title}>
+  <div class="cp-section-inner">
+    <div class="cp-section-head">
+      <span class="cp-eyebrow">{t.projects.eyebrow}</span>
+      <h2 class="cp-section-title cp-font-display cp-gold-gradient-text cp-divine-glow">
+        {t.projects.title}
+      </h2>
+      <p class="cp-section-desc">{t.projects.desc}</p>
+    </div>
+
+    <div class="cp-projects-grid">
+      {displayProjects.map((p) => {
+        const data = p[locale];
+        return (
+          <article class="cp-project-card">
+            <div class="cp-project-icon" aria-hidden="true">
+                <Icon name={p.icon} class="cp-project-icon-svg" />
+              </div>
+              <h3 class="cp-project-title">{data.title}</h3>
+              <p class="cp-project-desc">{data.description}</p>
+              <div class="cp-project-tags">
+                {data.tags.map((tag) => <span class="cp-tag">{tag}</span>)}
+              </div>
+              <div class="cp-project-buttons">
+                {data.buttons.map((btn) => {
+                  const isExternal = btn.link.startsWith('http');
+                  return (
+                    <a
+                      href={resolveProjectLink(btn.link, locale)}
+                      class={btn.style === 'primary'
+                        ? 'cp-mini-btn cp-mini-btn-primary'
+                        : 'cp-mini-btn cp-mini-btn-secondary'}
+                      target={isExternal ? '_blank' : undefined}
+                      rel={isExternal ? 'noopener noreferrer' : undefined}
+                    >
+                      {btn.label}
+                      <Icon name="lucide:arrow-right" size={14} aria-hidden="true" />
+                    </a>
+                  );
+                })}
+              </div>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PHILOSOPHY — 三柱
+     ============================================================ -->
+<section class="cp-section cp-philosophy" id="philosophy" aria-label={t.philosophy.title}>
+  <div class="cp-section-inner">
+    <div class="cp-section-head">
+      <span class="cp-eyebrow">{t.philosophy.eyebrow}</span>
+      <h2 class="cp-section-title cp-font-display cp-gold-gradient-text">
+        {t.philosophy.title}
+      </h2>
+      <p class="cp-section-desc">{t.philosophy.desc}</p>
+    </div>
+
+    <div class="cp-philo-grid">
+      {PILLARS.map((pillar) => {
+        const data = pillar[locale];
+        return (
+          <div class="cp-philo-item">
+            <div class="cp-philo-num">{pillar.num}</div>
+            <h3 class="cp-philo-title">{data.title}</h3>
+            <p class="cp-philo-text">{data.text}</p>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CTA
+     ============================================================ -->
+<section class="cp-section cp-cta" id="join" aria-label={t.cta.title}>
+  <div class="cp-section-inner">
+    <div class="cp-cta-card">
+      <div class="cp-section-head">
+        <span class="cp-eyebrow">{t.cta.eyebrow}</span>
+        <h2 class="cp-section-title cp-font-display cp-gold-gradient-text cp-divine-glow" style="font-size:clamp(1.8rem, 4vw + 0.8rem, 3rem);margin-top:0">
+          {t.cta.title}
+        </h2>
+        <p class="cp-section-desc" style="margin-bottom:2.25rem">{t.cta.desc}</p>
+      </div>
+      <div class="cp-hero-ctas">
+        <a href={t.cta.starHref} class="cp-btn cp-btn-primary" target="_blank" rel="noopener noreferrer">
+          <Icon name="lucide:star" size={18} aria-hidden="true" />
+          <span>{t.cta.star}</span>
+        </a>
+        <a href={t.cta.codexHref} class="cp-btn cp-btn-ghost">
+          <Icon name="lucide:book-open" size={18} aria-hidden="true" />
+          <span>{t.cta.codex}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     运行时脚本:
+       1. Canvas 粒子文字（reactbits particle-text 移植，TS 常量驱动）
+     ============================================================ -->
+<script>
+  import { PARTICLE_TEXT } from '../styles/celestial-tokens.ts';
+
+  /* ----------------------------------------------------------------
+     1. 粒子文字（reactbits.dev/text-animations/particle-text 移植）
+     ---------------------------------------------------------------- */
+  const wrap = document.getElementById('cp-particle-wrap') as HTMLElement | null;
+  const canvas = document.getElementById('cp-particle-canvas') as HTMLCanvasElement | null;
+
+  if (wrap && canvas) {
+    const ctx = canvas.getContext('2d');
+
+    if (ctx) {
+      interface Particle {
+        x: number;
+        y: number;
+        startX: number;
+        startY: number;
+        targetX: number;
+        targetY: number;
+        size: number;
+        color: string;
+        seed: number;
+        depth: number;
+        delay: number;
+      }
+
+      const hexToRgb = (hex: string): { r: number; g: number; b: number } | null => {
+        const clean = hex.replace('#', '').trim();
+        if (!/^[0-9a-fA-F]{6}$/.test(clean)) return null;
+        return {
+          r: parseInt(clean.slice(0, 2), 16),
+          g: parseInt(clean.slice(2, 4), 16),
+          b: parseInt(clean.slice(4, 6), 16),
+        };
+      };
+      const mixRgb = (
+        from: { r: number; g: number; b: number },
+        to: { r: number; g: number; b: number },
+        amount: number
+      ) => ({
+        r: Math.round(from.r + (to.r - from.r) * amount),
+        g: Math.round(from.g + (to.g - from.g) * amount),
+        b: Math.round(from.b + (to.b - from.b) * amount),
+      });
+      const rgbToCss = (rgb: { r: number; g: number; b: number }): string =>
+        `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+      const clamp = (v: number, min: number, max: number): number =>
+        Math.min(Math.max(v, min), max);
+      const easeOutCubic = (t: number): number => 1 - Math.pow(1 - t, 3);
+
+      let particles: Particle[] = [];
+      let animationFrame: number | null = null;
+      let resizeFrame: number | null = null;
+      let idleFrames = 0;
+      let buildId = 0;
+      let gathering = false;
+      let gatherStart = 0;
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
+      const pointer = { active: false, x: 0, y: 0, smoothX: 0, smoothY: 0 };
+
+      const fontFamily = "'Cormorant Garamond','Noto Serif SC',Georgia,serif";
+      const fontWeight = PARTICLE_TEXT.fontWeight;
+
+      const getColors = () => {
+        const isLight = document.documentElement.getAttribute('data-home-theme') === 'light';
+        return isLight ? PARTICLE_TEXT.colors.light : PARTICLE_TEXT.colors.dark;
+      };
+
+      // 字体就绪等待（带超时兜底，避免 Google Fonts 不可达时卡死）
+      const waitForFonts = async (): Promise<void> => {
+        await Promise.race([
+          (async () => {
+            if (!('fonts' in document)) return;
+            try {
+              await document.fonts.load(`${fontWeight} 100px ${fontFamily}`);
+            } catch {
+              /* ignore */
+            }
+            try {
+              await document.fonts.ready;
+            } catch {
+              /* ignore */
+            }
+          })(),
+          new Promise<void>((resolve) => setTimeout(resolve, 1500)),
+        ]);
+      };
+
+      const startGather = (fromScatter = true): void => {
+        if (!particles.length) return;
+        const now = performance.now();
+        const spread = reducedMotion ? 0 : PARTICLE_TEXT.scatter;
+        for (const p of particles) {
+          if (fromScatter) {
+            const angle = p.seed * Math.PI * 2;
+            const distance = spread * (0.35 + p.depth * 0.75);
+            p.x = p.targetX + Math.cos(angle) * distance + (p.depth - 0.5) * spread * 0.55;
+            p.y = p.targetY + Math.sin(angle) * distance + (p.seed - 0.5) * spread * 0.55;
+          }
+          p.startX = p.x;
+          p.startY = p.y;
+          p.delay = reducedMotion ? 0 : p.seed * PARTICLE_TEXT.stagger;
+        }
+        gatherStart = now;
+        gathering = true;
+      };
+
+      const drawParticle = (p: Particle): void => {
+        const size = p.size;
+        ctx!.fillStyle = p.color;
+        if (size <= 2.1) {
+          ctx!.fillRect(p.x - size / 2, p.y - size / 2, size, size);
+          return;
+        }
+        ctx!.beginPath();
+        ctx!.arc(p.x, p.y, size / 2, 0, Math.PI * 2);
+        ctx!.fill();
+      };
+
+      const render = (now: number): void => {
+        // 空闲漂移时按 30fps 节流（gather / 指针交互期间保持满帧）
+        idleFrames += 1;
+        if (!gathering && !pointer.active && idleFrames % 2 === 0) {
+          animationFrame = window.requestAnimationFrame(render);
+          return;
+        }
+        ctx!.clearRect(0, 0, width, height);
+
+        if (PARTICLE_TEXT.glow && !reducedMotion) {
+          ctx!.shadowBlur = PARTICLE_TEXT.particleSize * 3;
+          ctx!.shadowColor = getColors().highlight;
+        } else {
+          ctx!.shadowBlur = 0;
+        }
+
+        pointer.smoothX += (pointer.x - pointer.smoothX) * 0.18;
+        pointer.smoothY += (pointer.y - pointer.smoothY) * 0.18;
+
+        let complete = true;
+
+        for (const p of particles) {
+          let baseX = p.targetX;
+          let baseY = p.targetY;
+          let progress = 1;
+
+          if (gathering) {
+            const local =
+              (now - gatherStart - p.delay) / Math.max(1, reducedMotion ? 1 : PARTICLE_TEXT.gatherDuration);
+            progress = clamp(local, 0, 1);
+            const eased = easeOutCubic(progress);
+            baseX = p.startX + (p.targetX - p.startX) * eased;
+            baseY = p.startY + (p.targetY - p.startY) * eased;
+            if (progress < 1) complete = false;
+          } else if (!reducedMotion && PARTICLE_TEXT.idleDrift > 0) {
+            const driftTime = now * 0.001;
+            baseX += Math.sin(driftTime * 0.9 + p.seed * 10) * PARTICLE_TEXT.idleDrift * p.depth;
+            baseY += Math.cos(driftTime * 0.75 + p.depth * 10) * PARTICLE_TEXT.idleDrift * p.depth;
+          }
+
+          if (pointer.active && !reducedMotion) {
+            const dx = baseX - pointer.smoothX;
+            const dy = baseY - pointer.smoothY;
+            const distance = Math.hypot(dx, dy);
+            if (distance > 0 && distance < PARTICLE_TEXT.repelRadius) {
+              const force =
+                Math.pow(1 - distance / PARTICLE_TEXT.repelRadius, 2) * PARTICLE_TEXT.pointerRepel;
+              baseX += (dx / distance) * force;
+              baseY += (dy / distance) * force;
+            }
+          }
+
+          const follow = reducedMotion ? 1 : 0.22;
+          p.x += (baseX - p.x) * follow;
+          p.y += (baseY - p.y) * follow;
+
+          ctx!.globalAlpha = clamp(0.35 + progress * 0.65, 0, 1);
+          drawParticle(p);
+        }
+
+        ctx!.globalAlpha = 1;
+        ctx!.shadowBlur = 0;
+        if (gathering && complete) gathering = false;
+
+        animationFrame = window.requestAnimationFrame(render);
+      };
+
+      const ensureRenderLoop = (): void => {
+        if (animationFrame === null) {
+          animationFrame = window.requestAnimationFrame(render);
+        }
+      };
+
+      const sampleText = async (): Promise<void> => {
+        const currentBuild = ++buildId;
+        const rect = wrap.getBoundingClientRect();
+        width = Math.floor(rect.width);
+        height = Math.floor(rect.height);
+        if (width <= 0 || height <= 0) return;
+
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.max(1, Math.floor(width * dpr));
+        canvas.height = Math.max(1, Math.floor(height * dpr));
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        const content = PARTICLE_TEXT.text;
+        const maxTextWidth = width * 0.92;
+        let resolvedSize = Math.min(150, height * 0.95);
+        let font = `${fontWeight} ${resolvedSize}px ${fontFamily}`;
+
+        await waitForFonts();
+        if (currentBuild !== buildId) return;
+
+        const offscreen = document.createElement('canvas');
+        const offCtx = offscreen.getContext('2d', { willReadFrequently: true });
+        if (!offCtx) return;
+
+        offCtx.font = font;
+        let metrics = offCtx.measureText(content);
+        const measuredWidth = Math.max(1, metrics.width);
+        if (measuredWidth > maxTextWidth) {
+          resolvedSize = Math.max(18, resolvedSize * (maxTextWidth / measuredWidth));
+          font = `${fontWeight} ${resolvedSize}px ${fontFamily}`;
+          await waitForFonts();
+          if (currentBuild !== buildId) return;
+          offCtx.font = font;
+          metrics = offCtx.measureText(content);
+        }
+
+        const left = Math.ceil(metrics.actualBoundingBoxLeft || 0);
+        const right = Math.ceil(metrics.actualBoundingBoxRight || metrics.width);
+        const ascent = Math.ceil(metrics.actualBoundingBoxAscent || resolvedSize * 0.78);
+        const descent = Math.ceil(metrics.actualBoundingBoxDescent || resolvedSize * 0.22);
+        const padding = Math.max(12, Math.ceil(resolvedSize * 0.08));
+        const textWidth = Math.max(1, left + right);
+        const textHeight = Math.max(1, ascent + descent);
+
+        offscreen.width = textWidth + padding * 2;
+        offscreen.height = textHeight + padding * 2;
+        offCtx.clearRect(0, 0, offscreen.width, offscreen.height);
+        offCtx.font = font;
+        offCtx.textAlign = 'left';
+        offCtx.textBaseline = 'alphabetic';
+        offCtx.fillStyle = '#ffffff';
+        offCtx.fillText(content, padding - left, padding + ascent);
+
+        const imageData = offCtx.getImageData(0, 0, offscreen.width, offscreen.height);
+        const targets: { x: number; y: number; alpha: number }[] = [];
+        const step = Math.max(2, Math.floor(PARTICLE_TEXT.density));
+
+        for (let y = 0; y < offscreen.height; y += step) {
+          for (let x = 0; x < offscreen.width; x += step) {
+            const alpha = imageData.data[(y * offscreen.width + x) * 4 + 3];
+            if (alpha > 40) {
+              targets.push({
+                x: width / 2 - offscreen.width / 2 + x,
+                y: height / 2 - offscreen.height / 2 + y,
+                alpha: alpha / 255,
+              });
+            }
+          }
+        }
+
+        const maxParticles = Math.max(900, Math.min(5200, Math.floor((width * height) / 90)));
+        const stride = Math.max(1, Math.ceil(targets.length / maxParticles));
+        const { base, highlight } = getColors();
+        const baseRgb = hexToRgb(base);
+        const highlightRgb = hexToRgb(highlight);
+        const selected = targets.filter((_, index) => index % stride === 0);
+
+        particles = selected.map((target, index) => {
+          const seed = ((index * 9301 + 49297) % 233280) / 233280;
+          const depth = 0.45 + (((index * 233 + 97) % 1000) / 1000) * 0.9;
+          const blend =
+            baseRgb && highlightRgb
+              ? clamp(target.x / Math.max(1, width) + (seed - 0.5) * 0.35, 0, 1)
+              : 0;
+          const particleColor =
+            baseRgb && highlightRgb ? rgbToCss(mixRgb(baseRgb, highlightRgb, blend)) : base;
+          const angle = seed * Math.PI * 2;
+          const distance = (reducedMotion ? 0 : PARTICLE_TEXT.scatter) * (0.35 + depth * 0.75);
+          const startX = target.x + Math.cos(angle) * distance + (seed - 0.5) * PARTICLE_TEXT.scatter * 0.45;
+          const startY = target.y + Math.sin(angle) * distance + (depth - 0.9) * PARTICLE_TEXT.scatter * 0.45;
+
+          return {
+            x: reducedMotion ? target.x : startX,
+            y: reducedMotion ? target.y : startY,
+            startX,
+            startY,
+            targetX: target.x,
+            targetY: target.y,
+            size: Math.max(0.6, PARTICLE_TEXT.particleSize * (0.75 + target.alpha * 0.45)),
+            color: particleColor,
+            seed,
+            depth,
+            delay: seed * PARTICLE_TEXT.stagger,
+          };
+        });
+
+        pointer.x = width / 2;
+        pointer.y = height / 2;
+        pointer.smoothX = pointer.x;
+        pointer.smoothY = pointer.y;
+
+        if (reducedMotion) {
+          particles.forEach((p) => {
+            p.x = p.targetX;
+            p.y = p.targetY;
+            p.startX = p.targetX;
+            p.startY = p.targetY;
+            p.delay = 0;
+          });
+          gathering = false;
+        } else {
+          startGather(false);
+        }
+
+        ensureRenderLoop();
+      };
+
+      const queueSample = (): void => {
+        if (resizeFrame !== null) window.cancelAnimationFrame(resizeFrame);
+        resizeFrame = window.requestAnimationFrame(() => {
+          void sampleText();
+        });
+      };
+
+      const handlePointerMove = (event: PointerEvent): void => {
+        const rect = canvas.getBoundingClientRect();
+        pointer.x = event.clientX - rect.left;
+        pointer.y = event.clientY - rect.top;
+        pointer.active = true;
+      };
+      const handlePointerLeave = (): void => {
+        pointer.active = false;
+      };
+
+      canvas.addEventListener('pointerenter', handlePointerMove);
+      canvas.addEventListener('pointermove', handlePointerMove);
+      canvas.addEventListener('pointerleave', handlePointerLeave);
+
+      const resizeObserver = new ResizeObserver(queueSample);
+      resizeObserver.observe(wrap);
+
+      // —— 启动: 字体就绪后采样粒子 ——
+      const start = async (): Promise<void> => {
+        await waitForFonts();
+        await sampleText();
+      };
+
+      if (document.readyState === 'loading') {
+        window.addEventListener('DOMContentLoaded', () => void start(), { once: true });
+      } else {
+        void start();
+      }
+
+      // —— 主题切换时用新配色重建粒子 ——
+      const themeObserver = new MutationObserver(() => {
+        buildId += 1;
+        void sampleText();
+      });
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-home-theme'],
+      });
+
+      const cleanup = () => {
+        buildId += 1;
+        resizeObserver.disconnect();
+        themeObserver.disconnect();
+        if (animationFrame !== null) window.cancelAnimationFrame(animationFrame);
+        if (resizeFrame !== null) window.cancelAnimationFrame(resizeFrame);
+      };
+      document.addEventListener('astro:before-swap', cleanup);
+    }
+  }
+
+</script>
