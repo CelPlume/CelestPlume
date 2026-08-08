@@ -1,0 +1,13 @@
+# Build output
+dist/
+# Dependencies
+node_modules/
+# Astro
+.astro/
+# Logs
+*.log
+npm-debug.log*
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
