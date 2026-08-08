@@ -1,0 +1,261 @@
+---
+/**
+ * CelestPlume — Home Layout（主页专用布局）
+ * 独立完整 HTML（不依赖 Starlight Layout）。
+ * 仅主页使用；文档页仍用 Starlight 内置 Layout 与其原主题。
+ * 深浅色主题：主页使用 data-home-theme + localStorage('celplume-theme')，
+ * 与文档页的 Starlight 主题互不影响。
+ */
+import '../styles/celestial.css';
+import { Icon } from 'astro-icon/components';
+import { getUI, LOADER, type Locale } from '../styles/celestial-tokens.ts';
+
+export interface Props {
+  title: string;
+  description?: string;
+  locale: Locale;
+}
+
+const { title, description, locale } = Astro.props;
+const t = getUI(locale);
+
+const siteUrl = Astro.site ?? new URL('https://celplume.example.com');
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { label: t.nav.projects, href: '#projects' },
+  { label: t.nav.philosophy, href: '#philosophy' },
+  { label: t.nav.join, href: '#join' },
+  { label: t.nav.docs, href: t.nav.docsHref },
+];
+---
+
+<!doctype html>
+<html lang={t.htmlLang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0a0f1c" data-home-theme-color />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+
+    <link rel="canonical" href={new URL(currentPath, siteUrl).toString()} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL('/images/CelPlume_512.jpg', siteUrl).toString()} />
+    <meta property="og:locale" content={t.meta.ogLocale} />
+    <meta property="og:locale:alternate" content={locale === 'zh' ? 'en_US' : 'zh_CN'} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL('/images/CelPlume_512.jpg', siteUrl).toString()} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="/images/CelPlume_favicon_256.jpg" />
+    <link rel="apple-touch-icon" href="/images/CelPlume_512.jpg" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap"
+    />
+
+    <!-- 初始化主页主题（内联，避免 FOUC） -->
+    <script is:inline>
+      (function () {
+        try {
+          const key = 'celplume-theme';
+          const stored = window.localStorage.getItem(key);
+          let theme = stored === 'dark' || stored === 'light' ? stored : null;
+          if (!theme) {
+            theme =
+              window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
+                ? 'light'
+                : 'dark';
+          }
+          document.documentElement.setAttribute('data-home-theme', theme);
+          const m = document.querySelector('meta[data-home-theme-color]');
+          if (m) m.setAttribute('content', theme === 'light' ? '#faf8f3' : '#0a0f1c');
+        } catch {
+          /* ignore */
+        }
+      })();
+    </script>
+
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{locale === 'zh' ? '跳到主要内容' : 'Skip to content'}</a>
+
+    <!-- 加载动画（Uiverse.io by dexter-st: bright-lizard-8，纯 CSS） -->
+    <div class="cp-loader" id="cp-loader" role="status" aria-label={locale === 'zh' ? '加载中' : 'Loading'} aria-hidden="true">
+      <div class="loader-wrapper">
+        {LOADER.letters[locale].map((ch) => (
+          <span class="loader-letter">{ch}</span>
+        ))}
+        <div class="loader"></div>
+      </div>
+    </div>
+
+    <!-- 全局背景（柔和径向渐变） -->
+    <div class="cp-bg-glow" aria-hidden="true"></div>
+
+    <!-- 导航 -->
+    <header class="cp-nav" role="banner">
+      <div class="cp-nav-inner">
+        <a href={locale === 'zh' ? '/zh/' : '/'} class="cp-nav-brand" aria-label={t.brand.name}>
+          <img
+            src="/images/CelPlume.webp"
+            alt=""
+            class="cp-nav-logo"
+            loading="eager"
+            decoding="async"
+            width="160"
+            height="42"
+          />
+          <span class="cp-nav-brand-name">{t.brand.name}</span>
+        </a>
+
+        <nav class="cp-nav-links" aria-label={locale === 'zh' ? '主导航' : 'Primary'}>
+          <ul>
+            {navLinks.map((l) => (
+              <li><a href={l.href}>{l.label}</a></li>
+            ))}
+          </ul>
+        </nav>
+
+        <div class="cp-nav-actions">
+          <!-- 深浅色切换 -->
+          <button
+            type="button"
+            id="cp-theme-toggle"
+            class="cp-nav-action"
+            aria-label={t.nav.toggleTheme}
+            title={t.nav.toggleTheme}
+          >
+            <Icon name="lucide:sun" class="cp-icon-sun" size={18} aria-hidden="true" />
+            <Icon name="lucide:moon" class="cp-icon-moon" size={18} aria-hidden="true" />
+          </button>
+
+          <!-- 语言切换 -->
+          <a class="cp-nav-action" href={t.nav.switchLangHref} title={t.nav.switchLang}>
+            <Icon name="lucide:languages" size={18} aria-hidden="true" />
+            <span class="cp-nav-action-txt">{t.nav.switchLang}</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main id="main" role="main">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="cp-footer" role="contentinfo">
+      <div class="cp-footer-inner">
+        <div class="cp-footer-brand">
+          <img src="/images/CelPlume_512.jpg" alt="" class="cp-footer-logo" width="64" height="64" />
+          <div>
+            <p class="cp-footer-title cp-font-display cp-gold-gradient-text">{t.brand.name}</p>
+            <p class="cp-footer-sub">{t.footer.brandSubtitle}</p>
+          </div>
+        </div>
+
+        <nav class="cp-footer-links" aria-label={locale === 'zh' ? '页脚导航' : 'Footer'}>
+          {t.footer.columns.map((col) => (
+            <div>
+              <p class="cp-footer-heading">{col.heading}</p>
+              <ul>
+                {col.links.map((l) => (
+                  <li>
+                    <a
+                      href={l.href}
+                      target={l.external ? '_blank' : undefined}
+                      rel={l.external ? 'noopener noreferrer' : undefined}
+                    >
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </nav>
+      </div>
+
+      <div class="cp-footer-bottom">
+        <p>{t.footer.copyright(new Date().getFullYear())}</p>
+        <p class="cp-footer-legal">{t.footer.builtWith}</p>
+      </div>
+    </footer>
+
+    <!-- 主页运行时: 加载动画隐藏 + 主题切换 + 跟随系统 -->
+    <script>
+      import { THEME_STORAGE_KEY, LOADER } from '../styles/celestial-tokens.ts';
+
+      // 1. 加载动画（uiverse 纯 CSS）—— 字体就绪 + 最少展示 800ms，2.5s 兜底
+      const overlay = document.getElementById('cp-loader') as HTMLDivElement | null;
+      if (overlay) {
+        const tStart = performance.now();
+        const hideLoader = () => {
+          const wait = Math.max(0, LOADER.minShowMs - (performance.now() - tStart));
+          setTimeout(() => {
+            overlay.dataset.hidden = 'true';
+            setTimeout(() => overlay.remove(), LOADER.fadeOutMs + 80);
+          }, wait);
+        };
+
+        const fontsReady = (document as Document & { fonts?: FontFaceSet }).fonts?.ready;
+        if (fontsReady) {
+          fontsReady.then(hideLoader).catch(hideLoader);
+        } else {
+          window.addEventListener('load', hideLoader, { once: true });
+        }
+        window.setTimeout(hideLoader, LOADER.fallbackMs);
+      }
+
+      // 2. 主题切换
+      const toggleBtn = document.getElementById('cp-theme-toggle') as HTMLButtonElement | null;
+      const root = document.documentElement;
+      const themeMeta = document.querySelector('meta[data-home-theme-color]') as HTMLMetaElement | null;
+
+      const applyTheme = (mode: 'dark' | 'light') => {
+        root.setAttribute('data-home-theme', mode);
+        try {
+          window.localStorage.setItem(THEME_STORAGE_KEY, mode);
+        } catch {
+          /* ignore */
+        }
+        if (themeMeta) themeMeta.setAttribute('content', mode === 'light' ? '#faf8f3' : '#0a0f1c');
+      };
+
+      toggleBtn?.addEventListener('click', () => {
+        const current = root.getAttribute('data-home-theme') === 'light' ? 'light' : 'dark';
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      });
+
+      // 3. 跟随系统（仅当用户未手动切换过）
+      try {
+        const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+        if (!stored && window.matchMedia) {
+          const mql = window.matchMedia('(prefers-color-scheme: light)');
+          mql.addEventListener?.('change', (e) => {
+            if (!window.localStorage.getItem(THEME_STORAGE_KEY)) {
+              applyTheme(e.matches ? 'light' : 'dark');
+            }
+          });
+        }
+      } catch {
+        /* ignore */
+      }
+    </script>
+  </body>
+</html>

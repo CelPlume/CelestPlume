@@ -1,0 +1,13 @@
+---
+/**
+ * English homepage — https://celplume.dev/
+ * 英文主页（root locale）。品牌: hero 用全名 "Celest Plume"，其余位置用缩写 "CelPlume"。
+ */
+import Home from '../layouts/Home.astro';
+import HomePage from '../components/HomePage.astro';
+import { UI_EN } from '../styles/celestial-tokens.ts';
+---
+
+<Home locale="en" title={UI_EN.meta.title} description={UI_EN.meta.description}>
+  <HomePage locale="en" />
+</Home>

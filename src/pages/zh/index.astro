@@ -1,0 +1,13 @@
+---
+/**
+ * 简体中文主页 — https://celplume.dev/zh/
+ * 中文页面品牌: 一般位置写"天空之翼"，hero 主标题区保留英文名 "Celest Plume"。
+ */
+import Home from '../../layouts/Home.astro';
+import HomePage from '../../components/HomePage.astro';
+import { UI_ZH } from '../../styles/celestial-tokens.ts';
+---
+
+<Home locale="zh" title={UI_ZH.meta.title} description={UI_ZH.meta.description}>
+  <HomePage locale="zh" />
+</Home>
