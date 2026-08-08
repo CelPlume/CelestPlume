@@ -434,8 +434,9 @@ main#main {
   filter: saturate(0.95) contrast(1.05);
   transition: opacity 0.5s ease;
 }
+/* 浅色模式: 图片整体 60% 不透明（透出背景图，避免中间一片白） */
 :root[data-home-theme='light'] .cp-hero-bg-image {
-  opacity: 0.2;
+  opacity: 0.6;
   filter: saturate(0.8) contrast(1.02) brightness(1.08);
 }
 
@@ -443,14 +444,14 @@ main#main {
   position: absolute;
   inset: 0;
   z-index: 1;
-  background:
-    radial-gradient(ellipse at 50% 45%, transparent 0%, transparent 35%, var(--cp-night-deep) 75%, var(--cp-night-deep) 100%),
-    linear-gradient(180deg, color-mix(in srgb, var(--cp-night-deep) 50%, transparent) 0%, transparent 20%, transparent 70%, color-mix(in srgb, var(--cp-night-deep) 85%, transparent) 100%);
+  /* 中间完全透明，向外逐渐不透明至 60%；深浅色共用同一规则（颜色取主题的 --cp-night-deep） */
+  background: radial-gradient(
+    ellipse closest-side at 50% 50%,
+    transparent 0%,
+    transparent 40%,
+    color-mix(in srgb, var(--cp-night-deep) 60%, transparent) 100%
+  );
   pointer-events: none;
-}
-/* 浅色模式: hero 蒙版完全透明（深色保持原样） */
-:root[data-home-theme='light'] .cp-hero-vignette {
-  opacity: 0;
 }
 
 .cp-particle-wrap {
