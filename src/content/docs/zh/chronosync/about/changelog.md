@@ -8,6 +8,36 @@ sidebar:
 
 ## 📝 更新日志
 
+### v3.6.3 (2026-08-09) - 品牌与链接迁移：站内文档、Footer 改版与 CelPlume 统一
+
+**文档整理**
+
+- 项目目录结构与 API 接口清单集中维护到[系统架构与技术参考](/zh/chronosync/dev/architecture/)，README 不再内联维护
+- 仓库 GitHub 链接统一为 [CelPlume/SDNUChronoSync](https://github.com/CelPlume/SDNUChronoSync)
+
+**站内链接迁移**
+
+- README、[完整更新日志](/zh/chronosync/about/changelog/)与 llms.txt / llms-full.txt 中的教程链接由 hs.cnies.org 迁移至站内页面（[保姆级用户教程](/zh/chronosync/tutorials/nanny-user-tutorial/)、[使用教程导航](/zh/chronosync/tutorials/chronosync-user-guide/)、[更新日志](/zh/chronosync/about/changelog/)）
+- 前端导航（Navigation、MobileDrawer、首页）与教程入口常量同步指向站内页面，章节锚点适配新站（第二部分我的课表、3-导入课表、5-放假调休、第三部分团队协作）
+- 项目主页链接（hevspecu.hxcn.space）替换为[站内索引页](/zh/chronosync/)
+- 首页导航精简为「关于项目 / 使用教程 / Meet课程表」，移除「更新日志」与「项目主页」入口
+- 首页 hero 移除「特色功能」「使用教程」按钮，仅保留「立即注册 / 登录」
+
+**Footer 改版**
+
+- 品牌更名为**天空之翼（CelPlume）**，链接指向项目主页
+- 移除"由 Astro 和 Vue.js 强力驱动"技术栈行
+- 新增 Meet课程表（https://meetschedule.top）入口，使用日历图标
+- Footer「关于项目」指向站内索引页；移除「项目主页」入口，新增「服务条款」「隐私条款」站内法律链接
+
+**条款合规**
+
+- 登录与注册表单新增「我已阅读并同意《用户协议》和《隐私政策》」复选框（链接至站内法律条款页），未勾选时禁止登录/注册
+
+**验证**
+
+- 前端 lint、类型检查与生产构建通过；站内各页面与章节锚点实测可访问
+
 ### v3.6.2 (2026-08-04) - 前端引导脚本回归修复与头像跨域缓存修复
 
 **登录后页面加载修复**
