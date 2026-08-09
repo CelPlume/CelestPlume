@@ -100,6 +100,25 @@ bun run lint       # ESLint 代码检查
 - 新增图标时：`bun add @iconify-json/<set>`，并在 `astro.config.mjs` 的 `icon({ include: ... })` 中登记图标名
 - 项目数据中的图标字段（`celestial-tokens.ts` 的 `Project.icon`）存 Iconify 名（如 `lucide:brain`），不得存 emoji
 
+## 主页设计风格（神圣诗意 / 天文主题）
+
+主页视觉统一为「神圣诗意 / 天文」风格（深蓝夜背景 + 三色系），常量在
+`src/styles/celestial-tokens.ts`（TS 驱动 CSS 变量）与 `src/styles/celestial.css`
+（`:root[data-home-theme]` 深/浅两套）。
+
+- **三色系**（品牌色，深色模式值 / 浅色模式变体）：
+  - 珍珠白 `--cp-pearl`（`#f8f5ef` / `#1a1a2e`）
+  - 淡金 `--cp-gold`（`#d4af6c` / `#a8813a`），衍生 `--cp-gold-soft` / `--cp-gold-pale`
+  - 月光银 `--cp-moonlight`（`#b8c5d6` / `#5a6578`），衍生 `--cp-silver`
+- **底色**：深蓝夜 `--cp-night-deep`（`#0a0f1c` / 浅色 `#ffffff`）、`--cp-night`、`--cp-night-soft`
+- **loading 图标**（Uiverse bright-lizard-8 旋转光圈 + 字母跳动，主页与文档页同款）：
+  - 深色模式：保持彩虹光圈现状（默认 keyframes 不动）
+  - 浅色模式：光圈改用主页同款三色（`loader-rotate-light` / `cpd-loader-rotate-light`，
+    珍珠白 + 淡金 + 月光银，主页 `--cp-*` 变量 / 文档页固定 hex）
+  - 字母颜色跟随 `--cp-pearl`（主页）与 `--cpd-foreground`（文档页），深浅色自动适配
+- 新元素配色优先取自三色系与 `--cp-night-*` 底；改动 `celestial.css` 时保持
+  `:root[data-home-theme='light']` 变体同步（AGENTS.md 其他规则：仅 Home.astro 引入）
+
 ## 样式规范
 
 - 主页样式参数（颜色、粒子/动画/布局常量）统一写在 `src/styles/celestial-tokens.ts`（TypeScript），
