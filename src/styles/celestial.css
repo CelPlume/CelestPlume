@@ -176,7 +176,12 @@ main#main {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--cp-night-deep);
+  /* 与主页背景同款柔和光晕（金色/月光银 radial），避免纯色底发黑发闷 */
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -8%, color-mix(in srgb, var(--cp-gold) 7%, transparent), transparent 62%),
+    radial-gradient(ellipse 55% 45% at 100% 55%, color-mix(in srgb, var(--cp-moonlight) 5%, transparent), transparent 60%),
+    radial-gradient(ellipse 55% 45% at 0% 100%, color-mix(in srgb, var(--cp-gold) 5%, transparent), transparent 60%),
+    var(--cp-night-deep);
   transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 .cp-loader[data-hidden='true'] {
@@ -235,6 +240,35 @@ main#main {
       0 10px 20px 0 #fff inset,
       0 20px 30px 0 #ad5fff inset,
       0 60px 60px 0 #471eec inset;
+  }
+}
+
+/* 浅色模式：loading 光圈边缘改用主页亮色品牌三色（珍珠白 / 淡金 / 月光银），
+   避免深调变量在浅底上发黑；深色模式保持上方彩虹现状 */
+:root[data-home-theme='light'] .cp-loader .loader {
+  animation-name: loader-rotate-light;
+}
+@keyframes loader-rotate-light {
+  0% {
+    transform: rotate(90deg);
+    box-shadow:
+      0 10px 20px 0 #f8f5ef inset,
+      0 20px 30px 0 #d4af6c inset,
+      0 60px 60px 0 #b8c5d6 inset;
+  }
+  50% {
+    transform: rotate(270deg);
+    box-shadow:
+      0 10px 20px 0 #f8f5ef inset,
+      0 20px 10px 0 #b8c5d6 inset,
+      0 40px 60px 0 #d4af6c inset;
+  }
+  100% {
+    transform: rotate(450deg);
+    box-shadow:
+      0 10px 20px 0 #f8f5ef inset,
+      0 20px 30px 0 #d4af6c inset,
+      0 60px 60px 0 #b8c5d6 inset;
   }
 }
 

@@ -1517,6 +1517,34 @@ a.cpd-card:hover {
       0 60px 60px 0 #471eec inset;
   }
 }
+/* 浅色模式：loading 光圈边缘改用主页亮色品牌三色（珍珠白 / 淡金 / 月光银），
+   深色模式保持上方彩虹现状 */
+:root[data-cpd-theme='light'] .cpd-loader-ring {
+  animation-name: cpd-loader-rotate-light;
+}
+@keyframes cpd-loader-rotate-light {
+  0% {
+    transform: rotate(90deg);
+    box-shadow:
+      0 10px 20px 0 #f8f5ef inset,
+      0 20px 30px 0 #d4af6c inset,
+      0 60px 60px 0 #b8c5d6 inset;
+  }
+  50% {
+    transform: rotate(270deg);
+    box-shadow:
+      0 10px 20px 0 #f8f5ef inset,
+      0 20px 10px 0 #b8c5d6 inset,
+      0 40px 60px 0 #d4af6c inset;
+  }
+  100% {
+    transform: rotate(450deg);
+    box-shadow:
+      0 10px 20px 0 #f8f5ef inset,
+      0 20px 30px 0 #d4af6c inset,
+      0 60px 60px 0 #b8c5d6 inset;
+  }
+}
 .cpd-loader-letter {
   display: inline-block;
   opacity: 0.4;
