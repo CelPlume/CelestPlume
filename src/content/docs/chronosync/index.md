@@ -1,6 +1,6 @@
 ---
 title: ChronoSync
-description: A timetable and schedule tool for SDNU students — one-click import from the academic affairs system, plus ICS export.
+description: A modern, responsive multi-user schedule management web app for SDNU. Features include personal and team calendar views, ICS export, and admin controls for user and schedule management. Built with a Python (FastAPI) backend and a TypeScript (Astro, Vue.js) frontend. 
 ---
 
 ## ChronoSync
@@ -27,4 +27,3 @@ Related links:
 
 - [SDNU ChronoSync](https://sxtj.hxcn.space) — live app
 - [GitHub](https://github.com/CelPlume/SDNUChronoSync)
-- [About this site](/about/)
