@@ -2,6 +2,7 @@
 /**
  * About page (EN) — https://celplume.dev/about/
  * 关于页：品牌介绍 + 入门文档入口。使用主页布局（共享 SiteNav）。
+ * Editorial 排版：品牌衬线标题 + logo + 金点列表，见 celestial.css 第 14 节。
  */
 import Home from '../layouts/Home.astro';
 import { getUI } from '../styles/celestial-tokens.ts';
@@ -10,39 +11,42 @@ const t = getUI('en');
 ---
 
 <Home locale="en" title={`About — ${t.brand.name}`} description={`About ${t.brand.name} — a bilingual documentation home for the Celest Plume constellation of projects.`}>
-  <section class="cp-section" id="about">
-    <div class="cp-section-inner cp-article">
-      <p class="cp-eyebrow">About</p>
-      <h1 class="cp-section-title">Celest Plume</h1>
-      <p class="cp-section-desc">
-        Casting scales of old, spread wings to realms untold — a bilingual
-        documentation home for the Celest Plume constellation of projects,
-        built with Astro, Starlight and the Plumest design system.
-      </p>
+  <section class="cp-section cp-about" id="about">
+    <div class="cp-section-inner">
+      <header class="cp-about-head">
+        <img src="/images/CelPlume_512.jpg" alt="" class="cp-about-logo" width="84" height="84" loading="eager" />
+        <p class="cp-eyebrow">About</p>
+        <h1 class="cp-about-title cp-gold-gradient-text">Celest Plume</h1>
+        <p class="cp-about-lead">
+          Casting scales of old, spread wings to realms untold — a bilingual
+          documentation home for the Celest Plume constellation of projects,
+          built with Astro, Starlight and the Plumest design system.
+        </p>
+      </header>
 
-      <h2>Getting started</h2>
-      <p>
-        New to this site? The <a href="/guides/example/">Introduction</a> walks
-        through the documentation structure, and the
-        <a href="/contribution/overview/">Contribution</a> category covers the
-        Docs Kit styles and components.
-      </p>
+      <div class="cp-article">
+        <h2>Getting started</h2>
+        <p>
+          New to this site? The <a href="/guides/example/">Introduction</a> walks
+          through the documentation structure, and the
+          <a href="/contribution/overview/">Contribution</a> category covers the
+          Docs Kit styles and components.
+        </p>
 
-      <h2>Projects</h2>
-      <p>
-        Each project keeps its own documentation tree with a dedicated sidebar:
-      </p>
-      <ul>
-        <li><a href="/chronosync/">ChronoSync</a> — timetable &amp; schedule tool for SDNU students</li>
-        <li><a href="/bookmark-harbor/">BookmarkHarbor</a> — local-first bookmark browser</li>
-      </ul>
+        <h2>Projects</h2>
+        <p>Each project keeps its own documentation tree with a dedicated sidebar:</p>
+        <ul>
+          <li><a href="/chronosync/">ChronoSync</a> — timetable &amp; schedule tool for SDNU students</li>
+          <li><a href="/bookmark-harbor/">BookmarkHarbor</a> — local-first bookmark browser</li>
+        </ul>
 
-      <h2>Links</h2>
-      <ul>
-        <li><a href="https://github.com/CelPlume">GitHub</a></li>
-        <li><a href="https://github.com/CelPlume/CelestPlume/issues">Issues</a></li>
-        <li><a href="https://github.com/CelPlume/CelestPlume/blob/main/LICENSE">License</a></li>
-      </ul>
+        <h2>Links</h2>
+        <ul>
+          <li><a href="https://github.com/CelPlume">GitHub</a></li>
+          <li><a href="https://github.com/CelPlume/CelestPlume/issues">Issues</a></li>
+          <li><a href="https://github.com/CelPlume/CelestPlume/blob/main/LICENSE">License</a></li>
+        </ul>
+      </div>
     </div>
   </section>
 </Home>

@@ -2,6 +2,7 @@
 /**
  * About page (ZH) — https://celplume.dev/zh/about/
  * 关于页：品牌介绍 + 入门文档入口。使用主页布局（共享 SiteNav）。
+ * Editorial 排版：品牌衬线标题 + logo + 金点列表，见 celestial.css 第 14 节。
  */
 import Home from '../../layouts/Home.astro';
 import { getUI } from '../../styles/celestial-tokens.ts';
@@ -10,35 +11,40 @@ const t = getUI('zh');
 ---
 
 <Home locale="zh" title={`关于 — ${t.brand.name}`} description={`关于 ${t.brand.name} — 天空之翼诸星之工的双语文档之家。`}>
-  <section class="cp-section" id="about">
-    <div class="cp-section-inner cp-article">
-      <p class="cp-eyebrow">关于</p>
-      <h1 class="cp-section-title">天空之翼</h1>
-      <p class="cp-section-desc">
-        辞却尘渊旧日鳞，振翼云海入星河——天空之翼诸星之工的双语文档之家，
-        以 Astro、Starlight 与 Plumest 设计系统构建。
-      </p>
+  <section class="cp-section cp-about" id="about">
+    <div class="cp-section-inner">
+      <header class="cp-about-head">
+        <img src="/images/CelPlume_512.jpg" alt="" class="cp-about-logo" width="84" height="84" loading="eager" />
+        <p class="cp-eyebrow">关于</p>
+        <h1 class="cp-about-title cp-gold-gradient-text">天空之翼</h1>
+        <p class="cp-about-lead">
+          辞却尘渊旧日鳞，振翼云海入星河——天空之翼诸星之工的双语文档之家，
+          以 Astro、Starlight 与 Plumest 设计系统构建。
+        </p>
+      </header>
 
-      <h2>入门</h2>
-      <p>
-        初次到访？<a href="/zh/guides/example/">介绍</a>带你了解文档结构，
-        <a href="/zh/contribution/overview/">贡献</a>分类则涵盖 Docs Kit
-        的样式与组件参考。
-      </p>
+      <div class="cp-article">
+        <h2>入门</h2>
+        <p>
+          初次到访？<a href="/zh/guides/example/">介绍</a>带你了解文档结构，
+          <a href="/zh/contribution/overview/">贡献</a>分类则涵盖 Docs Kit
+          的样式与组件参考。
+        </p>
 
-      <h2>项目</h2>
-      <p>每个项目都拥有独立的文档树与专属侧边栏：</p>
-      <ul>
-        <li><a href="/zh/chronosync/">时序同笺</a> —— 专为 SDNU 学生设计的课表与日程工具</li>
-        <li><a href="/zh/bookmark-harbor/">BookmarkHarbor</a> —— 本地优先的书签浏览器</li>
-      </ul>
+        <h2>项目</h2>
+        <p>每个项目都拥有独立的文档树与专属侧边栏：</p>
+        <ul>
+          <li><a href="/zh/chronosync/">时序同笺</a> —— 专为 SDNU 学生设计的课表与日程工具</li>
+          <li><a href="/zh/bookmark-harbor/">BookmarkHarbor</a> —— 本地优先的书签浏览器</li>
+        </ul>
 
-      <h2>链接</h2>
-      <ul>
-        <li><a href="https://github.com/CelPlume">GitHub</a></li>
-        <li><a href="https://github.com/CelPlume/CelestPlume/issues">议题</a></li>
-        <li><a href="https://github.com/CelPlume/CelestPlume/blob/main/LICENSE">许可证</a></li>
-      </ul>
+        <h2>链接</h2>
+        <ul>
+          <li><a href="https://github.com/CelPlume">GitHub</a></li>
+          <li><a href="https://github.com/CelPlume/CelestPlume/issues">议题</a></li>
+          <li><a href="https://github.com/CelPlume/CelestPlume/blob/main/LICENSE">许可证</a></li>
+        </ul>
+      </div>
     </div>
   </section>
 </Home>
