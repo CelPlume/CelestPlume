@@ -57,8 +57,9 @@ bun run lint       # ESLint 代码检查
 - **body**：说明改动点、影响范围与必要背景；用**多个独立 `-m`** 组织
   （第一个 `-m` 为标题，后续每个 `-m` 一段无序列表项）；
   **禁止**用 `\n` 把多条说明塞进单个 `-m` 伪装多段
-- **footer**（可选）：`BREAKING CHANGE:` 等；如需决策记录可用
-  `Constraint:` / `Rejected:` / `Directive:` / `Tested:` trailer
+- **footer**（可选）：`BREAKING CHANGE:` 等；**不要添加 `Tested:` 等多余
+  trailer**（如需决策记录可用 `Constraint:` / `Rejected:` / `Directive:`；
+  验证结果在交付说明中汇报，不写入提交消息）
 - 示例：
 
   ```bash
