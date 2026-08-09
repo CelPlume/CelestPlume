@@ -435,11 +435,13 @@ main#main {
 }
 .cp-nav-action .cp-nav-action-txt { font-size: 0.82rem; letter-spacing: 0.05em; }
 
-/* 主题按钮: 深色显示月亮, 浅色显示太阳 */
+/* 主题按钮: 三态 —— 深色→月亮, 浅色→太阳, 跟随系统→显示器（按模式显示，与文档页一致） */
 #cp-theme-toggle .cp-icon-sun,
-#cp-theme-toggle .cp-icon-moon { display: none; }
-:root[data-home-theme='dark']  #cp-theme-toggle .cp-icon-moon { display: block; }
-:root[data-home-theme='light'] #cp-theme-toggle .cp-icon-sun  { display: block; }
+#cp-theme-toggle .cp-icon-moon,
+#cp-theme-toggle .cp-icon-system { display: none; }
+:root[data-home-theme-mode='dark']   #cp-theme-toggle .cp-icon-moon   { display: block; }
+:root[data-home-theme-mode='light']  #cp-theme-toggle .cp-icon-sun    { display: block; }
+:root[data-home-theme-mode='system'] #cp-theme-toggle .cp-icon-system { display: block; }
 
 /* ============================================================
    5. Hero
