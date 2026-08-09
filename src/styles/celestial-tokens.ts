@@ -162,8 +162,8 @@ export const PROJECTS: Project[] = [
         'SDNUChronoSync (时序同笺) is a timetable and schedule management tool designed exclusively for Shandong Normal University students. One-click import from the academic affairs system, plus ICS export for subscribing on multi-platform calendars. Features personal profiles, team views, and an admin panel, helping students sync and plan their campus life efficiently. Front-end and back-end are separated for easy secondary development and extension.',
       tags: ['Timetable', 'Calendar', 'TypeScript'],
       buttons: [
-        { label: 'Get Started', link: 'https://sxty.hxcn.space', style: 'primary' },
-        { label: 'GitHub', link: 'https://github.com/HevSpecu/SDNUChronoSync', style: 'secondary' },
+        { label: 'Get Started', link: 'https://sxtj.hxcn.space', style: 'primary' },
+        { label: 'GitHub', link: 'https://github.com/CelPlume/SDNUChronoSync', style: 'secondary' },
       ],
     },
     zh: {
@@ -172,8 +172,8 @@ export const PROJECTS: Project[] = [
         'SDNUChronoSync (时序同笺) 是一个专为山东师范大学（SDNU）学生设计的课表与日程管理工具。支持从教务系统一键导入课表，并能生成ICS文件以便在多平台日历应用中订阅。项目具备个人资料管理、团队视图以及管理员后台等功能，旨在帮助用户高效地同步与规划学习生活。前端与后端分离的设计，为二次开发和功能扩展提供了便利。',
       tags: ['课程表', '日历', 'TypeScript'],
       buttons: [
-        { label: '开始使用', link: 'https://sxty.hxcn.space', style: 'primary' },
-        { label: 'GitHub', link: 'https://github.com/HevSpecu/SDNUChronoSync', style: 'secondary' },
+        { label: '开始使用', link: 'https://sxtj.hxcn.space', style: 'primary' },
+        { label: 'GitHub', link: 'https://github.com/CelPlume/SDNUChronoSync', style: 'secondary' },
       ],
     },
   },
@@ -385,7 +385,7 @@ const EN_FOOTER_COLUMNS: FooterColumn[] = [
   {
     heading: 'Constellation',
     links: [
-      { label: 'SDNU ChronoSync', href: 'https://sxty.hxcn.space', external: true },
+      { label: 'SDNU ChronoSync', href: 'https://sxtj.hxcn.space', external: true },
       { label: 'BookmarkHarbor', href: 'https://bookmark.hxcn.space', external: true },
       { label: 'Reactive Resume', href: 'https://resume.hxcn.space', external: true },
     ],
@@ -412,7 +412,7 @@ const ZH_FOOTER_COLUMNS: FooterColumn[] = [
   {
     heading: '星座',
     links: [
-      { label: '时序同笺', href: 'https://sxty.hxcn.space', external: true },
+      { label: '时序同笺', href: 'https://sxtj.hxcn.space', external: true },
       { label: 'BookmarkHarbor', href: 'https://bookmark.hxcn.space', external: true },
       { label: '及时简历', href: 'https://resume.hxcn.space', external: true },
     ],
