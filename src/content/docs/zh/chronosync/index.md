@@ -13,7 +13,7 @@ sidebar:
 
 **线上地址：[https://sxtj.hxcn.space](https://sxtj.hxcn.space)**
 
-**使用教程：[时序同笺保姆级用户教程](https://celplume.hxcn.space/zh/chronosync/nanny-user-tutorial/)**
+**使用教程：[时序同笺保姆级用户教程](https://celplume.hxcn.space/zh/chronosync/tutorials/nanny-user-tutorial/)**
 
 欢迎访问在线版本，体验完整的课表与日程管理功能。
 
@@ -147,7 +147,7 @@ sidebar:
 
 ### 外域白名单与 CSP
 
-外部资源域名通过 `CODE_INJECTION_ALLOWED_HOSTS` 配置，反向代理层还需同步放行 CSP 的 `script-src`、`script-src-elem` 与 `connect-src`。各运行方式的环境变量配置和重启命令统一见[部署指南](/zh/chronosync/deployment/)。
+外部资源域名通过 `CODE_INJECTION_ALLOWED_HOSTS` 配置，反向代理层还需同步放行 CSP 的 `script-src`、`script-src-elem` 与 `connect-src`。各运行方式的环境变量配置和重启命令统一见[部署指南](/zh/chronosync/dev/deployment/)。
 
 ### UI/UX 特性
 
@@ -608,19 +608,19 @@ sidebar:
 
 ## 📁 项目结构
 
-项目目录结构、各模块职责与 API 接口清单已迁移至 [系统架构与技术参考](/zh/chronosync/architecture/)，本文不再内联维护。
+项目目录结构、各模块职责与 API 接口清单已迁移至 [系统架构与技术参考](/zh/chronosync/dev/architecture/)，本文不再内联维护。
 
 ## 项目文档
 
-- [部署指南](/zh/chronosync/deployment/)：Docker Compose、单容器、环境变量、HTTPS/CORS、持久化、备份恢复和故障排查。
-- [开发指南](/zh/chronosync/development/)：本地开发、代码规范、质量门槛、性能安全基线、发布与迁移治理。
+- [部署指南](/zh/chronosync/dev/deployment/)：Docker Compose、单容器、环境变量、HTTPS/CORS、持久化、备份恢复和故障排查。
+- [开发指南](/zh/chronosync/dev/development/)：本地开发、代码规范、质量门槛、性能安全基线、发布与迁移治理。
 - [SQLite 到 PostgreSQL 迁移 Runbook](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README_PG.md)：完整停机迁移、验证与回滚步骤。
-- [完整更新日志](/zh/chronosync/changelog/)：项目全部版本记录；本文仅展示最近三个月。
+- [完整更新日志](/zh/chronosync/about/changelog/)：项目全部版本记录；本文仅展示最近三个月。
 
 
 ## 🔌 API 接口
 
-完整的 REST API 接口清单（认证、课表、调休、分享、团队、个人资料、管理员、教务连接与空教室等）见 [系统架构与技术参考](/zh/chronosync/architecture/) 的「API 接口」章节。
+完整的 REST API 接口清单（认证、课表、调休、分享、团队、个人资料、管理员、教务连接与空教室等）见 [系统架构与技术参考](/zh/chronosync/dev/architecture/) 的「API 接口」章节。
 
 ## 📥 课表导入功能
 
@@ -762,14 +762,14 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 ## 📞 联系我们
 
 - 🌐 **项目主页**：[https://github.com/CelPlume/SDNUChronoSync](https://github.com/CelPlume/SDNUChronoSync)
-- 📖 **使用教程**：[https://celplume.hxcn.space/zh/chronosync/chronosync-user-guide/](https://celplume.hxcn.space/zh/chronosync/chronosync-user-guide/)
+- 📖 **使用教程**：[https://celplume.hxcn.space/zh/chronosync/tutorials/chronosync-user-guide/](https://celplume.hxcn.space/zh/chronosync/tutorials/chronosync-user-guide/)
 - ℹ️ **关于本项目**：[https://celplume.hxcn.space/zh/chronosync/](https://celplume.hxcn.space/zh/chronosync/)
 - 💬 **问题反馈**：通过项目 [Issues](https://github.com/CelPlume/SDNUChronoSync/issues) 提出
 - 📧 **邮箱联系**：[hxcn@cnies.org](mailto:hxcn@cnies.org)
 
 ## 📝 更新日志（最近三个月）
 
-完整版本历史见 [完整更新日志](/zh/chronosync/changelog/)。
+完整版本历史见 [完整更新日志](/zh/chronosync/about/changelog/)。
 
 ### v3.6.2 (2026-08-04) - 前端引导脚本回归修复与头像跨域缓存修复
 
@@ -819,9 +819,9 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 
 **文档与验证**
 
-- 开发规范、完整版本历史和通用部署说明分别集中到 `/zh/chronosync/development/`、`/zh/chronosync/changelog/` 与 `/zh/chronosync/deployment/`
+- 开发规范、完整版本历史和通用部署说明分别集中到 `/zh/chronosync/dev/development/`、`/zh/chronosync/about/changelog/` 与 `/zh/chronosync/dev/deployment/`
 - 后端完整回归 `152 passed`；前端 lint 为 0 error，类型检查和生产构建通过；真实生产 SQLite 副本已完成 PostgreSQL 18 迁移与应用 smoke
-- 更新日志弹窗不再运行时请求外部站点：构建阶段直接读取仓库 `/zh/chronosync/changelog/`，渲染最近三个月的版本条目并内联进页面，移除后端代理接口
+- 更新日志弹窗不再运行时请求外部站点：构建阶段直接读取仓库 `/zh/chronosync/about/changelog/`，渲染最近三个月的版本条目并内联进页面，移除后端代理接口
 
 ### v3.6.0 (2026-08-02) - 性能优化、认证安全加固与多 worker 可靠性
 
@@ -835,7 +835,7 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 - 66 个阻塞端点由 `async def` 改为同步 `def`（FastAPI 线程池），登录不再卡死事件循环（登录期间 `/health` 从 168ms 降至 10ms），轻量端点并发不再线性排队
 - 新增 `RequestTimingMiddleware`，生产日志输出 `TIMING method path status X.Xms` 每请求耗时，支持定位慢端点
 - 课表接口响应体瘦身：个人端点不再嵌套完整 schedule/owner（857KB→735KB），团队聚合端点 3.47MB→1.52MB（243→153ms），筛选端点 349KB→150KB，并消除序列化 N+1
-- FastAPI 足以应对当前业务规模；关键性能基线与复测方法维护在[开发指南](/zh/chronosync/development/)的性能章节
+- FastAPI 足以应对当前业务规模；关键性能基线与复测方法维护在[开发指南](/zh/chronosync/dev/development/)的性能章节
 
 **认证安全**
 
@@ -1132,7 +1132,7 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 
 **文档更新**
 
-- [部署指南](/zh/chronosync/deployment/)新增“数据库配置”章节：PostgreSQL 连接池参数、`pg_dump`/`pg_restore` 备份恢复、从 SQLite 迁移的步骤
+- [部署指南](/zh/chronosync/dev/deployment/)新增“数据库配置”章节：PostgreSQL 连接池参数、`pg_dump`/`pg_restore` 备份恢复、从 SQLite 迁移的步骤
 - [项目说明](/zh/chronosync/)技术栈更新：数据库从 SQLite 改为 SQLite/PostgreSQL（推荐生产环境使用 PostgreSQL）
 
 ### v3.2.0 (2026-05-18) - UI视觉收敛、认证表单统一与移动端导航优化

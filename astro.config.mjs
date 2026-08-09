@@ -48,7 +48,39 @@ export default defineConfig({
         {
           label: 'ChronoSync',
           translations: { 'zh-CN': '时序同笺' },
-          autogenerate: { directory: 'chronosync' },
+          items: [
+            {
+              label: 'About',
+              translations: { 'zh-CN': '关于项目' },
+              items: [
+                {
+                  label: 'About ChronoSync',
+                  translations: { 'zh-CN': '关于时序同笺' },
+                  link: '/chronosync/',
+                },
+                {
+                  label: 'Changelog',
+                  translations: { 'zh-CN': '更新日志' },
+                  link: '/chronosync/about/changelog/',
+                },
+              ],
+            },
+            {
+              label: 'Tutorials',
+              translations: { 'zh-CN': '用户教程' },
+              autogenerate: { directory: 'chronosync/tutorials' },
+            },
+            {
+              label: 'Development',
+              translations: { 'zh-CN': '开发部署' },
+              autogenerate: { directory: 'chronosync/dev' },
+            },
+            {
+              label: 'Legal',
+              translations: { 'zh-CN': '法律条款' },
+              autogenerate: { directory: 'chronosync/legal' },
+            },
+          ],
         },
         {
           label: 'BookmarkHarbor',

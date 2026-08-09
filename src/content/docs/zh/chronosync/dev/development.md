@@ -23,8 +23,8 @@ sidebar:
 ### 文档入口
 
 - [项目说明](/zh/chronosync/)
-- [部署指南](/zh/chronosync/deployment/)
-- [完整更新日志](/zh/chronosync/changelog/)
+- [部署指南](/zh/chronosync/dev/deployment/)
+- [完整更新日志](/zh/chronosync/about/changelog/)
 
 ## Build / Test / Run Scripts（构建/运行指令）
 
@@ -231,10 +231,10 @@ localStorage.removeItem('umami.disabled')
 | `backend/pyproject.toml` | `version = "x.y.z"` | Python 项目元数据，`uv` 和打包使用 |
 | `backend/main.py` | `version="x.y.z"`（FastAPI 初始化） | API 文档和 `/` 端点显示的版本 |
 | `backend/main.py` | 根端点返回的 `"version": "x.y.z"` | `GET /` 响应体 |
-| [`CHANGELOG.md`](/zh/chronosync/changelog/) | 新增 `### vX.Y.Z (...)` 完整记录 | 全部版本历史 |
+| [`CHANGELOG.md`](/zh/chronosync/about/changelog/) | 新增 `### vX.Y.Z (...)` 完整记录 | 全部版本历史 |
 | [`README.md`](/zh/chronosync/) | 最近三个月内保留同一版本记录 | 项目首页近期更新 |
 
-前端“更新日志”弹窗在构建阶段从 [`CHANGELOG.md`](/zh/chronosync/changelog/) 渲染（`frontend/src/layouts/DashboardLayout.astro`），且只展示相对构建日期最近三个月的版本条目（用户界面不显示该限制，无需手改版本号）。**变更版本号后必须核对**：弹窗构建产物与 README「最近三个月」区间展示同一批版本条目、同一最新版本号；两者不一致或最新版本未出现时不得发布。
+前端“更新日志”弹窗在构建阶段从 [`CHANGELOG.md`](/zh/chronosync/about/changelog/) 渲染（`frontend/src/layouts/DashboardLayout.astro`），且只展示相对构建日期最近三个月的版本条目（用户界面不显示该限制，无需手改版本号）。**变更版本号后必须核对**：弹窗构建产物与 README「最近三个月」区间展示同一批版本条目、同一最新版本号；两者不一致或最新版本未出现时不得发布。
 
 **CI/CD 自动行为**：推送到 `main` 分支时，GitHub Actions 自动从 `backend/pyproject.toml` 读取版本号，构建 Docker 镜像并打 `latest` 和 `x.y.z` 两个 tag 推送到 Docker Hub。推送 `v*` 格式的 git tag 时，还会额外追加该 git tag 作为镜像 tag。
 
@@ -258,7 +258,7 @@ git push origin main --tags
 - `backend/migrations/` 不再作为迁移脚本目录存在；历史 Alembic 资源统一归档到 `scripts/migrations/legacy_alembic/`，不要再把迁移文件放回 `backend/migrations/`。
 - 每新增、修改或废弃一个迁移脚本时，必须同步维护：
   - [迁移脚本说明](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README.md)：脚本清单、引入版本、用途、适用数据库、使用方式、注意事项；
-  - [项目说明](/zh/chronosync/)、[部署指南](/zh/chronosync/deployment/)或[完整更新日志](/zh/chronosync/changelog/)中与该变更直接相关的入口和升级说明。
+  - [项目说明](/zh/chronosync/)、[部署指南](/zh/chronosync/dev/deployment/)或[完整更新日志](/zh/chronosync/about/changelog/)中与该变更直接相关的入口和升级说明。
 - 运行迁移脚本前，优先确认当前实际数据库类型与连接串来源；本项目当前以 PostgreSQL 为主，命令行执行前应显式加载 `backend/.env`。
 - **模型与迁移 DDL 一致性（必须）**：新增列/表时，`models.py` 与 Alembic revision 必须逐项一致——列类型、nullable、以及 `server_default`（模型用 `server_default=text(...)`，迁移用 `server_default=...`，两侧都要有；参照 `is_default`/`is_hidden`/`token_version` 惯例）。缺失即视为 schema 漂移。
 - **新 head 同步（必须）**：新增 revision 成为新 head 后，必须同步更新 `backend/tests/test_postgres_integration.py` 的 `HEAD_REVISION`，否则 CI 的 fresh-upgrade 门禁必红。

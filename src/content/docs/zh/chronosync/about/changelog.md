@@ -56,7 +56,7 @@ sidebar:
 
 **文档与验证**
 
-- 开发规范、完整版本历史和通用部署说明分别集中到[开发指南](/zh/chronosync/development/)、本文件与[部署指南](/zh/chronosync/deployment/)
+- 开发规范、完整版本历史和通用部署说明分别集中到[开发指南](/zh/chronosync/dev/development/)、本文件与[部署指南](/zh/chronosync/dev/deployment/)
 - 后端完整回归 `152 passed`；前端 lint 为 0 error，类型检查和生产构建通过；真实生产 SQLite 副本已完成 PostgreSQL 18 迁移与应用 smoke
 - 更新日志弹窗不再运行时请求外部站点：构建阶段直接读取仓库 `docs/CHANGELOG.md`，渲染最近三个月的版本条目并内联进页面，移除后端代理接口
 
@@ -72,7 +72,7 @@ sidebar:
 - 66 个阻塞端点由 `async def` 改为同步 `def`（FastAPI 线程池），登录不再卡死事件循环（登录期间 `/health` 从 168ms 降至 10ms），轻量端点并发不再线性排队
 - 新增 `RequestTimingMiddleware`，生产日志输出 `TIMING method path status X.Xms` 每请求耗时，支持定位慢端点
 - 课表接口响应体瘦身：个人端点不再嵌套完整 schedule/owner（857KB→735KB），团队聚合端点 3.47MB→1.52MB（243→153ms），筛选端点 349KB→150KB，并消除序列化 N+1
-- FastAPI 足以应对当前业务规模；关键性能基线与复测方法维护在[开发指南](/zh/chronosync/development/)的性能章节
+- FastAPI 足以应对当前业务规模；关键性能基线与复测方法维护在[开发指南](/zh/chronosync/dev/development/)的性能章节
 
 **认证安全**
 
@@ -369,7 +369,7 @@ sidebar:
 
 **文档更新**
 
-- [部署指南](/zh/chronosync/deployment/)新增“数据库配置”章节：PostgreSQL 连接池参数、`pg_dump`/`pg_restore` 备份恢复、从 SQLite 迁移的步骤
+- [部署指南](/zh/chronosync/dev/deployment/)新增“数据库配置”章节：PostgreSQL 连接池参数、`pg_dump`/`pg_restore` 备份恢复、从 SQLite 迁移的步骤
 - [项目说明](/zh/chronosync/)技术栈更新：数据库从 SQLite 改为 SQLite/PostgreSQL（推荐生产环境使用 PostgreSQL）
 
 ### v3.2.0 (2026-05-18) - UI视觉收敛、认证表单统一与移动端导航优化
