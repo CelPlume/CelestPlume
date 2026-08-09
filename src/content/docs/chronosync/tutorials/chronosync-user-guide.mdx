@@ -1,0 +1,32 @@
+---
+title: ChronoSync User Guide
+description: ChronoSync tutorial navigator — entry points for personal schedules, academic system import, ICS import, team collaboration, admin features, and self-hosted deployment. Tailored for new users, team managers, and developers so you can quickly find the right guide.
+sidebar:
+  order: 2
+---
+import { cards } from '../../../../lib/ui';
+
+ChronoSync is a modern, full-featured schedule and timetable management web app built for Shandong Normal University students and staff. Whether you need to manage a packed personal course load or coordinate with a team, ChronoSync has you covered:
+
+- **Personal schedule management**: multiple schedules, one-click import (academic affairs system, ICS file), manual event creation, multi-view mode (week / month), ICS export, one-click schedule screenshot, smart holiday adjustment system (holiday setup, makeup days)
+- **Team collaboration**: smart invitation mechanism, 8-digit random invitation codes, flexible team management, team ownership transfer, tiered permission control, three-level permission system, team schedule aggregation, time conflict detection, advanced filtering, convenient member operations, team lifecycle management
+- **Admin features**: user management, schedule management, team monitoring, system settings, avatar upload, storage configuration
+
+To help you get up to speed with ChronoSync, here's where to start:
+
+If **you're a new user**, read the [Nanny User Tutorial](./nanny-user-tutorial/) for a step-by-step walkthrough of creating and managing personal schedules and joining teams for collaboration.
+
+If **you're a club, lab, or organization manager or event planner** looking to gather your members' schedules for better coordination, read the [Team Collaboration Tutorial](../../#-团队协作系统).
+
+If **you want a comprehensive look at every feature**, read the [User Documentation](../../#-使用指南).
+
+If **you're a developer** and want to self-deploy the project, read the [Self-Hosting Tutorial](../dev/deployment/).
+
+## Tutorial entries
+
+<div set:html={cards([
+  { title: 'Nanny User Tutorial', description: 'A step-by-step guide covering registration, login, schedule creation, academic system and ICS import, manual events, holiday adjustments, sharing and export, team collaboration, empty classroom lookup, and profile settings. Designed for new users to follow in order.', href: './nanny-user-tutorial/', icon: 'lucide:book-open' },
+  { title: 'User Documentation', description: 'A detailed reference for every ChronoSync feature: personal schedules, smart holiday adjustments, schedule sharing, team collaboration, the admin panel, and self-hosted deployment.', href: '../../#-使用指南', icon: 'lucide:file-text' },
+  { title: 'Team Collaboration Tutorial', description: "For club, lab, and organization managers and event planners: gather members' schedules efficiently for better coordination and time planning.", href: '../../#-团队协作系统', icon: 'lucide:list-ordered' },
+  { title: 'Self-Hosting Tutorial', description: 'For developers: deploy the project yourself, covering environment setup, configuration, startup, and operations.', href: '../dev/deployment/', icon: 'lucide:folder-tree' },
+], { className: 'cpd-cards-stack' })} />
