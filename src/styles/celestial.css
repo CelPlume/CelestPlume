@@ -1004,6 +1004,16 @@ main#main {
   color: var(--cp-moonlight);
 }
 .cp-footer-bottom p { margin: 0; }
+.cp-footer-copy-link {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--cp-gold) 45%, transparent);
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.cp-footer-copy-link:hover {
+  color: var(--cp-gold-pale);
+  border-color: var(--cp-gold-pale);
+}
 .cp-footer-legal { opacity: 0.8; }
 
 /* ============================================================

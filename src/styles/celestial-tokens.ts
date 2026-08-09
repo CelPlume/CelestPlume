@@ -376,22 +376,19 @@ export interface UiCopy {
   footer: {
     brandSubtitle: string;
     columns: FooterColumn[];
-    copyright: (year: number) => string;
+    /** 官网地址（版权栏品牌名与列内「官网」项共用） */
+    officialUrl: string;
+    /** 版权栏中被链接的品牌名文本 */
+    copyrightBrand: string;
+    /** 版权栏品牌名之后的版权说明 */
+    copyrightSuffix: string;
     builtWith: string;
   };
 }
 
 const EN_FOOTER_COLUMNS: FooterColumn[] = [
   {
-    heading: 'Constellation',
-    links: [
-      { label: 'SDNU ChronoSync', href: 'https://sxtj.hxcn.space', external: true },
-      { label: 'BookmarkHarbor', href: 'https://bookmark.hxcn.space', external: true },
-      { label: 'Reactive Resume', href: 'https://resume.hxcn.space', external: true },
-    ],
-  },
-  {
-    heading: 'Scripture',
+    heading: 'Docs',
     links: [
       { label: 'Documentation', href: '/guides/example/' },
       { label: '中文文档', href: '/zh/guides/example/' },
@@ -401,6 +398,7 @@ const EN_FOOTER_COLUMNS: FooterColumn[] = [
   {
     heading: 'Covenant',
     links: [
+      { label: 'Website', href: 'https://celplume.hxcn.space', external: true },
       { label: 'GitHub', href: 'https://github.com/CelPlume', external: true },
       { label: 'Issues', href: 'https://github.com/CelPlume/CelestPlume/issues', external: true },
       { label: 'License', href: 'https://github.com/CelPlume/CelestPlume/blob/main/LICENSE', external: true },
@@ -410,15 +408,7 @@ const EN_FOOTER_COLUMNS: FooterColumn[] = [
 
 const ZH_FOOTER_COLUMNS: FooterColumn[] = [
   {
-    heading: '星座',
-    links: [
-      { label: '时序同笺', href: 'https://sxtj.hxcn.space', external: true },
-      { label: 'BookmarkHarbor', href: 'https://bookmark.hxcn.space', external: true },
-      { label: '及时简历', href: 'https://resume.hxcn.space', external: true },
-    ],
-  },
-  {
-    heading: '典章',
+    heading: '文档',
     links: [
       { label: '中文文档', href: '/zh/guides/example/' },
       { label: 'English Docs', href: '/guides/example/' },
@@ -428,6 +418,7 @@ const ZH_FOOTER_COLUMNS: FooterColumn[] = [
   {
     heading: '盟约',
     links: [
+      { label: '官网', href: 'https://celplume.hxcn.space', external: true },
       { label: 'GitHub', href: 'https://github.com/CelPlume', external: true },
       { label: '议题', href: 'https://github.com/CelPlume/CelestPlume/issues', external: true },
       { label: '许可证', href: 'https://github.com/CelPlume/CelestPlume/blob/main/LICENSE', external: true },
@@ -442,7 +433,7 @@ export const UI_EN: UiCopy = {
     description: 'Casting scales of old, spread wings to realms untold. Code as scripture, craft as sacrament.',
     ogLocale: 'en_US',
   },
-  brand: { name: 'CelPlume', footerSubtitle: 'Code as scripture' },
+  brand: { name: 'CelPlume', footerSubtitle: 'Casting scales of old, spread wings to realms untold.' },
   nav: {
     home: 'Home',
     projects: 'Projects',
@@ -479,10 +470,12 @@ export const UI_EN: UiCopy = {
     codexHref: '/guides/example/',
   },
   footer: {
-    brandSubtitle: 'Code as scripture',
+    brandSubtitle: 'Casting scales of old, spread wings to realms untold.',
     columns: EN_FOOTER_COLUMNS,
-    copyright: (year: number) => `© ${year} CelPlume — Crafted under the crescent moon.`,
-    builtWith: 'Built with Astro · Starlight · Cormorant Garamond',
+    officialUrl: 'https://celplume.hxcn.space',
+    copyrightBrand: 'CelPlume',
+    copyrightSuffix: ' · All rights reserved.',
+    builtWith: 'Powered by Astro · Starlight · Plumest',
   },
 };
 
@@ -493,7 +486,7 @@ export const UI_ZH: UiCopy = {
     description: '辞却尘渊旧日鳞，振翼云海入星河。代码即经卷，匠艺即圣礼。',
     ogLocale: 'zh_CN',
   },
-  brand: { name: '天空之翼', footerSubtitle: '代码即经卷' },
+  brand: { name: '天空之翼', footerSubtitle: '辞却尘渊旧日鳞，振翼云海入星河' },
   nav: {
     home: '首页',
     projects: '项目',
@@ -530,10 +523,12 @@ export const UI_ZH: UiCopy = {
     codexHref: '/zh/guides/example/',
   },
   footer: {
-    brandSubtitle: '代码即经卷',
+    brandSubtitle: '辞却尘渊旧日鳞，振翼云海入星河',
     columns: ZH_FOOTER_COLUMNS,
-    copyright: (year: number) => `© ${year} 天空之翼 — 造於新月之下。`,
-    builtWith: '以 Astro · Starlight · Cormorant Garamond 铸造',
+    officialUrl: 'https://celplume.hxcn.space',
+    copyrightBrand: '天空之翼（CelPlume）',
+    copyrightSuffix: ' · All rights reserved.',
+    builtWith: '由 Astro · Starlight · Plumest 强力驱动',
   },
 };
 

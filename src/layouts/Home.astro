@@ -171,7 +171,18 @@ const currentPath = Astro.url.pathname;
       </div>
 
       <div class="cp-footer-bottom">
-        <p>{t.footer.copyright(new Date().getFullYear())}</p>
+        <p>
+          © {new Date().getFullYear()}{' '}
+          <a
+            href={t.footer.officialUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="cp-footer-copy-link"
+          >
+            {t.footer.copyrightBrand}
+          </a>
+          {t.footer.copyrightSuffix}
+        </p>
         <p class="cp-footer-legal">{t.footer.builtWith}</p>
       </div>
     </footer>
