@@ -10,7 +10,7 @@
  */
 
 import { getLineOffset } from './toc';
-import { applyTheme, resolveInitialTheme, type CpdThemeMode } from './tokens';
+import { applyTheme, resolveInitialTheme, LANG_STORAGE_KEY, type CpdThemeMode } from './tokens';
 import { Icon } from './icons';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -467,6 +467,20 @@ function initTheme(root: ParentNode): void {
   }
 }
 
+function initLang(root: ParentNode): void {
+  const link = root.querySelector<HTMLAnchorElement>('[data-cpd-lang-switch]');
+  if (!link) return;
+  // 点击语言切换时写入偏好（供下次访问 ThemeProvider 重定向）；目标语言由 href 前缀推断
+  link.addEventListener('click', () => {
+    try {
+      const target = link.getAttribute('href')?.startsWith('/zh') ? 'zh' : 'en';
+      window.localStorage.setItem(LANG_STORAGE_KEY, target);
+    } catch {
+      /* storage unavailable */
+    }
+  });
+}
+
 function initAstroCodeCopy(root: ParentNode): void {
   // 文档正文代码块：expressive-code（Starlight）与 Shiki 兜底输出统一注入 kit 复制按钮
   root.querySelectorAll<HTMLPreElement>('pre.astro-code, .cpd-md-content .expressive-code pre').forEach((pre) => {
@@ -516,6 +530,7 @@ export function initCelestialUI(options: CelestialUiOptions = {}): () => void {
   initCopy(root);
   initAstroCodeCopy(root);
   initTheme(root);
+  initLang(root);
 
   return () => {
     // 清理由事件委托挂在 root 上的监听（由调用方决定是否真正移除）

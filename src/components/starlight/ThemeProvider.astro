@@ -50,5 +50,25 @@
         /* ignore */
       }
     }).observe(root, { attributes: true, attributeFilter: ['data-cpd-theme'] });
+
+    // i18n 偏好：celplume-lang（'en' | 'zh'）与当前路径语言不一致时重定向，保留 query/hash。
+    // 与主页同款逻辑；切换按钮的写入见 runtime.ts initLang。
+    (() => {
+      try {
+        const LANG_KEY = 'celplume-lang';
+        const pref = localStorage.getItem(LANG_KEY);
+        if (pref !== 'zh' && pref !== 'en') return;
+        const p = location.pathname;
+        const isZhPath = p.startsWith('/zh');
+        let target = null;
+        if (pref === 'zh' && !isZhPath) target = '/zh/' + p.replace(/^\/+/, '');
+        if (pref === 'en' && isZhPath) target = p.slice(3) || '/';
+        if (target && target !== p) {
+          location.replace(target + location.search + location.hash);
+        }
+      } catch {
+        /* storage unavailable — 保持当前语言 */
+      }
+    })();
   })();
 </script>

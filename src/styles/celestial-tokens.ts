@@ -16,6 +16,8 @@ export type Locale = 'en' | 'zh';
 export type ThemeMode = 'dark' | 'light';
 
 export const THEME_STORAGE_KEY = 'celplume-theme';
+/** i18n 偏好存储键（'en' | 'zh'），与文档页共用 */
+export const LANG_STORAGE_KEY = 'celplume-lang';
 
 export function resolveInitialTheme(): ThemeMode {
   if (typeof window === 'undefined') return 'dark';

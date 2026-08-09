@@ -47,6 +47,7 @@ const langTitle = isZh ? 'Switch to English' : '切换到中文';
       href={langHref}
       title={langTitle}
       aria-label={langTitle}
+      data-cpd-lang-switch
     >
       <Fragment set:html={Icon.languages({})} />
       <span class="cpd-docs-lang-txt">{langLabel}</span>

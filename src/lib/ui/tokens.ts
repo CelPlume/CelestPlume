@@ -8,6 +8,8 @@
  */
 
 export const THEME_STORAGE_KEY = 'celplume-theme';
+/** i18n 偏好存储键（'en' | 'zh'），与主页共用 */
+export const LANG_STORAGE_KEY = 'celplume-lang';
 
 export type CpdThemeMode = 'dark' | 'light' | 'system';
 

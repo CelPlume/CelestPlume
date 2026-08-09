@@ -93,6 +93,27 @@ const navLinks = [
       })();
     </script>
 
+    <!-- i18n 偏好（内联，避免闪语言）：celplume-lang 与当前页语言不一致时重定向，保留 query/hash -->
+    <script is:inline>
+      (function () {
+        try {
+          const key = 'celplume-lang';
+          const pref = window.localStorage.getItem(key);
+          if (pref !== 'zh' && pref !== 'en') return;
+          const p = window.location.pathname;
+          const isZhPath = p.startsWith('/zh');
+          let target = null;
+          if (pref === 'zh' && !isZhPath) target = '/zh/' + p.replace(/^\/+/, '');
+          if (pref === 'en' && isZhPath) target = p.slice(3) || '/';
+          if (target && target !== p) {
+            window.location.replace(target + window.location.search + window.location.hash);
+          }
+        } catch {
+          /* storage unavailable — 保持当前语言 */
+        }
+      })();
+    </script>
+
   </head>
   <body>
     <a class="skip-link" href="#main">{locale === 'zh' ? '跳到主要内容' : 'Skip to content'}</a>
@@ -149,7 +170,12 @@ const navLinks = [
           </button>
 
           <!-- 语言切换 -->
-          <a class="cp-nav-action" href={t.nav.switchLangHref} title={t.nav.switchLang}>
+          <a
+            class="cp-nav-action"
+            href={t.nav.switchLangHref}
+            title={t.nav.switchLang}
+            data-cp-lang-switch
+          >
             <Icon name="lucide:languages" size={18} aria-hidden="true" />
             <span class="cp-nav-action-txt">{t.nav.switchLang}</span>
           </a>
@@ -203,7 +229,7 @@ const navLinks = [
 
     <!-- 主页运行时: 加载动画隐藏 + 主题切换 + 跟随系统 -->
     <script>
-      import { THEME_STORAGE_KEY, LOADER } from '../styles/celestial-tokens.ts';
+      import { THEME_STORAGE_KEY, LANG_STORAGE_KEY, LOADER } from '../styles/celestial-tokens.ts';
 
       // 1. 加载动画（uiverse 纯 CSS）—— 字体就绪 + 最少展示 800ms，1s 兜底；
       //     prefers-reduced-motion 直接隐藏（不展示、不阻塞首屏）
@@ -262,6 +288,17 @@ const navLinks = [
       // 3. 跟随系统（仅当模式为 system 时响应系统偏好变化）
       media.addEventListener?.('change', () => {
         if (currentMode() === 'system') applyTheme('system');
+      });
+
+      // 4. i18n 偏好：点击语言切换时写入 localStorage（供下次访问重定向到目标语言）
+      const langLink = document.querySelector<HTMLAnchorElement>('[data-cp-lang-switch]');
+      langLink?.addEventListener('click', () => {
+        try {
+          const target = langLink.getAttribute('href')?.startsWith('/zh') ? 'zh' : 'en';
+          window.localStorage.setItem(LANG_STORAGE_KEY, target);
+        } catch {
+          /* storage unavailable */
+        }
       });
     </script>
   </body>
