@@ -1,0 +1,83 @@
+---
+title: Callout
+description: Five semantic notice variants with a tinted background and accent bar.
+sidebar:
+  order: 2
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { callout, code } from '../../../../lib/ui';
+
+A callout surfaces a notice next to your prose. Each `type` maps to a semantic
+token (`--cpd-info`, `--cpd-warning`, …) that drives the accent bar, the
+`color-mix` background tint and the default icon.
+
+## Variants
+
+<Preview
+  label="All five types"
+  html={[
+    callout('Additional context that helps the reader.', { type: 'info', title: 'Note' }),
+    callout('Something needs attention before you continue.', { type: 'warning', title: 'Warning' }),
+    callout('The operation failed. Retry after fixing the cause.', { type: 'error', title: 'Error' }),
+    callout('The operation completed successfully.', { type: 'success', title: 'Success' }),
+    callout('A cleaner way to approach this.', { type: 'idea', title: 'Idea' }),
+  ].join('')}
+/>
+
+```ts
+callout('Additional context that helps the reader.', { type: 'info', title: 'Note' });
+callout('Something needs attention before you continue.', { type: 'warning', title: 'Warning' });
+callout('The operation failed. Retry after fixing the cause.', { type: 'error', title: 'Error' });
+callout('The operation completed successfully.', { type: 'success', title: 'Success' });
+callout('A cleaner way to approach this.', { type: 'idea', title: 'Idea' });
+```
+
+## With and without title
+
+<Preview
+  label="Title vs. no title"
+  html={[
+    callout('A titled callout — the bold heading sits above the body.'),
+    callout(`A bare callout with no title, default ${code('info')} type.`),
+  ].join('')}
+/>
+
+```ts
+callout('A titled callout — the bold heading sits above the body.', { title: 'Heads up' });
+callout(`A bare callout with no title, default ${code('info')} type.`);
+```
+
+## Custom icon
+
+<Preview
+  label="Replaced icon"
+  html={callout('The default icon is replaced by a custom SVG.', {
+    type: 'warning',
+    title: 'Custom icon',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+  })}
+/>
+
+```ts
+callout('The default icon is replaced by a custom SVG.', {
+  type: 'warning',
+  title: 'Custom icon',
+  icon: '<svg …>…</svg>', // any inline SVG string
+});
+```
+
+## Props
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `content` | `string` | — | Body text (required, first argument). |
+| `type` | `'info' \| 'warning' \| 'error' \| 'success' \| 'idea'` | `'info'` | Semantic variant — drives accent bar, tint and icon. |
+| `title` | `string` | `''` | Optional bold title above the body. |
+| `icon` | `string` | auto | Raw SVG string replacing the default icon. |
+
+## Notes
+
+- Markdown passed inside `content` is escaped; use plain text or pre-built HTML.
+- The tint uses `color-mix(in oklab, var(--cpd-<type>) 10%, transparent)` —
+  one semantic token per variant, matching Plumest.

@@ -1,0 +1,57 @@
+---
+title: Heading
+description: Anchored headings with hover copy-link buttons.
+sidebar:
+  order: 12
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { heading } from '../../../../lib/ui';
+
+`heading()` renders an anchored heading: clicking the text jumps to the
+anchor, a ghost copy button appears on hover/focus and copies the `#<id>`
+link.
+
+## Levels
+
+<Preview
+  label="h2 and h3"
+  html={[
+    heading(2, 'Installation', { id: 'installation' }),
+    heading(3, 'From source', { id: 'from-source' }),
+    heading(3, 'From registry', { id: 'from-registry' }),
+  ].join('')}
+/>
+
+```ts
+heading(2, 'Installation', { id: 'installation' });
+heading(3, 'From source', { id: 'from-source' });
+heading(3, 'From registry', { id: 'from-registry' });
+```
+
+## Step headings
+
+<Preview
+  label="data-cpd-step flag"
+  html={heading(2, 'Create the account', { id: 'create-account', step: true })}
+/>
+
+```ts
+heading(2, 'Create the account', { id: 'create-account', step: true });
+```
+
+## Props
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `level` | `1–6` | Heading level (first argument). |
+| `text` | `string` | Heading text (second argument). |
+| `id` | `string` | Anchor id — also used by the copy-link button. |
+| `step` | `boolean` | Marks the heading as a ClerkTOC step (`data-cpd-step`). |
+
+## Notes
+
+- The anchor link is `href="#<id>"`; the copy button copies the absolute
+  `location.origin + pathname + #<id>` URL.
+- `step` headings render with a step badge in the article and get step dots
+  in the ClerkTOC rail.

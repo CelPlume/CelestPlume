@@ -1,0 +1,75 @@
+---
+title: Pagination
+description: Previous / next navigation cards.
+sidebar:
+  order: 9
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { pagination } from '../../../../lib/ui';
+
+Pagination renders Plumest-style previous/next cards. Either side can be
+omitted; labels localize the "Previous Page" / "Next Page" hints.
+
+## Both sides
+
+<Preview
+  label="Previous + next"
+  html={pagination(
+    { title: 'Styles', description: 'Tokens and layout metrics.', href: '/contribution/styles/' },
+    { title: 'Cards', description: 'The link-card grid.', href: '/contribution/components/cards/' },
+  )}
+/>
+
+```ts
+pagination(
+  { title: 'Styles', description: 'Tokens and layout metrics.', href: '/contribution/styles/' },
+  { title: 'Cards', description: 'The link-card grid.', href: '/contribution/components/cards/' },
+);
+```
+
+## One side only
+
+<Preview
+  label="Next only"
+  html={pagination(
+    undefined,
+    { title: 'Tabs', href: '/contribution/components/tabs/' },
+  )}
+/>
+
+<Preview
+  label="Previous only, localized labels"
+  html={pagination(
+    { title: '概述', href: '/zh/contribution/overview/' },
+    undefined,
+    { previous: '上一页', next: '下一页' },
+  )}
+/>
+
+```ts
+pagination(
+  undefined,
+  { title: 'Tabs', href: '/contribution/components/tabs/' },
+);
+pagination(
+  { title: '概述', href: '/zh/contribution/overview/' },
+  undefined,
+  { previous: '上一页', next: '下一页' },
+);
+```
+
+## Props
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `previous` | `PaginationItem \| undefined` | Previous card; omit to hide. |
+| `next` | `PaginationItem \| undefined` | Next card; omit to hide. |
+| `labels.previous` / `labels.next` | `string` | Localized hint labels. |
+
+`PaginationItem`: `{ title: string; description?: string; href: string }`.
+
+## Notes
+
+- On the real docs pages the Starlight `Pagination` slot is overridden with
+  this builder; labels are localized automatically from the current locale.

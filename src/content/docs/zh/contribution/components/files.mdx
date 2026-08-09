@@ -1,0 +1,90 @@
+---
+title: Files 文件树
+description: 带可折叠目录的文件树浏览器。
+sidebar:
+  order: 7
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { files, folder, file as fileRow } from '../../../../../lib/ui';
+
+`files()` 渲染 Plumest 风格文件树。目录是原生 `<details>` 元素，无需
+JavaScript 即可折叠。
+
+## 嵌套树
+
+<Preview
+  label="目录 + 文件"
+  html={files([
+    folder('<span>src</span>', { label: 'src' }),
+    folder('<span>lib</span>', { label: 'lib' }),
+    fileRow('ui'),
+    fileRow('tokens.ts'),
+    fileRow('components.ts'),
+    fileRow('index.ts'),
+  ])}
+/>
+
+```ts
+files([
+  folder('<span>src</span>', { label: 'src' }),
+  folder('<span>lib</span>', { label: 'lib' }),
+  fileRow('ui'),
+  fileRow('tokens.ts'),
+  fileRow('components.ts'),
+  fileRow('index.ts'),
+]);
+```
+
+## 默认展开的目录
+
+<Preview
+  label="defaultOpen 目录"
+  html={files([
+    folder('<span>src</span>', { label: 'src', defaultOpen: true }),
+    fileRow('styles'),
+    fileRow('celestial-docs.css'),
+    folder('<span>scripts</span>', { label: 'scripts' }),
+    fileRow('build.ts'),
+  ])}
+/>
+
+```ts
+files([
+  folder('<span>src</span>', { label: 'src', defaultOpen: true }),
+  fileRow('styles'),
+  fileRow('celestial-docs.css'),
+  folder('<span>scripts</span>', { label: 'scripts' }),
+  fileRow('build.ts'),
+]);
+```
+
+## 自定义图标
+
+<Preview
+  label="自定义文件图标"
+  html={files([
+    fileRow('package.json', '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>'),
+    fileRow('README.md'),
+  ])}
+/>
+
+```ts
+files([
+  fileRow('package.json', '<svg …>…</svg>'), // 任意内联 SVG 字符串
+  fileRow('README.md'),
+]);
+```
+
+## API
+
+| 函数 | 签名 | 说明 |
+| --- | --- | --- |
+| `file(name, icon?)` | `(string, string?) => string` | 文件行（可传自定义 SVG 图标）。 |
+| `folder(children, { label, defaultOpen? })` | — | 可折叠目录行。 |
+| `files(children)` | `(string) => string` | 树容器。 |
+
+## 注意
+
+- `folder(children, …)` 的 label 接收**预构建 HTML**，便于独立样式化目录名。
+- 每层子项按一个 `--cpd-spacing` 步长缩进。

@@ -1,0 +1,88 @@
+---
+title: Tabs
+description: Tab panels with labels, custom values and default index.
+sidebar:
+  order: 5
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { tabs, code } from '../../../../lib/ui';
+
+Tabs switch panels client-side via the runtime — no page reload. The tab list
+is `role="tablist"` with proper `aria-selected` state.
+
+## Simple items
+
+<Preview
+  label="Items only"
+  html={tabs({ items: ['Preview', 'Code', 'Notes'] })}
+/>
+
+```ts
+tabs({ items: ['Preview', 'Code', 'Notes'] });
+```
+
+## Panels with content
+
+<Preview
+  label="Panels + label"
+  html={tabs({
+    label: 'Package manager',
+    panels: [
+      { title: 'bun', content: code('bun add @iconify-json/lucide') },
+      { title: 'npm', content: code('npm install @iconify-json/lucide') },
+      { title: 'pnpm', content: code('pnpm add @iconify-json/lucide') },
+    ],
+  })}
+/>
+
+```ts
+tabs({
+  label: 'Package manager',
+  panels: [
+    { title: 'bun', content: code('bun add @iconify-json/lucide') },
+    { title: 'npm', content: code('npm install @iconify-json/lucide') },
+    { title: 'pnpm', content: code('pnpm add @iconify-json/lucide') },
+  ],
+});
+```
+
+## Non-default start index
+
+<Preview
+  label="defaultIndex = 2"
+  html={tabs({
+    defaultIndex: 2,
+    panels: [
+      { title: 'Setup', content: '<p>Install and configure.</p>' },
+      { title: 'Usage', content: '<p>Import and call the builder.</p>' },
+      { title: 'Advanced', content: '<p>Override icons and labels.</p>' },
+    ],
+  })}
+/>
+
+```ts
+tabs({
+  defaultIndex: 2,
+  panels: [
+    { title: 'Setup', content: '<p>Install and configure.</p>' },
+    { title: 'Usage', content: '<p>Import and call the builder.</p>' },
+    { title: 'Advanced', content: '<p>Override icons and labels.</p>' },
+  ],
+});
+```
+
+## Props
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `items` | `string[]` | — | Tab titles when `panels` is omitted. |
+| `panels` | `TabPanel[]` | — | `{ title?, value?, content }` — content can be HTML. |
+| `label` | `string` | `''` | Optional group label before the tab list. |
+| `defaultIndex` | `number` | `0` | Initially active tab. |
+
+## Notes
+
+- `value` (when set) is used as the `data-cpd-tab` value; otherwise it is
+  derived from the title (`title.toLowerCase().replace(/\s/, '-')`).
+- Panels with no content (items-only mode) render an empty active panel.

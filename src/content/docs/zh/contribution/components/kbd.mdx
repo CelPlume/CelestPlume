@@ -1,0 +1,54 @@
+---
+title: Kbd 按键
+description: 键盘按键小片。
+sidebar:
+  order: 14
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { kbd } from '../../../../../lib/ui';
+
+`kbd()` 渲染键盘按键小片，使用 `--cpd-secondary` 底色与细微内阴影。
+
+## 单个按键
+
+<Preview
+  label="按键"
+  html={[
+    kbd('⌘'),
+    ' ',
+    kbd('K'),
+    ' ',
+    kbd('Ctrl'),
+    ' ',
+    kbd('Shift'),
+  ].join('')}
+/>
+
+```ts
+kbd('⌘');
+kbd('K');
+kbd('Ctrl');
+```
+
+## 组合键
+
+<Preview
+  label="组合"
+  html={[kbd('Ctrl'), ' + ', kbd('Shift'), ' + ', kbd('P')].join('')}
+/>
+
+```ts
+[kbd('Ctrl'), ' + ', kbd('Shift'), ' + ', kbd('P')].join('');
+```
+
+## 参数
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| `text` | `string` | 按键文本（第一个参数）。 |
+
+## 注意
+
+- 渲染为 `<kbd class="cpd-kbd">`；组合分隔符由你自己拼接的普通文本。
+- 建议使用 `--cpd-font-mono` 字体族保证按键字形一致。

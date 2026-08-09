@@ -1,0 +1,55 @@
+---
+title: Heading 标题
+description: 带锚点与悬停复制链接按钮的标题。
+sidebar:
+  order: 12
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { heading } from '../../../../../lib/ui';
+
+`heading()` 渲染带锚点的标题：点击文本跳转到锚点，悬停/聚焦时出现 ghost
+复制按钮，复制 `#<id>` 链接。
+
+## 层级
+
+<Preview
+  label="h2 与 h3"
+  html={[
+    heading(2, '安装', { id: 'installation' }),
+    heading(3, '从源码安装', { id: 'from-source' }),
+    heading(3, '从仓库安装', { id: 'from-registry' }),
+  ].join('')}
+/>
+
+```ts
+heading(2, '安装', { id: 'installation' });
+heading(3, '从源码安装', { id: 'from-source' });
+heading(3, '从仓库安装', { id: 'from-registry' });
+```
+
+## 步骤标题
+
+<Preview
+  label="data-cpd-step 标记"
+  html={heading(2, '创建账号', { id: 'create-account', step: true })}
+/>
+
+```ts
+heading(2, '创建账号', { id: 'create-account', step: true });
+```
+
+## 参数
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| `level` | `1–6` | 标题层级（第一个参数）。 |
+| `text` | `string` | 标题文本（第二个参数）。 |
+| `id` | `string` | 锚点 id——复制链接按钮也使用它。 |
+| `step` | `boolean` | 标记为 ClerkTOC 阶数项（`data-cpd-step`）。 |
+
+## 注意
+
+- 锚点链接为 `href="#<id>"`；复制按钮复制 `location.origin + pathname + #<id>`
+  绝对地址。
+- `step` 标题在文章内渲染阶数徽标，并在 ClerkTOC 栏显示阶数圆点。

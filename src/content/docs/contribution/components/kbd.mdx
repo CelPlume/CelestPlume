@@ -1,0 +1,56 @@
+---
+title: Kbd
+description: Keyboard key chip.
+sidebar:
+  order: 14
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { kbd } from '../../../../lib/ui';
+
+`kbd()` renders a keyboard key chip styled with `--cpd-secondary` and a subtle
+inner shadow.
+
+## Single keys
+
+<Preview
+  label="Keys"
+  html={[
+    kbd('⌘'),
+    ' ',
+    kbd('K'),
+    ' ',
+    kbd('Ctrl'),
+    ' ',
+    kbd('Shift'),
+  ].join('')}
+/>
+
+```ts
+kbd('⌘');
+kbd('K');
+kbd('Ctrl');
+```
+
+## Combinations
+
+<Preview
+  label="Chord"
+  html={[kbd('Ctrl'), ' + ', kbd('Shift'), ' + ', kbd('P')].join('')}
+/>
+
+```ts
+[kbd('Ctrl'), ' + ', kbd('Shift'), ' + ', kbd('P')].join('');
+```
+
+## Props
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `text` | `string` | Key label (first argument). |
+
+## Notes
+
+- Renders as `<kbd class="cpd-kbd">`; combination separators are plain text
+  joined with string concatenation.
+- Use the `--cpd-font-mono` family for consistent key glyphs.

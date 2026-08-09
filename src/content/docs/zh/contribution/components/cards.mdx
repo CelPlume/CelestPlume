@@ -1,0 +1,69 @@
+---
+title: Cards 卡片
+description: 响应式链接卡片网格与单卡片，可选图标。
+sidebar:
+  order: 3
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { card, cards } from '../../../../../lib/ui';
+
+`card()` 构建单张卡片；`cards()` 将任意数量卡片包进 Plumest 风格响应式网格。
+
+## 网格
+
+<Preview
+  label="三张卡片网格"
+  html={cards([
+    { title: 'Markdown 创作', description: '用纯 Markdown 写文档。', href: '/guides/example/', icon: 'lucide:file-text' },
+    { title: '组件画廊', description: '全部构建器实时展示。', href: '/contribution/components/', icon: 'lucide:zap' },
+    { title: '设计令牌', description: '单一事实来源。', href: '/contribution/styles/', icon: 'lucide:palette' },
+  ])}
+/>
+
+```ts
+cards([
+  { title: 'Markdown 创作', description: '用纯 Markdown 写文档。', href: '/guides/example/', icon: 'lucide:file-text' },
+  { title: '组件画廊', description: '全部构建器实时展示。', href: '/contribution/components/', icon: 'lucide:zap' },
+  { title: '设计令牌', description: '单一事实来源。', href: '/contribution/styles/', icon: 'lucide:palette' },
+]);
+```
+
+## 单卡片状态
+
+<Preview
+  label="链接卡片"
+  html={card({ title: '开始使用', description: '链接到某处的卡片。', href: '/guides/example/', icon: 'lucide:arrow-right' })}
+/>
+
+<Preview
+  label="无图标卡片"
+  html={card({ title: '纯卡片', description: '无图标、无链接——纯内容块。', children: '<p>额外的 HTML 内容。</p>' })}
+/>
+
+<Preview
+  label="外链卡片"
+  html={card({ title: 'Plumest', description: '外链在新标签页打开。', href: 'https://github.com/CelPlume/CelestPlume', external: true, icon: 'lucide:external-link' })}
+/>
+
+```ts
+card({ title: '开始使用', description: '链接到某处的卡片。', href: '/guides/example/', icon: 'lucide:arrow-right' });
+card({ title: '纯卡片', description: '无图标、无链接——纯内容块。', children: '<p>额外的 HTML 内容。</p>' });
+card({ title: 'Plumest', description: '外链在新标签页打开。', href: 'https://github.com/CelPlume/CelestPlume', external: true, icon: 'lucide:external-link' });
+```
+
+## 参数
+
+| 参数 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `title` | `string` | — | 卡片标题（必填）。 |
+| `description` | `string` | `''` | 说明文字。 |
+| `href` | `string` | `''` | 目标地址——带它时卡片渲染为 `<a>`。 |
+| `external` | `boolean` | `false` | 添加 `target="_blank" rel="noreferrer"`。 |
+| `icon` | `string` | `''` | Iconify 图标名（如 `lucide:zap`）或原始 SVG。 |
+| `children` | `string` | `''` | 说明下方的额外 HTML。 |
+
+## 注意
+
+- 图标经项目本地 `@iconify-json` 图标集解析——运行时绝不从 Iconify API 在线拉取。
+- `cards()` 接受 `CardOptions[]` 或单个预构建 HTML 字符串。

@@ -1,0 +1,82 @@
+---
+title: Callout 提示框
+description: 五种语义提示变体，带底色与左侧条。
+sidebar:
+  order: 2
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { callout, code } from '../../../../../lib/ui';
+
+Callout 在正文旁呈现提示信息。每种 `type` 对应一个语义令牌
+（`--cpd-info`、`--cpd-warning` 等），驱动左侧条、`color-mix` 底色与默认图标。
+
+## 变体
+
+<Preview
+  label="全部五种类型"
+  html={[
+    callout('对读者有帮助的补充说明。', { type: 'info', title: '注意' }),
+    callout('继续之前需要先处理。', { type: 'warning', title: '警告' }),
+    callout('操作失败，修复原因后重试。', { type: 'error', title: '错误' }),
+    callout('操作已成功完成。', { type: 'success', title: '成功' }),
+    callout('还有更简洁的做法。', { type: 'idea', title: '灵感' }),
+  ].join('')}
+/>
+
+```ts
+callout('对读者有帮助的补充说明。', { type: 'info', title: '注意' });
+callout('继续之前需要先处理。', { type: 'warning', title: '警告' });
+callout('操作失败，修复原因后重试。', { type: 'error', title: '错误' });
+callout('操作已成功完成。', { type: 'success', title: '成功' });
+callout('还有更简洁的做法。', { type: 'idea', title: '灵感' });
+```
+
+## 有标题与无标题
+
+<Preview
+  label="带标题 vs. 不带"
+  html={[
+    callout('带标题的提示——加粗标题位于正文上方。', { title: '提醒' }),
+    callout(`无标题提示，默认 ${code('info')} 类型。`),
+  ].join('')}
+/>
+
+```ts
+callout('带标题的提示——加粗标题位于正文上方。', { title: '提醒' });
+callout(`无标题提示，默认 ${code('info')} 类型。`);
+```
+
+## 自定义图标
+
+<Preview
+  label="替换图标"
+  html={callout('默认图标被替换为自定义 SVG。', {
+    type: 'warning',
+    title: '自定义图标',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+  })}
+/>
+
+```ts
+callout('默认图标被替换为自定义 SVG。', {
+  type: 'warning',
+  title: '自定义图标',
+  icon: '<svg …>…</svg>', // 任意内联 SVG 字符串
+});
+```
+
+## 参数
+
+| 参数 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `content` | `string` | — | 正文文本（必填，第一个参数）。 |
+| `type` | `'info' \| 'warning' \| 'error' \| 'success' \| 'idea'` | `'info'` | 语义变体——驱动左侧条、底色与图标。 |
+| `title` | `string` | `''` | 可选的加粗标题。 |
+| `icon` | `string` | 自动 | 替换默认图标的原始 SVG 字符串。 |
+
+## 注意
+
+- `content` 内的 Markdown 会被转义；需要富文本时请传入 HTML。
+- 底色由 `color-mix(in oklab, var(--cpd-<type>) 10%, transparent)` 生成——
+  每种变体单一语义令牌，与 Plumest 一致。

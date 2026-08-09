@@ -1,0 +1,63 @@
+---
+title: Breadcrumb 面包屑
+description: 带分隔符的页面祖先路径。
+sidebar:
+  order: 8
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { breadcrumb } from '../../../../../lib/ui';
+
+面包屑展示当前页所在位置。条目间以 chevron 图标分隔；最后一项（无
+`href`）渲染为当前页。
+
+## 两层
+
+<Preview
+  label="概述 → 页面"
+  html={breadcrumb([
+    { name: '首页', href: '/' },
+    { name: '贡献' },
+  ])}
+/>
+
+```ts
+breadcrumb([
+  { name: '首页', href: '/' },
+  { name: '贡献' },
+]);
+```
+
+## 三层
+
+<Preview
+  label="首页 → 分类 → 页面"
+  html={breadcrumb([
+    { name: '首页', href: '/' },
+    { name: '贡献', href: '/zh/contribution/overview/' },
+    { name: '组件文档', href: '/zh/contribution/components/' },
+    { name: 'Callout 提示框' },
+  ])}
+/>
+
+```ts
+breadcrumb([
+  { name: '首页', href: '/' },
+  { name: '贡献', href: '/zh/contribution/overview/' },
+  { name: '组件文档', href: '/zh/contribution/components/' },
+  { name: 'Callout 提示框' },
+]);
+```
+
+## 参数
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| `name` | `string` | 显示名。 |
+| `href` | `string` | 链接目标；最后一项（当前页）省略。 |
+
+## 注意
+
+- 容器为 `<nav aria-label="Breadcrumb">`；当前页使用
+  `.cpd-breadcrumb-current`（非链接）。
+- 真实文档页的 `PageTitle` 覆盖组件会从侧边栏树自动渲染该面包屑。

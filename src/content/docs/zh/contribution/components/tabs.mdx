@@ -1,0 +1,88 @@
+---
+title: Tabs 标签页
+description: 带分组、自定义 value 与默认索引的标签面板。
+sidebar:
+  order: 5
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { tabs, code } from '../../../../../lib/ui';
+
+Tabs 由运行时在客户端切换面板，不刷新页面。标签列表为
+`role="tablist"`，带正确的 `aria-selected` 状态。
+
+## 纯标题
+
+<Preview
+  label="仅 items"
+  html={tabs({ items: ['预览', '代码', '说明'] })}
+/>
+
+```ts
+tabs({ items: ['预览', '代码', '说明'] });
+```
+
+## 带内容的面板
+
+<Preview
+  label="panels + label"
+  html={tabs({
+    label: '包管理器',
+    panels: [
+      { title: 'bun', content: code('bun add @iconify-json/lucide') },
+      { title: 'npm', content: code('npm install @iconify-json/lucide') },
+      { title: 'pnpm', content: code('pnpm add @iconify-json/lucide') },
+    ],
+  })}
+/>
+
+```ts
+tabs({
+  label: '包管理器',
+  panels: [
+    { title: 'bun', content: code('bun add @iconify-json/lucide') },
+    { title: 'npm', content: code('npm install @iconify-json/lucide') },
+    { title: 'pnpm', content: code('pnpm add @iconify-json/lucide') },
+  ],
+});
+```
+
+## 非默认起始索引
+
+<Preview
+  label="defaultIndex = 2"
+  html={tabs({
+    defaultIndex: 2,
+    panels: [
+      { title: '安装', content: '<p>安装并配置。</p>' },
+      { title: '用法', content: '<p>导入并调用构建器。</p>' },
+      { title: '进阶', content: '<p>覆盖图标与标签。</p>' },
+    ],
+  })}
+/>
+
+```ts
+tabs({
+  defaultIndex: 2,
+  panels: [
+    { title: '安装', content: '<p>安装并配置。</p>' },
+    { title: '用法', content: '<p>导入并调用构建器。</p>' },
+    { title: '进阶', content: '<p>覆盖图标与标签。</p>' },
+  ],
+});
+```
+
+## 参数
+
+| 参数 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `items` | `string[]` | — | 省略 `panels` 时的标签标题。 |
+| `panels` | `TabPanel[]` | — | `{ title?, value?, content }`，content 可为 HTML。 |
+| `label` | `string` | `''` | 标签列表前的可选分组名。 |
+| `defaultIndex` | `number` | `0` | 初始激活的标签。 |
+
+## 注意
+
+- 设置 `value` 时用作 `data-cpd-tab` 值；否则由标题推导
+  （`title.toLowerCase().replace(/\s/, '-')`）。
+- 无内容的纯标题模式会渲染空激活面板。

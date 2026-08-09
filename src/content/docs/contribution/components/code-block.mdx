@@ -1,0 +1,64 @@
+---
+title: CodeBlock
+description: Framed code with filename header and copy button.
+sidebar:
+  order: 11
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { codeBlock } from '../../../../lib/ui';
+
+`codeBlock()` renders a framed code figure with an optional filename header
+and a ghost copy button. The copy button is wired by the runtime
+(`[data-cpd-copy]`).
+
+## With filename
+
+<Preview
+  label="Filename header"
+  html={codeBlock({
+    filename: 'src/lib/ui/tokens.ts',
+    lang: 'ts',
+    code: 'export const LAYOUT = {\n  sidebarWidth: 256,\n  tocWidth: 256,\n  pageMaxWidth: 800,\n} as const;\n',
+  })}
+/>
+
+```ts
+codeBlock({
+  filename: 'src/lib/ui/tokens.ts',
+  lang: 'ts',
+  code: 'export const LAYOUT = {\n  sidebarWidth: 256,\n  tocWidth: 256,\n  pageMaxWidth: 800,\n} as const;\n',
+});
+```
+
+## Without filename
+
+<Preview
+  label="Bare code"
+  html={codeBlock({
+    lang: 'bash',
+    code: 'bun install\nbun run dev\n',
+  })}
+/>
+
+```ts
+codeBlock({
+  lang: 'bash',
+  code: 'bun install\nbun run dev\n',
+});
+```
+
+## Props
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `code` | `string` | — | Code text (required). |
+| `filename` | `string` | `''` | Filename shown in the header — also enables the copy button. |
+| `lang` | `string` | `''` | Language hint class (`language-<lang>`), no syntax highlighting. |
+
+## Notes
+
+- The builder escapes `code` — raw markup is never executed.
+- No syntax highlighting ships with the kit; the real docs pages use
+  astro-expressive-code blocks instead (styled to match).
+- Copy uses `navigator.clipboard` with a fallback `execCommand('copy')`.

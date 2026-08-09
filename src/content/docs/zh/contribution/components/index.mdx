@@ -1,0 +1,50 @@
+---
+title: 组件文档
+description: Docs Kit 全部构建器的分页文档，每个组件独立一页并带实时预览。
+sidebar:
+  order: 1
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { cards } from '../../../../../lib/ui';
+
+Docs Kit 的每个组件都是一个**纯 TypeScript 函数**，返回 HTML 字符串；交互由
+`initCelestialUI()` 在运行时通过 `data-cpd-*` 钩子接管。全部导出见
+`src/lib/ui/index.ts`。
+
+本分类每页记录一个组件：**不同状态的实时预览**、生成它们的构建器调用、
+参数表与注意事项。
+
+<Preview
+  label="组件画廊"
+  html={cards([
+    { title: 'Callout 提示框', description: '五种语义提示变体。', href: '/zh/contribution/components/callout/', icon: 'lucide:circle-info' },
+    { title: 'Cards 卡片', description: '响应式链接卡片网格。', href: '/zh/contribution/components/cards/', icon: 'lucide:layout-grid' },
+    { title: 'Steps 步骤', description: '编号流程列表。', href: '/zh/contribution/components/steps/', icon: 'lucide:list-ordered' },
+    { title: 'Tabs 标签页', description: '带分组的标签面板。', href: '/zh/contribution/components/tabs/', icon: 'lucide:panels-top-left' },
+    { title: 'Accordion 折叠', description: '可折叠章节。', href: '/zh/contribution/components/accordion/', icon: 'lucide:chevrons-down-up' },
+    { title: 'Files 文件树', description: '文件树浏览器。', href: '/zh/contribution/components/files/', icon: 'lucide:folder-tree' },
+    { title: 'Breadcrumb 面包屑', description: '页面祖先路径。', href: '/zh/contribution/components/breadcrumb/', icon: 'lucide:chevrons-right' },
+    { title: 'Pagination 分页', description: '上一页 / 下一页卡片。', href: '/zh/contribution/components/pagination/', icon: 'lucide:move-left' },
+    { title: 'CodeBlock 代码块', description: '带复制按钮的代码框。', href: '/zh/contribution/components/code-block/', icon: 'lucide:code' },
+    { title: 'Heading 标题', description: '带锚点与复制链接的标题。', href: '/zh/contribution/components/heading/', icon: 'lucide:heading' },
+    { title: 'Badge 徽标', description: '六种语义变体。', href: '/zh/contribution/components/badge/', icon: 'lucide:tag' },
+    { title: 'Kbd 按键', description: '键盘按键小片。', href: '/zh/contribution/components/kbd/', icon: 'lucide:keyboard' },
+    { title: 'LinkButton 链接按钮', description: '带图标的幽灵按钮。', href: '/zh/contribution/components/link-button/', icon: 'lucide:arrow-up-right' },
+  ])}
+/>
+
+## 运行时
+
+`initCelestialUI()` 通过事件委托接管全部交互，DOM 就绪后调用一次即可：
+
+```ts
+import { initCelestialUI } from '/src/lib/ui/runtime';
+initCelestialUI();
+```
+
+它负责：侧边栏折叠分组/折叠/抽屉、ClerkTOC 追踪、标签页、折叠面板、复制
+按钮与主题切换。函数幂等，任何页面调用都安全（无 `cpd-` 元素时为空操作）。
+文档站通过 `astro.config.mjs` 里的 `celestialUiRuntime` 集成注入每个页面。
+
+设计令牌见[样式规范](/zh/contribution/styles/)与 `src/lib/ui/tokens.ts`。

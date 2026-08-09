@@ -1,0 +1,62 @@
+---
+title: CodeBlock 代码块
+description: 带文件名头与复制按钮的代码框。
+sidebar:
+  order: 11
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { codeBlock } from '../../../../../lib/ui';
+
+`codeBlock()` 渲染带框代码图，可选文件名头与 ghost 复制按钮。复制按钮由
+运行时接线（`[data-cpd-copy]`）。
+
+## 带文件名
+
+<Preview
+  label="文件名头"
+  html={codeBlock({
+    filename: 'src/lib/ui/tokens.ts',
+    lang: 'ts',
+    code: 'export const LAYOUT = {\n  sidebarWidth: 256,\n  tocWidth: 256,\n  pageMaxWidth: 800,\n} as const;\n',
+  })}
+/>
+
+```ts
+codeBlock({
+  filename: 'src/lib/ui/tokens.ts',
+  lang: 'ts',
+  code: 'export const LAYOUT = {\n  sidebarWidth: 256,\n  tocWidth: 256,\n  pageMaxWidth: 800,\n} as const;\n',
+});
+```
+
+## 无文件名
+
+<Preview
+  label="裸代码"
+  html={codeBlock({
+    lang: 'bash',
+    code: 'bun install\nbun run dev\n',
+  })}
+/>
+
+```ts
+codeBlock({
+  lang: 'bash',
+  code: 'bun install\nbun run dev\n',
+});
+```
+
+## 参数
+
+| 参数 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `code` | `string` | — | 代码文本（必填）。 |
+| `filename` | `string` | `''` | 文件名头——同时启用复制按钮。 |
+| `lang` | `string` | `''` | 语言提示类（`language-<lang>`），不做语法高亮。 |
+
+## 注意
+
+- 构建器会转义 `code`——原始标记永不执行。
+- Kit 不内置语法高亮；真实文档页改用 astro-expressive-code 块（样式已对齐）。
+- 复制使用 `navigator.clipboard`，带 `execCommand('copy')` 回退。

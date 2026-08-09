@@ -1,0 +1,75 @@
+---
+title: Pagination 分页
+description: 上一页 / 下一页导航卡片。
+sidebar:
+  order: 9
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { pagination } from '../../../../../lib/ui';
+
+分页渲染 Plumest 风格上一页/下一页卡片。任一侧都可省略；标签用于本地化
+"上一页 / 下一页"提示文案。
+
+## 两侧齐全
+
+<Preview
+  label="上一页 + 下一页"
+  html={pagination(
+    { title: '样式规范', description: '令牌与布局度量。', href: '/contribution/styles/' },
+    { title: 'Cards 卡片', description: '链接卡片网格。', href: '/contribution/components/cards/' },
+  )}
+/>
+
+```ts
+pagination(
+  { title: '样式规范', description: '令牌与布局度量。', href: '/contribution/styles/' },
+  { title: 'Cards 卡片', description: '链接卡片网格。', href: '/contribution/components/cards/' },
+);
+```
+
+## 仅一侧
+
+<Preview
+  label="仅下一页"
+  html={pagination(
+    undefined,
+    { title: 'Tabs 标签页', href: '/contribution/components/tabs/' },
+  )}
+/>
+
+<Preview
+  label="仅上一页 + 本地化标签"
+  html={pagination(
+    { title: 'Styles', href: '/contribution/styles/' },
+    undefined,
+    { previous: 'Previous Page', next: 'Next Page' },
+  )}
+/>
+
+```ts
+pagination(
+  undefined,
+  { title: 'Tabs 标签页', href: '/contribution/components/tabs/' },
+);
+pagination(
+  { title: 'Styles', href: '/contribution/styles/' },
+  undefined,
+  { previous: 'Previous Page', next: 'Next Page' },
+);
+```
+
+## 参数
+
+| 参数 | 类型 | 说明 |
+| --- | --- | --- |
+| `previous` | `PaginationItem \| undefined` | 上一页卡片；省略即隐藏。 |
+| `next` | `PaginationItem \| undefined` | 下一页卡片；省略即隐藏。 |
+| `labels.previous` / `labels.next` | `string` | 本地化提示标签。 |
+
+`PaginationItem`：`{ title: string; description?: string; href: string }`。
+
+## 注意
+
+- 真实文档页的 Starlight `Pagination` 槽即由此构建器覆盖；标签自动按当前
+  语言本地化。

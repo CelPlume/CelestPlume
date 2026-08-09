@@ -1,0 +1,60 @@
+---
+title: Accordion
+description: Collapsible sections with optional anchor copy-link.
+sidebar:
+  order: 6
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { accordion, accordions } from '../../../../lib/ui';
+
+Accordions collapse/expand client-side. Giving an item an `id` adds a copy-link
+button that copies `#<id>` to the clipboard.
+
+## Closed by default
+
+<Preview
+  label="accordions()"
+  html={accordions([
+    { title: 'Why pure TypeScript?', content: '<p>No React, no runtime dependencies — builders return HTML strings and one small vanilla runtime wires the hooks.</p>' },
+    { title: 'How do styles stay isolated?', content: '<p>Everything is namespaced: <code>cpd-</code> classes, <code>--cpd-*</code> variables and <code>data-cpd-*</code> hooks.</p>' },
+  ])}
+/>
+
+```ts
+accordions([
+  { title: 'Why pure TypeScript?', content: '<p>No React, no runtime dependencies.</p>' },
+  { title: 'How do styles stay isolated?', content: '<p>Everything is namespaced.</p>' },
+]);
+```
+
+## Open by default, with anchors
+
+<Preview
+  label="defaultOpen + id"
+  html={accordion(
+    { title: 'Single accordion, open', content: '<p>This one starts expanded and exposes a copy-link anchor.</p>', id: 'open-acc', defaultOpen: true },
+  )}
+/>
+
+```ts
+accordion(
+  { title: 'Single accordion, open', content: '<p>This one starts expanded.</p>', id: 'open-acc', defaultOpen: true },
+);
+```
+
+## Props
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | `string` | — | Accordion header (required). |
+| `content` | `string` | `''` | Collapsible body (HTML allowed). |
+| `id` | `string` | — | Anchor id; also enables the copy-link button. |
+| `defaultOpen` | `boolean` | `false` | Start expanded. |
+
+## Notes
+
+- `accordions(items)` wraps a list of `AccordionOptions` in a
+  `data-cpd-accordions` container; `accordion(options)` builds a single item.
+- The `aria-expanded` attribute is set server-side from `defaultOpen`, then
+  maintained by the runtime.

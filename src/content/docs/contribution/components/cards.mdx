@@ -1,0 +1,71 @@
+---
+title: Cards
+description: Responsive link-card grid and single cards with optional icons.
+sidebar:
+  order: 3
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { card, cards } from '../../../../lib/ui';
+
+`card()` builds a single card; `cards()` wraps any number of them in the
+Plumest-style responsive grid.
+
+## Grid
+
+<Preview
+  label="Three cards in a grid"
+  html={cards([
+    { title: 'Markdown authoring', description: 'Write docs in plain Markdown.', href: '/guides/example/', icon: 'lucide:file-text' },
+    { title: 'Component gallery', description: 'Every kit builder, live.', href: '/contribution/components/', icon: 'lucide:zap' },
+    { title: 'Design tokens', description: 'The single source of truth.', href: '/contribution/styles/', icon: 'lucide:palette' },
+  ])}
+/>
+
+```ts
+cards([
+  { title: 'Markdown authoring', description: 'Write docs in plain Markdown.', href: '/guides/example/', icon: 'lucide:file-text' },
+  { title: 'Component gallery', description: 'Every kit builder, live.', href: '/contribution/components/', icon: 'lucide:zap' },
+  { title: 'Design tokens', description: 'The single source of truth.', href: '/contribution/styles/', icon: 'lucide:palette' },
+]);
+```
+
+## Single card states
+
+<Preview
+  label="Link card"
+  html={card({ title: 'Getting started', description: 'A card that links somewhere.', href: '/guides/example/', icon: 'lucide:arrow-right' })}
+/>
+
+<Preview
+  label="Card without icon"
+  html={card({ title: 'Plain card', description: 'No icon, no link — a bare block.', children: '<p class="cpd-card-children-note">Extra HTML content inside.</p>' })}
+/>
+
+<Preview
+  label="External link card"
+  html={card({ title: 'Plumest', description: 'External links open in a new tab.', href: 'https://github.com/CelPlume/CelestPlume', external: true, icon: 'lucide:external-link' })}
+/>
+
+```ts
+card({ title: 'Getting started', description: 'A card that links somewhere.', href: '/guides/example/', icon: 'lucide:arrow-right' });
+card({ title: 'Plain card', description: 'No icon, no link — a bare block.', children: '<p>Extra HTML content inside.</p>' });
+card({ title: 'Plumest', description: 'External links open in a new tab.', href: 'https://github.com/CelPlume/CelestPlume', external: true, icon: 'lucide:external-link' });
+```
+
+## Props
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | `string` | — | Card title (required). |
+| `description` | `string` | `''` | Supporting text. |
+| `href` | `string` | `''` | Target URL — with it the card renders as an `<a>`. |
+| `external` | `boolean` | `false` | Adds `target="_blank" rel="noreferrer"`. |
+| `icon` | `string` | `''` | Iconify name (e.g. `lucide:zap`) or raw SVG. |
+| `children` | `string` | `''` | Extra HTML below the description. |
+
+## Notes
+
+- Icons resolve via the project's local `@iconify-json` sets — never fetched
+  from the Iconify API at runtime.
+- `cards()` accepts an array of `CardOptions` or a single pre-built HTML string.

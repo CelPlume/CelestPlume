@@ -1,0 +1,59 @@
+---
+title: LinkButton
+description: Ghost buttons with optional icons, internal or external.
+sidebar:
+  order: 15
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { linkButton } from '../../../../lib/ui';
+
+A link button renders as an `<a>` styled like a ghost button — used for
+"Get started" and footer links.
+
+## Internal
+
+<Preview
+  label="Plain"
+  html={linkButton({ label: 'Get started', href: '/guides/example/' })}
+/>
+
+```ts
+linkButton({ label: 'Get started', href: '/guides/example/' });
+```
+
+## With icon
+
+<Preview
+  label="Icon + external"
+  html={linkButton({
+    label: 'View on GitHub',
+    href: 'https://github.com/CelPlume/CelestPlume',
+    external: true,
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>',
+  })}
+/>
+
+```ts
+linkButton({
+  label: 'View on GitHub',
+  href: 'https://github.com/CelPlume/CelestPlume',
+  external: true,
+  icon: '<svg …>…</svg>', // any inline SVG string
+});
+```
+
+## Props
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `href` | `string` | — | Target URL (required). |
+| `label` | `string` | — | Button text (required). |
+| `external` | `boolean` | `false` | Adds `target="_blank" rel="noreferrer"`. |
+| `icon` | `string` | `''` | Raw SVG string placed before the label. |
+
+## Notes
+
+- Styling comes from `.cpd-btn cpd-btn-ghost cpd-link-button`; sizes inherit
+  from the surrounding typography.
+- Use Iconify-built SVGs from `src/lib/ui/icons.ts` or any inline SVG string.

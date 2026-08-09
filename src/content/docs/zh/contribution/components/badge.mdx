@@ -1,0 +1,64 @@
+---
+title: Badge 徽标
+description: 六种语义徽标变体。
+sidebar:
+  order: 13
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { badge } from '../../../../../lib/ui';
+
+徽标为短内容打标签。六种变体与 Callout 共用语义色令牌。
+
+## 全部变体
+
+<Preview
+  label="六种变体"
+  html={[
+    badge('default'),
+    badge('gold', 'gold'),
+    badge('info', 'info'),
+    badge('warning', 'warning'),
+    badge('error', 'error'),
+    badge('success', 'success'),
+  ].join(' ')}
+/>
+
+```ts
+badge('default');
+badge('gold', 'gold');
+badge('info', 'info');
+badge('warning', 'warning');
+badge('error', 'error');
+badge('success', 'success');
+```
+
+## 上下文示例
+
+<Preview
+  label="内联用法"
+  html={[
+    '部署状态：',
+    badge('部署中', 'info'),
+    ' ',
+    badge('新增', 'gold'),
+    ' ',
+    badge('已弃用', 'warning'),
+  ].join('')}
+/>
+
+```ts
+'部署状态：' + badge('部署中', 'info') + ' ' + badge('新增', 'gold');
+```
+
+## 参数
+
+| 参数 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `text` | `string` | — | 徽标文本（第一个参数）。 |
+| `variant` | `'default' \| 'gold' \| 'info' \| 'warning' \| 'error' \| 'success'` | `'default'` | 语义变体。 |
+
+## 注意
+
+- 变体映射到 `--cpd-*` 语义令牌；`gold` 保留品牌强调色用于特殊高亮。
+- 渲染为 `<span class="cpd-badge cpd-badge-<variant>">`。

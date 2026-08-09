@@ -1,0 +1,54 @@
+---
+title: Components
+description: Every Docs Kit builder, documented one page per component with live previews.
+sidebar:
+  order: 1
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { cards } from '../../../../lib/ui';
+
+Every component in the Docs Kit is a **pure TypeScript function** that returns
+an HTML string; interaction is attached at runtime by `initCelestialUI()`
+through `data-cpd-*` hooks. All exports come from `src/lib/ui/index.ts`.
+
+Each page in this section documents one component: a **live preview** of its
+different states, the builder call that produced it, a props table and notes.
+
+<Preview
+  label="The component gallery"
+  html={cards([
+    { title: 'Callout', description: 'Five semantic notice variants.', href: '/contribution/components/callout/', icon: 'lucide:circle-info' },
+    { title: 'Cards', description: 'Responsive link-card grid.', href: '/contribution/components/cards/', icon: 'lucide:layout-grid' },
+    { title: 'Steps', description: 'Numbered procedure list.', href: '/contribution/components/steps/', icon: 'lucide:list-ordered' },
+    { title: 'Tabs', description: 'Tab panels with labels.', href: '/contribution/components/tabs/', icon: 'lucide:panels-top-left' },
+    { title: 'Accordion', description: 'Collapsible sections.', href: '/contribution/components/accordion/', icon: 'lucide:chevrons-down-up' },
+    { title: 'Files', description: 'File-tree explorer.', href: '/contribution/components/files/', icon: 'lucide:folder-tree' },
+    { title: 'Breadcrumb', description: 'Trail of page ancestors.', href: '/contribution/components/breadcrumb/', icon: 'lucide:chevrons-right' },
+    { title: 'Pagination', description: 'Previous / next cards.', href: '/contribution/components/pagination/', icon: 'lucide:move-left' },
+    { title: 'CodeBlock', description: 'Framed code with copy button.', href: '/contribution/components/code-block/', icon: 'lucide:code' },
+    { title: 'Heading', description: 'Anchored headings with copy-link.', href: '/contribution/components/heading/', icon: 'lucide:heading' },
+    { title: 'Badge', description: 'Six semantic variants.', href: '/contribution/components/badge/', icon: 'lucide:tag' },
+    { title: 'Kbd', description: 'Keyboard key chip.', href: '/contribution/components/kbd/', icon: 'lucide:keyboard' },
+    { title: 'LinkButton', description: 'Ghost buttons with icons.', href: '/contribution/components/link-button/', icon: 'lucide:arrow-up-right' },
+  ])}
+/>
+
+## Runtime
+
+`initCelestialUI()` attaches all interactions via event delegation — call it
+once after the DOM is ready:
+
+```ts
+import { initCelestialUI } from '/src/lib/ui/runtime';
+initCelestialUI();
+```
+
+It wires sidebar folders/collapse/drawer, ClerkTOC tracking, tabs, accordions,
+copy buttons and the theme toggle. It is idempotent and safe to call on any
+page (no-ops when no `cpd-` elements exist). On the docs site it is injected
+into every page by the `celestialUiRuntime` integration in
+`astro.config.mjs`.
+
+See [Styles](/contribution/styles/) for the design tokens and
+`src/lib/ui/tokens.ts`.

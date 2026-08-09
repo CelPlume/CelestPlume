@@ -1,0 +1,66 @@
+---
+title: Badge
+description: Six semantic badge variants.
+sidebar:
+  order: 13
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { badge } from '../../../../lib/ui';
+
+A badge labels a short piece of content. Six variants share the semantic
+color tokens with callouts.
+
+## All variants
+
+<Preview
+  label="Six variants"
+  html={[
+    badge('default'),
+    badge('gold', 'gold'),
+    badge('info', 'info'),
+    badge('warning', 'warning'),
+    badge('error', 'error'),
+    badge('success', 'success'),
+  ].join(' ')}
+/>
+
+```ts
+badge('default');
+badge('gold', 'gold');
+badge('info', 'info');
+badge('warning', 'warning');
+badge('error', 'error');
+badge('success', 'success');
+```
+
+## In context
+
+<Preview
+  label="Inline usage"
+  html={[
+    'Deploy status: ',
+    badge('deploying', 'info'),
+    ' ',
+    badge('new', 'gold'),
+    ' ',
+    badge('deprecated', 'warning'),
+  ].join('')}
+/>
+
+```ts
+'Deploy status: ' + badge('deploying', 'info') + ' ' + badge('new', 'gold');
+```
+
+## Props
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `text` | `string` | — | Badge label (first argument). |
+| `variant` | `'default' \| 'gold' \| 'info' \| 'warning' \| 'error' \| 'success'` | `'default'` | Semantic variant. |
+
+## Notes
+
+- Variants map to `--cpd-*` semantic tokens; `gold` keeps the brand accent
+  for special highlights.
+- Renders as `<span class="cpd-badge cpd-badge-<variant>">`.

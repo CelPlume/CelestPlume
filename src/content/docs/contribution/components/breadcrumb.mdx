@@ -1,0 +1,64 @@
+---
+title: Breadcrumb
+description: Trail of page ancestors with separators.
+sidebar:
+  order: 8
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { breadcrumb } from '../../../../lib/ui';
+
+A breadcrumb shows where the current page sits. Items are separated by chevron
+icons; the last item (no `href`) renders as the current page.
+
+## Two levels
+
+<Preview
+  label="Overview → page"
+  html={breadcrumb([
+    { name: 'Home', href: '/' },
+    { name: 'Contribution' },
+  ])}
+/>
+
+```ts
+breadcrumb([
+  { name: 'Home', href: '/' },
+  { name: 'Contribution' },
+]);
+```
+
+## Three levels
+
+<Preview
+  label="Home → Section → Page"
+  html={breadcrumb([
+    { name: 'Home', href: '/' },
+    { name: 'Contribution', href: '/contribution/overview/' },
+    { name: 'Components', href: '/contribution/components/' },
+    { name: 'Callout' },
+  ])}
+/>
+
+```ts
+breadcrumb([
+  { name: 'Home', href: '/' },
+  { name: 'Contribution', href: '/contribution/overview/' },
+  { name: 'Components', href: '/contribution/components/' },
+  { name: 'Callout' },
+]);
+```
+
+## Props
+
+| Option | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | Display name. |
+| `href` | `string` | Link target; omit for the last (current) item. |
+
+## Notes
+
+- The container is `<nav aria-label="Breadcrumb">`; the current page uses
+  `.cpd-breadcrumb-current` (not a link).
+- On the real docs pages the `PageTitle` override renders this breadcrumb
+  automatically from the sidebar tree.

@@ -1,0 +1,52 @@
+---
+title: Steps
+description: Numbered procedure list with CSS-counter badges.
+sidebar:
+  order: 4
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { steps, step, code } from '../../../../lib/ui';
+
+A `steps` block renders an ordered procedure. Numbers come from CSS counters
+with Plumest-style circular badges; the left rail connects the steps.
+
+## Three steps
+
+<Preview
+  label="Array of strings"
+  html={steps([
+    step(`Install dependencies with ${code('bun install')}.`),
+    step(`Run ${code('bun run dev')} and open http://localhost:4321.`),
+    step(`Write your docs under ${code('src/content/docs/')}.`),
+  ])}
+/>
+
+```ts
+steps([
+  step(`Install dependencies with ${code('bun install')}.`),
+  step(`Run ${code('bun run dev')} and open http://localhost:4321.`),
+  step(`Write your docs under ${code('src/content/docs/')}.`),
+]);
+```
+
+## Two steps, pre-built HTML
+
+<Preview
+  label="Single HTML string"
+  html={steps(
+    '<div class="cpd-step">Create a branch.</div><div class="cpd-step">Open a pull request.</div>',
+  )}
+/>
+
+```ts
+steps(
+  '<div class="cpd-step">Create a branch.</div><div class="cpd-step">Open a pull request.</div>',
+);
+```
+
+## Notes
+
+- `steps(children)` accepts either a `string[]` (each item is wrapped in
+  `.cpd-step`) or a single HTML string.
+- `step(content)` is the single-step builder used to wrap array items.

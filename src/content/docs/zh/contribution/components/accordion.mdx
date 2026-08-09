@@ -1,0 +1,59 @@
+---
+title: Accordion 折叠面板
+description: 可折叠章节，可选锚点复制链接。
+sidebar:
+  order: 6
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { accordion, accordions } from '../../../../../lib/ui';
+
+折叠面板在客户端展开/收起。给条目设置 `id` 会添加复制链接按钮，复制
+`#<id>` 到剪贴板。
+
+## 默认收起
+
+<Preview
+  label="accordions()"
+  html={accordions([
+    { title: '为什么用纯 TypeScript？', content: '<p>没有 React、零运行时依赖——构建器返回 HTML 字符串，一个轻量 vanilla 运行时接管钩子。</p>' },
+    { title: '样式如何隔离？', content: '<p>一切都有命名空间：<code>cpd-</code> 类名、<code>--cpd-*</code> 变量与 <code>data-cpd-*</code> 钩子。</p>' },
+  ])}
+/>
+
+```ts
+accordions([
+  { title: '为什么用纯 TypeScript？', content: '<p>没有 React、零运行时依赖。</p>' },
+  { title: '样式如何隔离？', content: '<p>一切都有命名空间。</p>' },
+]);
+```
+
+## 默认展开、带锚点
+
+<Preview
+  label="defaultOpen + id"
+  html={accordion(
+    { title: '单个面板，展开', content: '<p>这个默认展开，并暴露复制链接锚点。</p>', id: 'open-acc', defaultOpen: true },
+  )}
+/>
+
+```ts
+accordion(
+  { title: '单个面板，展开', content: '<p>这个默认展开。</p>', id: 'open-acc', defaultOpen: true },
+);
+```
+
+## 参数
+
+| 参数 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `title` | `string` | — | 折叠头（必填）。 |
+| `content` | `string` | `''` | 可折叠正文（允许 HTML）。 |
+| `id` | `string` | — | 锚点 id；同时启用复制链接按钮。 |
+| `defaultOpen` | `boolean` | `false` | 默认展开。 |
+
+## 注意
+
+- `accordions(items)` 将 `AccordionOptions[]` 包进 `data-cpd-accordions`
+  容器；`accordion(options)` 构建单个条目。
+- `aria-expanded` 由 `defaultOpen` 在服务端设置，运行时随后维护。
