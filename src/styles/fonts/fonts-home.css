@@ -1,0 +1,3 @@
+/* 主页字体包（Home.astro 引入）：正文 + 衬线显示 */
+@import './sans.css';
+@import './serif.css';

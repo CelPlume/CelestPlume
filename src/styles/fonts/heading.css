@@ -1,0 +1,38 @@
+/* ============================================================
+   CelestPlume 字体 — 标题/导航/TOC/面包屑/kbd
+   （英文 Plus Jakarta Sans + 中文 LxgwNeoXiHei，仅文档页引入）
+   ============================================================ */
+
+/* Plus Jakarta Sans — jsDelivr @fontsource woff2 */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5.3.0/files/plus-jakarta-sans-latin-400-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5.3.0/files/plus-jakarta-sans-latin-500-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5.3.0/files/plus-jakarta-sans-latin-600-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/plus-jakarta-sans@5.3.0/files/plus-jakarta-sans-latin-700-normal.woff2')
+    format('woff2');
+}

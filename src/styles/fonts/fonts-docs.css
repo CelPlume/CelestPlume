@@ -1,0 +1,6 @@
+/* 文档页字体包（Starlight customCss / DocsKit 引入）：
+   正文 + 标题 + 等宽 + 衬线（品牌/页头，serif），按需加载 */
+@import './sans.css';
+@import './heading.css';
+@import './mono.css';
+@import './serif.css';

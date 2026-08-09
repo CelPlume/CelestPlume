@@ -33,9 +33,11 @@ export function resolveInitialTheme(): ThemeMode {
    字体栈
    ============================================================ */
 export const FONTS = {
-  display: "'Cormorant Garamond','Noto Serif SC',Georgia,serif",
-  serif: "'Noto Serif SC','Cormorant Garamond',Georgia,serif",
-  sans: "'Inter',system-ui,-apple-system,sans-serif",
+  // 衬线显示：英文 Libertine（=Libertinus Serif，jsDelivr woff2），中文 LxgwNeoZhiSong（本地子集）
+  display: "'Libertine','LxgwNeoZhiSong',Georgia,serif",
+  serif: "'LxgwNeoZhiSong','Libertine',Georgia,serif",
+  // 正文：英文 Manrope 优先（无 CJK），中文 LxgwNeoXiHei；回落系统 sans
+  sans: "'Manrope','LxgwNeoXiHei',ui-sans-serif,system-ui,'Segoe UI',Roboto,'Source Sans 3','Helvetica Neue',Arial,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji',sans-serif",
 } as const;
 
 /* ============================================================
@@ -78,11 +80,8 @@ export const LOADER = {
   fallbackMs: 2500,
   /** 淡出时长（ms） */
   fadeOutMs: 500,
-  /** 字母文案（按语言区分布局，渲染为单字符 span） */
-  letters: {
-    en: ['L', 'o', 'a', 'd', 'i', 'n', 'g'],
-    zh: ['加', '载', '中'],
-  },
+  /** 字母文案（仅英文 "Loading"，渲染为单字符 span） */
+  letters: ['L', 'o', 'a', 'd', 'i', 'n', 'g'],
 } as const;
 
 /* ============================================================
@@ -133,7 +132,7 @@ export const PROJECTS: Project[] = [
     en: {
       title: 'Sky Mirror',
       description:
-        'A futuristic, tech-forward documentation portal that mirrors tomorrow and connects the world of innovation. Built on the Fumadocs design system for an elegant reading experience and powerful features.',
+        'A futuristic, tech-forward documentation portal that mirrors tomorrow and connects the world of innovation. Built on the Plumest design system for an elegant reading experience and powerful features.',
       tags: ['React', 'Frontend', 'Docusaurus'],
       buttons: [
         { label: 'Visit Home', link: '/', style: 'primary' },
@@ -143,7 +142,7 @@ export const PROJECTS: Project[] = [
     zh: {
       title: '天空之镜',
       description:
-        '极具未来感和科技感的文档站点，映照科技未来，连接创新世界。采用 Fumadocs 设计系统，提供优雅的阅读体验和强大的功能。',
+        '极具未来感和科技感的文档站点，映照科技未来，连接创新世界。采用 Plumest 设计系统，提供优雅的阅读体验和强大的功能。',
       tags: ['React', '前端', 'Docusaurus'],
       buttons: [
         { label: '访问首页', link: '/', style: 'primary' },
@@ -450,7 +449,7 @@ export const UI_EN: UiCopy = {
     docs: 'Codex',
     docsHref: '/guides/example/',
     toggleTheme: 'Toggle theme',
-    switchLang: '中文',
+    switchLang: '中',
     switchLangHref: '/zh/',
     github: 'GitHub',
   },

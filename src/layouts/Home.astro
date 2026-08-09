@@ -7,6 +7,7 @@
  * 与文档页的 Starlight 主题互不影响。
  */
 import '../styles/celestial.css';
+import '../styles/fonts/fonts-home.css';
 import { Icon } from 'astro-icon/components';
 import { getUI, LOADER, type Locale } from '../styles/celestial-tokens.ts';
 
@@ -60,30 +61,24 @@ const navLinks = [
     <link rel="icon" type="image/jpeg" href="/images/CelPlume_favicon_256.jpg" />
     <link rel="apple-touch-icon" href="/images/CelPlume_512.jpg" />
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap"
-    />
+    <!-- Fonts：经 frontmatter 引入 src/styles/fonts/fonts-home.css（按需打包） -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 
     <!-- 初始化主页主题（内联，避免 FOUC） -->
     <script is:inline>
       (function () {
         try {
           const key = 'celplume-theme';
+          const media = window.matchMedia('(prefers-color-scheme: light)');
+          let mode = 'system';
           const stored = window.localStorage.getItem(key);
-          let theme = stored === 'dark' || stored === 'light' ? stored : null;
-          if (!theme) {
-            theme =
-              window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches
-                ? 'light'
-                : 'dark';
-          }
-          document.documentElement.setAttribute('data-home-theme', theme);
+          if (stored === 'dark' || stored === 'light' || stored === 'system') mode = stored;
+          const resolved = mode === 'system' ? (media.matches ? 'light' : 'dark') : mode;
+          document.documentElement.setAttribute('data-home-theme', resolved);
+          document.documentElement.setAttribute('data-home-theme-mode', mode);
           const m = document.querySelector('meta[data-home-theme-color]');
-          if (m) m.setAttribute('content', theme === 'light' ? '#faf8f3' : '#0a0f1c');
+          if (m) m.setAttribute('content', resolved === 'light' ? '#faf8f3' : '#0a0f1c');
         } catch {
           /* ignore */
         }
@@ -94,10 +89,10 @@ const navLinks = [
   <body>
     <a class="skip-link" href="#main">{locale === 'zh' ? '跳到主要内容' : 'Skip to content'}</a>
 
-    <!-- 加载动画（Uiverse.io by dexter-st: bright-lizard-8，纯 CSS） -->
-    <div class="cp-loader" id="cp-loader" role="status" aria-label={locale === 'zh' ? '加载中' : 'Loading'} aria-hidden="true">
+    <!-- 加载动画（Uiverse.io by dexter-st: bright-lizard-8，纯 CSS；仅英文 Loading） -->
+    <div class="cp-loader" id="cp-loader" role="status" aria-label="Loading" aria-hidden="true">
       <div class="loader-wrapper">
-        {LOADER.letters[locale].map((ch) => (
+        {LOADER.letters.map((ch) => (
           <span class="loader-letter">{ch}</span>
         ))}
         <div class="loader"></div>
@@ -142,6 +137,7 @@ const navLinks = [
           >
             <Icon name="lucide:sun" class="cp-icon-sun" size={18} aria-hidden="true" />
             <Icon name="lucide:moon" class="cp-icon-moon" size={18} aria-hidden="true" />
+            <Icon name="lucide:monitor" class="cp-icon-system" size={18} aria-hidden="true" />
           </button>
 
           <!-- 语言切换 -->
@@ -222,40 +218,38 @@ const navLinks = [
         window.setTimeout(hideLoader, LOADER.fallbackMs);
       }
 
-      // 2. 主题切换
+      // 2. 主题切换（三态：system → light → dark，默认跟随系统）
       const toggleBtn = document.getElementById('cp-theme-toggle') as HTMLButtonElement | null;
       const root = document.documentElement;
       const themeMeta = document.querySelector('meta[data-home-theme-color]') as HTMLMetaElement | null;
+      const media = window.matchMedia('(prefers-color-scheme: light)');
+      const CYCLE = ['system', 'light', 'dark'] as const;
+      const currentMode = () => {
+        const m = root.getAttribute('data-home-theme-mode');
+        return m === 'dark' || m === 'light' || m === 'system' ? m : 'system';
+      };
 
-      const applyTheme = (mode: 'dark' | 'light') => {
-        root.setAttribute('data-home-theme', mode);
+      const applyTheme = (mode: 'dark' | 'light' | 'system') => {
+        const resolved = mode === 'system' ? (media.matches ? 'light' : 'dark') : mode;
+        root.setAttribute('data-home-theme', resolved);
+        root.setAttribute('data-home-theme-mode', mode);
         try {
           window.localStorage.setItem(THEME_STORAGE_KEY, mode);
         } catch {
           /* ignore */
         }
-        if (themeMeta) themeMeta.setAttribute('content', mode === 'light' ? '#faf8f3' : '#0a0f1c');
+        if (themeMeta) themeMeta.setAttribute('content', resolved === 'light' ? '#faf8f3' : '#0a0f1c');
       };
 
       toggleBtn?.addEventListener('click', () => {
-        const current = root.getAttribute('data-home-theme') === 'light' ? 'light' : 'dark';
-        applyTheme(current === 'dark' ? 'light' : 'dark');
+        const next = CYCLE[(CYCLE.indexOf(currentMode()) + 1) % CYCLE.length];
+        applyTheme(next);
       });
 
-      // 3. 跟随系统（仅当用户未手动切换过）
-      try {
-        const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-        if (!stored && window.matchMedia) {
-          const mql = window.matchMedia('(prefers-color-scheme: light)');
-          mql.addEventListener?.('change', (e) => {
-            if (!window.localStorage.getItem(THEME_STORAGE_KEY)) {
-              applyTheme(e.matches ? 'light' : 'dark');
-            }
-          });
-        }
-      } catch {
-        /* ignore */
-      }
+      // 3. 跟随系统（仅当模式为 system 时响应系统偏好变化）
+      media.addEventListener?.('change', () => {
+        if (currentMode() === 'system') applyTheme('system');
+      });
     </script>
   </body>
 </html>

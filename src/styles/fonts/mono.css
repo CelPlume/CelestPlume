@@ -1,0 +1,37 @@
+/* ============================================================
+   CelestPlume 字体 — 等宽（Maple Mono + Fira Code，jsDelivr woff2）
+   中文回落到 LxgwNeoXiHei（栈中排第三，见 AGENTS.md）。
+   ============================================================ */
+
+@font-face {
+  font-family: 'Maple Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/maple-mono@5.3.0/files/maple-mono-latin-400-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Maple Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/maple-mono@5.3.0/files/maple-mono-latin-500-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/fira-code@5.3.0/files/fira-code-latin-400-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Fira Code';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/fira-code@5.3.0/files/fira-code-latin-500-normal.woff2')
+    format('woff2');
+}

@@ -1,0 +1,40 @@
+/* ============================================================
+   CelestPlume 字体 — 正文（英文 Manrope + 中文 LxgwNeoXiHei）
+   混排规则：栈中英文优先 → Manrope（无 CJK 字形），中文落回
+   LxgwNeoXiHei（本地全量 woff2）。按需引入：主页 / 文档页共用。
+   ============================================================ */
+
+/* Manrope — jsDelivr @fontsource woff2（本地只缓存使用中的字重见 AGENTS.md） */
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/manrope@5.3.0/files/manrope-latin-300-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/manrope@5.3.0/files/manrope-latin-400-normal.woff2')
+    format('woff2');
+}
+@font-face {
+  font-family: 'Manrope';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/manrope@5.3.0/files/manrope-latin-500-normal.woff2')
+    format('woff2');
+}
+
+/* LxgwNeoXiHei（霞鹜新晰黑）— 本地全量 woff2（jsDelivr 无 woff2，见 AGENTS.md） */
+@font-face {
+  font-family: 'LxgwNeoXiHei';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/lxgw-neoxihei-400.woff2') format('woff2');
+}
