@@ -229,6 +229,7 @@ data-cpd-theme → 写 data-theme"，**绝不回写 data-cpd-theme**（历史死
 
 参考 [fuma-nama 的 good-docs](https://github.com/fuma-nama/fuma/blob/main/content/good-docs.mdx)。
 适用于 `src/content/docs/` 全部文档（EN + ZH 双份）。
+**导入外部项目文档时**：若用户未明确说明需要翻译，必须先询问用户是否需要翻译，不得默认生成双语版本。
 
 - **简单词、直接陈述**：不写 fancy 措辞；去掉冗余（"you can"、"you may"、"please"、
   "you need to"）——"To enable B, configure C"，不要 "You can configure C to enable B"

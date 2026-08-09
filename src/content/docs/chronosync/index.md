@@ -15,11 +15,16 @@ Shandong Normal University students.
 - Personal profiles, team views, and an admin panel
 - Front-end and back-end separated for easy extension
 
-## Getting started
+## Documentation
 
-This section is a placeholder — project documentation will be written here.
+The full project documentation — overview and features, usage guide,
+architecture, development, deployment, performance audit, and changelog — is
+currently available in Chinese:
+
+- [Full documentation (Chinese)](/zh/chronosync/)
+
 Related links:
 
-- [SDNU ChronoSync](https://sxty.hxcn.space) — live app
+- [SDNU ChronoSync](https://sxtj.hxcn.space) — live app
 - [GitHub](https://github.com/HevSpecu/SDNUChronoSync)
 - [About this site](/about/)
