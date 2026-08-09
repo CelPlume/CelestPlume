@@ -1,0 +1,389 @@
+---
+// CelestPlume Docs Kit — 完整页面演示
+// 渲染 Plumest 风格布局（左侧边栏 + 移动端顶栏 + 文章 + ClerkTOC），
+// 全部由 src/lib/ui 的纯 TS 构建器输出，runtime 负责交互。
+import type { Locale, NavNode } from '../lib/ui';
+import {
+  renderSidebar,
+  renderToc,
+  breadcrumb,
+  callout,
+  cards,
+  steps,
+  tabs,
+  accordions,
+  codeBlock,
+  files,
+  file,
+  folder,
+  badge,
+  kbd,
+  themeToggle,
+  linkButton,
+  pagination,
+  heading,
+  Icon,
+} from '../lib/ui';
+
+interface Props {
+  locale: Locale;
+  pathname: string;
+}
+
+const { locale, pathname } = Astro.props;
+
+const EN = locale === 'en';
+
+/* ------------------------------------------------------------
+   文案
+   ------------------------------------------------------------ */
+const copy = {
+  sidebarTitle: 'CelPlume Docs Kit',
+  drawerTrigger: 'Open Sidebar',
+  liveDemo: 'Live Demo',
+  gettingStarted: 'Getting Started',
+  guides: 'Guides',
+  introduction: 'Introduction',
+  contribution: 'Contribution',
+  overview: 'Overview',
+  styles: 'Styles',
+  components: 'Components',
+  github: 'GitHub',
+  tocTitle: EN ? 'On this page' : '本页目录',
+  tocEmpty: EN ? 'No headings on this page' : '本页暂无标题',
+  breadcrumb: ['Home', 'Docs Kit', 'Live Demo'],
+  h1: EN ? 'Celest Plume Docs Kit' : 'Celest Plume Docs Kit',
+  intro: EN
+    ? 'A hand-crafted, framework-free implementation of the Plumest UI, built with pure TypeScript — no React, no dependencies. Every component below is rendered from <code>src/lib/ui</code> by server-side builders and wired by the vanilla <code>initCelestialUI</code> runtime.'
+    : '纯 TypeScript 手搓的 Plumest 风格组件库，不依赖 React、零运行时依赖。下方所有组件均由 <code>src/lib/ui</code> 的构建器输出 HTML，再由原生 <code>initCelestialUI</code> runtime 接管交互。',
+  sectionCallouts: 'Callouts',
+  sectionCalloutsDesc: EN
+    ? 'Five semantic variants, driven by the <code>--cpd-*</code> semantic colors.'
+    : '五种语义变体，由 <code>--cpd-*</code> 语义色驱动。',
+  sectionCards: 'Cards',
+  sectionCardsDesc: EN
+    ? 'Icon + title + description grid, linking to the real documentation.'
+    : '图标 + 标题 + 描述的卡片网格，可跳转到真实文档。',
+  sectionSteps: 'Steps',
+  sectionStepsDesc: EN
+    ? 'Numbered steps with a connecting line. Heading below is marked with <code>data-cpd-step</code>, so the ClerkTOC numbers it.'
+    : '带连接线的编号步骤。下方标题标记了 <code>data-cpd-step</code>，ClerkTOC 会为其编号。',
+  sectionTabs: 'Tabs',
+  sectionTabsDesc: EN
+    ? 'Simple mode — pass an <code>items</code> array or explicit panels.'
+    : '简单模式 —— 传入 <code>items</code> 数组或显式面板。',
+  sectionAccordions: 'Accordions',
+  sectionAccordionsDesc: EN
+    ? 'Collapsible groups with copy-link support (<code>id</code> + hash deep-link).'
+    : '可折叠分组，支持复制链接（<code>id</code> + hash 深链）。',
+  sectionCode: 'Code Blocks',
+  sectionCodeDesc: EN
+    ? 'Filename header + one-click copy.'
+    : '文件名头 + 一键复制。',
+  sectionFiles: 'File Tree',
+  sectionFilesDesc: EN
+    ? 'Collapsible folders, zero-JS via native <code>&lt;details&gt;</code>.'
+    : '可折叠文件夹，原生 <code>&lt;details&gt;</code> 零 JS。',
+  sectionTokens: 'Design Tokens',
+  sectionTokensDesc: EN
+    ? 'A sample of the <code>--cpd-*</code> palette. Full tables live in the Styles guide.'
+    : '<code>--cpd-*</code> 色板示例。完整表格见「样式规范」文档。',
+  sectionExtras: 'Extras',
+  sectionExtrasDesc: EN
+    ? 'Badges, key caps, quotes and tables.'
+    : '徽章、按键、引用与表格。',
+  prevPage: 'Getting Started',
+  prevDesc: 'The Starlight documentation',
+  nextPage: 'Components Guide',
+  nextDesc: 'Every builder in the kit',
+  nextHref: EN ? '/contribution/components/' : '/zh/contribution/components/',
+  prevHref: EN ? '/guides/example/' : '/zh/guides/example/',
+  badgeTs: 'Pure TS',
+  badgeNoReact: 'No React',
+  badgeMIT: 'MIT-style',
+  kbdCopy: 'Ctrl',
+  kbdPaste: 'C',
+  quote: EN
+    ? 'Plumest is our in-house docs style. This kit is its framework-free implementation — same layout, same tokens, hand-rolled in TypeScript.'
+    : 'Plumest 是本项目自有的文档样式，本 Kit 是它的无框架实现 —— 同样的布局、同样的令牌，全部用 TypeScript 手写。',
+  callouts: {
+    info: { title: EN ? 'Information' : '信息', body: EN ? 'Default variant — use it for neutral context and tips.' : '默认变体 —— 用于中性说明与提示。' },
+    warning: { title: EN ? 'Warning' : '警告', body: EN ? 'Draw attention to something that could go wrong.' : '提醒可能出错的地方。' },
+    error: { title: EN ? 'Error' : '错误', body: EN ? 'For blockers and destructive operations.' : '用于阻塞性问题与破坏性操作。' },
+    success: { title: EN ? 'Success' : '成功', body: EN ? 'Confirm that something completed as expected.' : '确认某事按预期完成。' },
+    idea: { title: EN ? 'Idea' : '灵感', body: EN ? 'Suggest an alternative approach or best practice.' : '建议替代方案或最佳实践。' },
+  },
+  tabsLabel: 'Runtime',
+  tabItems: ['API', 'Runtime', 'CSS'],
+  tabApi: EN
+    ? 'Builders are pure functions returning HTML strings — safe to render with <code>set:html</code> in Astro.'
+    : '构建器是返回 HTML 字符串的纯函数 —— 可在 Astro 中通过 <code>set:html</code> 安全渲染。',
+  tabRuntime: EN
+    ? '<code>initCelestialUI()</code> attaches delegated listeners for folders, drawer, TOC tracking, tabs, accordions and copy buttons.'
+    : '<code>initCelestialUI()</code> 为折叠、抽屉、TOC 追踪、Tabs、Accordion 与复制按钮挂载事件委托。',
+  tabCss: EN
+    ? 'Styles live in <code>src/styles/celestial-docs.css</code>, scoped under the <code>cpd-</code> prefix.'
+    : '样式位于 <code>src/styles/celestial-docs.css</code>，全部以 <code>cpd-</code> 前缀隔离。',
+  accordions: [
+    { title: EN ? 'Why no React?' : '为什么不用 React？', body: EN ? 'The kit renders static HTML at build time; interactivity is ~350 lines of vanilla TypeScript. No virtual DOM, no hydration, no dependency tree.' : '构建期输出静态 HTML，交互只有约 350 行原生 TypeScript：无虚拟 DOM、无水合、无依赖树。' },
+    { title: EN ? 'How is the sidebar activated?' : '侧边栏如何高亮激活项？', body: EN ? 'Each link is compared against the current <code>pathname</code>; folders on the active path open automatically. See <code>isNavLinkActive</code>.' : '每个链接与当前 <code>pathname</code> 比对；激活路径上的分组自动展开。见 <code>isNavLinkActive</code>。' },
+    { title: EN ? 'Deep-link me' : '给我加个深链', body: EN ? 'This accordion exposes an <code>id</code>, so its URL can be copied with the link button — open it and the hash will expand it.' : '本 Accordion 带 <code>id</code>，可用链接按钮复制地址 —— 打开后 hash 会自动展开它。', id: 'accordion-deeplink' },
+  ],
+} as const;
+
+/* ------------------------------------------------------------
+   导航数据（本地化）
+   ------------------------------------------------------------ */
+const navTree: NavNode[] = EN
+  ? [
+      {
+        type: 'separator',
+        label: 'Docs',
+      },
+      {
+        type: 'folder',
+        label: 'Guides',
+        defaultOpen: true,
+        children: [
+          { type: 'link', label: copy.introduction, href: '/guides/example/' },
+        ],
+      },
+      {
+        type: 'folder',
+        label: 'Contribution',
+        defaultOpen: true,
+        children: [
+          { type: 'link', label: copy.overview, href: '/contribution/overview/' },
+          { type: 'link', label: copy.styles, href: '/contribution/styles/' },
+          { type: 'link', label: copy.components, href: '/contribution/components/' },
+        ],
+      },
+    ]
+  : [
+      {
+        type: 'separator',
+        label: '文档',
+      },
+      {
+        type: 'folder',
+        label: '指南',
+        defaultOpen: true,
+        children: [
+          { type: 'link', label: '介绍', href: '/zh/guides/example/' },
+        ],
+      },
+      {
+        type: 'folder',
+        label: '贡献',
+        defaultOpen: true,
+        children: [
+          { type: 'link', label: '概述', href: '/zh/contribution/overview/' },
+          { type: 'link', label: '样式规范', href: '/zh/contribution/styles/' },
+          { type: 'link', label: '组件文档', href: '/zh/contribution/components/' },
+        ],
+      },
+    ];
+
+const navLinks: NavNode[] = [
+  {
+    type: 'link',
+    label: EN ? 'Getting Started' : '快速开始',
+    href: EN ? '/guides/example/' : '/zh/guides/example/',
+    icon: Icon.bookOpen(),
+  },
+  {
+    type: 'link',
+    label: EN ? 'Live Demo' : '在线演示',
+    href: EN ? '/demo/' : '/zh/demo/',
+    icon: Icon.compass(),
+  },
+  {
+    type: 'link',
+    label: 'GitHub',
+    href: 'https://github.com/CelPlume/CelestPlume',
+    external: true,
+    icon: Icon.github(),
+  },
+];
+
+const sidebarFooter = `${themeToggle()}${linkButton({
+  href: 'https://github.com/CelPlume/CelestPlume',
+  label: '',
+  external: true,
+  icon: Icon.github(),
+})}`;
+
+/* ------------------------------------------------------------
+   文章内容
+   ------------------------------------------------------------ */
+const codeSample = `// src/lib/ui — pure TS, no framework
+import { renderSidebar, renderToc, callout, cards } from '../lib/ui';
+
+const nav = {
+  tree: [
+    { type: 'folder', label: 'Guides', children: [
+      { type: 'link', label: 'Intro', href: '/guides/example/' },
+    ]},
+  ],
+  pathname: '/demo/',
+};
+
+// Server-side: HTML strings
+const sidebarHtml = renderSidebar(nav);
+const tocHtml = renderToc(tocItems, { steps: true });
+const noteHtml = callout('Hello from a pure-TS builder', { type: 'idea' });`;
+
+const tabPanels = [
+  { value: 'api', content: copy.tabApi },
+  { value: 'runtime', content: copy.tabRuntime },
+  { value: 'css', content: copy.tabCss },
+];
+
+const article = [
+  breadcrumb([
+    { name: copy.breadcrumb[0], href: EN ? '/' : '/zh/' },
+    { name: copy.breadcrumb[1] },
+    { name: copy.breadcrumb[2] },
+  ]),
+  heading(1, copy.h1, { id: 'docs-kit' }),
+  `<p>${copy.intro} ${badge(copy.badgeTs, 'gold')} ${badge(copy.badgeNoReact, 'success')} ${badge(copy.badgeMIT)}</p>`,
+
+  heading(2, copy.sectionCallouts, { id: 'callouts' }),
+  `<p>${copy.sectionCalloutsDesc}</p>`,
+  callout(copy.callouts.info.body, { type: 'info', title: copy.callouts.info.title }),
+  callout(copy.callouts.warning.body, { type: 'warning', title: copy.callouts.warning.title }),
+  callout(copy.callouts.error.body, { type: 'error', title: copy.callouts.error.title }),
+  callout(copy.callouts.success.body, { type: 'success', title: copy.callouts.success.title }),
+  callout(copy.callouts.idea.body, { type: 'idea', title: copy.callouts.idea.title }),
+
+  heading(2, copy.sectionCards, { id: 'cards' }),
+  `<p>${copy.sectionCardsDesc}</p>`,
+  cards([
+    {
+      title: copy.styles,
+      description: EN ? 'Tokens, palette, typography and layout metrics.' : '令牌、色板、字体与布局度量。',
+      href: EN ? '/contribution/styles/' : '/zh/contribution/styles/',
+      icon: Icon.palette(),
+    },
+    {
+      title: copy.components,
+      description: EN ? 'Every builder, its signature and data hooks.' : '每个构建器的签名与 data 钩子。',
+      href: EN ? '/contribution/components/' : '/zh/contribution/components/',
+      icon: Icon.code(),
+    },
+    {
+      title: copy.overview,
+      description: EN ? 'Why the kit exists and how to contribute.' : 'Kit 的由来与贡献方式。',
+      href: EN ? '/contribution/overview/' : '/zh/contribution/overview/',
+      icon: Icon.bookOpen(),
+    },
+    {
+      title: copy.liveDemo,
+      description: EN ? 'This page — the layout, sidebar and TOC are all kit output.' : '本页 —— 布局、侧边栏与 TOC 全部来自 Kit。',
+      href: EN ? '/demo/' : '/zh/demo/',
+      icon: Icon.compass(),
+    },
+  ]),
+
+  heading(2, copy.sectionSteps, { id: 'steps', step: true }),
+  `<p>${copy.sectionStepsDesc}</p>`,
+  steps([
+    `<p><strong>${EN ? 'Install' : '安装'}</strong> — ${EN ? 'no dependencies to install; copy the <code>src/lib/ui</code> directory into your project.' : '无需安装依赖，把 <code>src/lib/ui</code> 目录拷进项目即可。'}</p>`,
+    `<p><strong>${EN ? 'Render' : '渲染'}</strong> — ${EN ? 'call the builders and inject with <code>set:html</code> in Astro, or interpolate anywhere.' : '在 Astro 中调用构建器并以 <code>set:html</code> 注入，或任意插值。'}</p>`,
+    `<p><strong>${EN ? 'Initialize' : '初始化'}</strong> — ${EN ? 'one <code>initCelestialUI()</code> call wires every interaction.' : '一次 <code>initCelestialUI()</code> 调用接管全部交互。'}</p>`,
+  ]),
+
+  heading(2, copy.sectionTabs, { id: 'tabs' }),
+  `<p>${copy.sectionTabsDesc}</p>`,
+  tabs({ items: copy.tabItems, label: copy.tabsLabel, panels: tabPanels }),
+
+  heading(2, copy.sectionAccordions, { id: 'accordions' }),
+  `<p>${copy.sectionAccordionsDesc}</p>`,
+  accordions([
+    { title: copy.accordions[0].title, content: copy.accordions[0].body },
+    { title: copy.accordions[1].title, content: copy.accordions[1].body },
+    { title: copy.accordions[2].title, id: copy.accordions[2].id, content: copy.accordions[2].body },
+  ]),
+
+  heading(2, copy.sectionCode, { id: 'code', step: true }),
+  `<p>${copy.sectionCodeDesc}</p>`,
+  codeBlock({ code: codeSample, filename: 'kit-usage.ts', lang: 'ts' }),
+
+  heading(2, copy.sectionFiles, { id: 'files', step: true }),
+  `<p>${copy.sectionFilesDesc}</p>`,
+  files(
+    folder(file('html.ts') + file('types.ts') + file('icons.ts') + file('tokens.ts'), {
+      name: 'src/lib/ui',
+      defaultOpen: true,
+    }) +
+      folder(
+        file('docs-kit.css') + file('celestial-docs.css'),
+        { name: 'src/styles' },
+      ) +
+      folder(file('demo.astro') + file('zh/demo.astro'), { name: 'src/pages' }),
+  ),
+
+  heading(2, copy.sectionTokens, { id: 'tokens' }),
+  `<p>${copy.sectionTokensDesc}</p>`,
+  `<table>
+    <thead><tr><th>Variable</th><th>Light</th><th>Dark</th></tr></thead>
+    <tbody>
+      <tr><td><code>--cpd-background</code></td><td><code>hsl(0 0% 96%)</code></td><td><code>hsl(0 0% 7.04%)</code></td></tr>
+      <tr><td><code>--cpd-primary</code></td><td><code>hsl(40 48% 39%)</code></td><td><code>hsl(40 52% 63%)</code></td></tr>
+      <tr><td><code>--cpd-sidebar-width</code></td><td colspan="2"><code>268px</code></td></tr>
+      <tr><td><code>--cpd-radius</code></td><td colspan="2"><code>8px</code></td></tr>
+    </tbody>
+  </table>`,
+
+  heading(2, copy.sectionExtras, { id: 'extras' }),
+  `<p>${copy.sectionExtrasDesc} Press ${kbd(copy.kbdCopy)} + ${kbd(copy.kbdPaste)} to copy. ${badge('Badge', 'info')} ${badge('Warn', 'warning')} ${badge('Danger', 'error')}</p>`,
+  `<blockquote>${copy.quote}</blockquote>`,
+
+  pagination(
+    { title: copy.prevPage, description: copy.prevDesc, href: copy.prevHref },
+    { title: copy.nextPage, description: copy.nextDesc, href: copy.nextHref },
+  ),
+];
+
+/* ------------------------------------------------------------
+   TOC 条目（与文章标题一致；step 项显示编号圆徽）
+   ------------------------------------------------------------ */
+const tocItems = [
+  { url: '#callouts', title: copy.sectionCallouts, depth: 2 },
+  { url: '#cards', title: copy.sectionCards, depth: 2 },
+  { url: '#steps', title: copy.sectionSteps, depth: 2, step: 1 },
+  { url: '#tabs', title: copy.sectionTabs, depth: 2 },
+  { url: '#accordions', title: copy.sectionAccordions, depth: 2 },
+  { url: '#code', title: copy.sectionCode, depth: 2, step: 2 },
+  { url: '#files', title: copy.sectionFiles, depth: 2, step: 3 },
+  { url: '#tokens', title: copy.sectionTokens, depth: 2 },
+  { url: '#extras', title: copy.sectionExtras, depth: 2 },
+];
+
+const sidebar = renderSidebar({
+  title: copy.sidebarTitle,
+  links: [...navLinks],
+  tree: [...navTree],
+  footer: sidebarFooter,
+  pathname,
+});
+const tocHtml = renderToc(tocItems, { title: copy.tocTitle, steps: false });
+const mobileHeader = `
+  <header class="cpd-mobile-header">
+    <span class="cpd-mobile-header-brand">${EN ? 'CelPlume' : '天空之翼'}</span>
+    ${themeToggle()}
+    <button class="cpd-btn cpd-btn-ghost" type="button" data-cpd-drawer-trigger aria-label="${copy.drawerTrigger}">${Icon.panelLeft()}</button>
+  </header>`;
+const expandButton = `
+  <button class="cpd-btn cpd-btn-ghost cpd-sidebar-expand" type="button" data-cpd-expand aria-label="Expand Sidebar">${Icon.panelLeft()}</button>`;
+---
+
+<div class="cpd-layout" data-cpd-layout>
+  <div data-cpd-slot set:html={sidebar} />
+  <div data-cpd-slot set:html={mobileHeader} />
+  <main class="cpd-main">
+    <article class="cpd-article" data-cpd-article set:html={article.join('')} />
+  </main>
+  <div data-cpd-slot set:html={tocHtml} />
+  <div data-cpd-slot set:html={expandButton} />
+</div>

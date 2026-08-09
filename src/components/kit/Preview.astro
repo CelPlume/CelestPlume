@@ -1,0 +1,17 @@
+---
+// Preview — MDX 组件文档的实时预览框
+// 用法：<Preview html={callout('...', { type: 'info' })} label="基础用法" />
+interface Props {
+  /** kit 构建器返回的 HTML 字符串（set:html 渲染） */
+  html: string;
+  /** 可选预览标题 */
+  label?: string;
+}
+
+const { html, label } = Astro.props;
+---
+
+<div class="cpd-preview">
+  {label && <div class="cpd-preview-label">{label}</div>}
+  <div class="cpd-preview-body" set:html={html} />
+</div>

@@ -1,0 +1,406 @@
+/* ============================================================
+   Starlight 外壳中和 + Plumest 观感（仅文档页加载，经 customCss）
+   ------------------------------------------------------------
+   Starlight 内部样式位于 @layer starlight.*；本文件为无层样式，
+   按级联规则优先于层内规则。可见外壳（PageFrame/Header/Sidebar/
+   TwoColumnContent/PageSidebar/…）已由 src/components/starlight/* 整体替换，
+   这里负责：壳布局、残留 sl 组件（搜索对话框）配色、正文/代码/预览样式。
+   ============================================================ */
+
+/* 0. Starlight 变量映射（随 --cpd-* 深浅切换） */
+:root {
+  --sl-nav-height: 3.5rem;
+  --sl-mobile-toc-height: 0rem;
+  --sl-content-width: 100%;
+  --sl-main-pad: 0rem;
+  --sl-color-bg: var(--cpd-background);
+  --sl-color-bg-nav: var(--cpd-background);
+  --sl-color-bg-sidebar: var(--cpd-sidebar);
+  --sl-color-bg-inline-code: var(--cpd-secondary);
+  --sl-color-text: var(--cpd-foreground);
+  --sl-color-text-accent: var(--cpd-primary);
+  --sl-color-white: var(--cpd-foreground);
+  --sl-color-black: var(--cpd-background);
+  --sl-color-hairline: var(--cpd-border);
+  --sl-color-hairline-light: color-mix(in oklab, var(--cpd-border) 45%, transparent);
+  --sl-color-hairline-shade: var(--cpd-border);
+  --sl-color-accent: var(--cpd-primary);
+  --sl-color-accent-high: var(--cpd-primary);
+  --sl-color-accent-low: color-mix(in oklab, var(--cpd-primary) 8%, transparent);
+  --sl-color-gray-6: var(--cpd-muted-foreground);
+  --sl-color-gray-5: var(--cpd-border);
+  --sl-color-gray-4: var(--cpd-muted-foreground);
+  --sl-color-gray-3: var(--cpd-muted-foreground);
+  --sl-color-gray-2: var(--cpd-foreground);
+  --sl-color-gray-1: var(--cpd-foreground);
+}
+
+/* 1. 外壳布局（PageFrame / Header / TwoColumnContent 覆盖后的类） */
+.cpd-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.cpd-docs-header {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: var(--sl-nav-height);
+  padding-inline: 1rem;
+  border-bottom: 1px solid var(--cpd-border);
+  background: color-mix(in oklab, var(--cpd-background) 82%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.cpd-docs-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--cpd-foreground);
+  text-decoration: none;
+}
+.cpd-docs-brand:hover {
+  text-decoration: none;
+}
+/* 品牌文字与首页 nav 一致：Libertine/霞鹜衬线、加粗（zh 显示"天空之翼"） */
+.cpd-docs-brand-text {
+  font-family: var(--cpd-font-serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
+.cpd-docs-brand-logo {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 4px;
+}
+.cpd-docs-menu {
+  display: none;
+}
+.cpd-docs-header-grow {
+  flex: 1;
+}
+.cpd-docs-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cpd-docs-icon-btn svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+/* 语言切换（主页同款：languages 图标 + 文本） */
+.cpd-docs-lang {
+  gap: 0.4rem;
+}
+.cpd-docs-lang svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+.cpd-docs-lang-txt {
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+/* 侧栏列：固定、独立滚动（Plumest 行为） */
+.cpd-sidebar-shell {
+  position: fixed;
+  top: var(--sl-nav-height);
+  bottom: 0;
+  inset-inline-start: 0;
+  width: var(--cpd-sidebar-width);
+  background: var(--cpd-sidebar);
+  border-inline-end: 1px solid var(--cpd-sidebar-border);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transition: transform 200ms ease;
+}
+/* 桌面折叠：shell 滑出、主列占满、展开按钮浮现（文档页无 .cpd-layout，按 root 状态折叠） */
+.cpd-sidebar-shell:has(.cpd-sidebar-root[data-cpd-collapsed='true']) {
+  transform: translateX(-100%);
+}
+.cpd-sidebar-shell:has(.cpd-sidebar-root[data-cpd-collapsed='true']) + .cpd-main-frame {
+  margin-inline-start: 0;
+}
+.cpd-sidebar-shell .cpd-sidebar-expand {
+  top: calc(1rem + var(--sl-nav-height));
+  display: none;
+}
+.cpd-sidebar-shell:has(.cpd-sidebar-root[data-cpd-collapsed='true']) .cpd-sidebar-expand {
+  display: inline-flex;
+}
+.cpd-sidebar-shell .cpd-sidebar-root {
+  height: calc(100dvh - var(--sl-nav-height));
+  min-height: 0;
+}
+.cpd-sidebar-shell .cpd-sidebar {
+  position: static;
+  width: 100%;
+  height: calc(100dvh - var(--sl-nav-height));
+  border-inline-end: none;
+}
+.cpd-sidebar-shell .cpd-sidebar-nav {
+  scrollbar-gutter: stable;
+}
+
+.cpd-main-frame {
+  margin-inline-start: var(--cpd-sidebar-width);
+  margin-top: var(--sl-nav-height);
+  flex: 1;
+  min-width: 0;
+}
+
+/* 内容双栏：主列 + 右侧 ClerkTOC */
+.cpd-two-col {
+  display: flex;
+}
+.cpd-main-pane {
+  flex: 1;
+  min-width: 0;
+}
+.cpd-toc-shell {
+  order: 2;
+  flex-shrink: 0;
+  width: var(--cpd-toc-width-desktop);
+  position: sticky;
+  top: var(--sl-nav-height);
+  height: calc(100vh - var(--sl-nav-height));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-inline-start: 1px solid var(--cpd-border);
+  padding: 1.25rem 1rem;
+  display: none;
+}
+@media (min-width: 80rem) {
+  .cpd-toc-shell {
+    display: block;
+  }
+}
+.cpd-toc-shell .cpd-toc {
+  position: static;
+  height: auto;
+}
+.cpd-toc-shell .cpd-toc-scroll {
+  position: static;
+  height: auto;
+  max-height: none;
+}
+
+/* 内容面板：Plumest 版心 */
+.cpd-content-panel {
+  max-width: var(--cpd-page-max-width);
+  margin-inline: auto;
+  padding: 0.5rem 2rem 0;
+}
+.cpd-content-panel:last-child {
+  padding-bottom: 2rem;
+}
+.cpd-main-pane main {
+  padding: 0;
+}
+
+/* 2. 页头：面包屑 + 标题 + 描述 */
+.cpd-docs-title {
+  margin: 0 0 0.25rem;
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--cpd-foreground);
+}
+.cpd-docs-description {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-content-panel > .cpd-breadcrumb {
+  margin-bottom: 0.25rem;
+}
+/* Starlight 给标题包 .sl-heading-wrapper 并加 43.5px 默认 margin，
+   与 .cpd-article 的 gap + 标题自身 margin 叠加成"一大块"；这里中和，间距交给 kit 排版 */
+.cpd-md-content .sl-heading-wrapper {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* 3. 正文代码块（Starlight 经 astro-expressive-code 输出 .expressive-code） */
+.cpd-md-content .expressive-code {
+  margin-block: 1rem;
+  border: 1px solid var(--cpd-border) !important;
+  border-radius: var(--cpd-radius);
+  background: var(--cpd-card);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+}
+/* 代码内层背景透出外层 --cpd-card（避免深色下 expressive-code 主题背景发白/发灰） */
+.cpd-md-content .expressive-code pre,
+.cpd-md-content .expressive-code pre > code {
+  background-color: transparent !important;
+}
+.cpd-md-content .expressive-code pre,
+.cpd-md-content .expressive-code code,
+.cpd-md-content .expressive-code .ec-line {
+  font-family: var(--cpd-font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+}
+/* expressive-code 自带复制按钮改为隐藏，统一使用 kit 复制按钮（check 图标效果） */
+.cpd-md-content .expressive-code .copy {
+  display: none !important;
+}
+.cpd-md-content .expressive-code pre.cpd-astro-pre {
+  position: relative;
+}
+/* 兜底：非 Starlight 场景的 Astro Shiki 输出 */
+.cpd-md-content .astro-code {
+  margin-block: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: var(--cpd-radius);
+  background: var(--cpd-card) !important;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04);
+  font-size: 13px;
+  line-height: 1.55;
+  position: relative;
+}
+.cpd-md-content .astro-code code {
+  font-family: var(--cpd-font-mono);
+}
+.cpd-astro-copy {
+  position: absolute;
+  top: 0.5rem;
+  inset-inline-end: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: none;
+  border-radius: var(--cpd-radius);
+  background: transparent;
+  color: var(--cpd-muted-foreground);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  opacity: 0;
+  transition: opacity 150ms ease, background-color 100ms ease, color 100ms ease;
+}
+.cpd-astro-copy:hover {
+  background: var(--cpd-accent);
+  color: var(--cpd-accent-foreground);
+}
+.cpd-astro-copy svg {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+}
+.cpd-astro-pre:hover .cpd-astro-copy,
+.cpd-astro-copy:focus-visible {
+  opacity: 1;
+}
+
+/* 4. 搜索触发按钮（Starlight pagefind）→ Plumest 搜索框观感 */
+site-search button[data-open-modal] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.125rem;
+  min-width: 14rem;
+  padding-inline: 0.625rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: 8px;
+  background: var(--cpd-card);
+  color: var(--cpd-muted-foreground);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+site-search button[data-open-modal]:hover {
+  background: var(--cpd-secondary);
+}
+site-search button[data-open-modal] kbd {
+  margin-inline-start: auto;
+  padding: 0.0625rem 0.3125rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: 4px;
+  background: var(--cpd-background);
+  font-size: 0.6875rem;
+  color: var(--cpd-muted-foreground);
+}
+
+/* 5. 页脚（EditLink / LastUpdated / Pagination） */
+.cpd-content-panel footer,
+.cpd-content-panel > footer {
+  margin-top: 2.5rem;
+  font-size: 0.8125rem;
+}
+.cpd-content-panel footer .meta {
+  margin-top: 0;
+}
+.cpd-content-panel .cpd-pagination {
+  margin-top: 1.5rem;
+}
+
+/* 6. MDX 组件文档：实时预览框 */
+.cpd-preview {
+  margin-block: 1rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: var(--cpd-radius);
+  background: var(--cpd-card);
+  overflow: hidden;
+}
+.cpd-preview-label {
+  padding: 0.375rem 0.75rem;
+  border-bottom: 1px solid var(--cpd-border);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-preview-body {
+  padding: 1.25rem;
+}
+.cpd-preview-body > :first-child {
+  margin-top: 0;
+}
+.cpd-preview-body > :last-child {
+  margin-bottom: 0;
+}
+/* 预览内嵌预览（避免嵌套卡片叠卡片） */
+.cpd-preview-body .cpd-preview {
+  margin-block: 0;
+}
+
+/* 7. 移动端 */
+@media (max-width: 47.9375rem) {
+  .cpd-docs-menu {
+    display: inline-flex;
+  }
+  .cpd-sidebar-shell {
+    display: none;
+  }
+  .cpd-main-frame {
+    margin-inline-start: 0;
+  }
+  .cpd-content-panel {
+    padding: 0.5rem 1.25rem 0;
+  }
+  site-search button[data-open-modal] {
+    min-width: 2.125rem;
+    width: 2.125rem;
+    padding-inline: 0;
+    justify-content: center;
+  }
+  site-search button[data-open-modal] > :not(svg) {
+    display: none;
+  }
+}

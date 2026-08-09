@@ -1,0 +1,58 @@
+---
+// CelestPlume Docs Kit — Demo 页布局
+// 独立于 Starlight；加载 celestial-docs.css 与字体（fonts-docs.css），注入 kit runtime。
+import '../styles/celestial-docs.css';
+import '../styles/fonts/fonts-docs.css';
+
+interface Props {
+  title: string;
+  lang?: string;
+  /** 是否在首帧后启用交互（默认 true） */
+  interactive?: boolean;
+}
+
+const { title, lang = 'en', interactive = true } = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <link rel="icon" type="image/jpeg" href="/images/CelPlume_favicon_256.jpg" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin="" />
+  </head>
+  <body>
+    <slot />
+    {
+      interactive && (
+        <script>
+          import { initCelestialUI } from '../lib/ui/runtime';
+          initCelestialUI();
+        </script>
+      )
+    }
+  </body>
+</html>
+
+<style is:global>
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    background: var(--cpd-background);
+    color: var(--cpd-foreground);
+    font-family: var(--cpd-font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  body,
+  #app-root {
+    min-height: 100dvh;
+  }
+</style>
