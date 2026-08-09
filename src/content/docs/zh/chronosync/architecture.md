@@ -2,7 +2,7 @@
 title: 系统架构与技术参考
 description: 项目目录结构、各模块职责与 REST API 接口清单。
 sidebar:
-  order: 2
+  order: 4
 ---
 > 本文档集中维护项目目录结构与 REST API 接口清单（自 README 迁移，2026-08-05）。
 > 架构概览：前端 Astro + Vue 3 + TypeScript + Tailwind CSS；后端 FastAPI（Python 3.10+）；

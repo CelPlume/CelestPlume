@@ -2,7 +2,7 @@
 title: 更新日志
 description: SDNUChronoSync 完整版本历史。
 sidebar:
-  order: 6
+  order: 7
 ---
 本文件保留项目全部版本记录；项目首页仅展示最近三个月的版本。
 

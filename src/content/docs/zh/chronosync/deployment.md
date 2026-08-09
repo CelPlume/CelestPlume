@@ -2,7 +2,7 @@
 title: 部署指南
 description: Docker Compose、单容器与源码三种部署方式，以及数据库配置、持久化、环境变量与故障排查。
 sidebar:
-  order: 4
+  order: 6
 ---
 多用户课表与日程管理工具的完整部署指南，支持三种部署方式。
 
