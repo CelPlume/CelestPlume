@@ -165,3 +165,14 @@ Projects 区块数据来自 [CelPlume/HeavenlySpeculum](https://github.com/CelPl
 - 中文：一般位置写 `天空之翼`，hero 主标题区保留 `Celest Plume`
 - 中文页面不出现英文文案、英文页面不出现中文文案（品牌名、技术术语除外）
 - 主页深浅色独立于文档页（Starlight 原主题）
+
+## 鸣谢
+
+组件视觉与交互参考了以下开源项目的设计：
+
+- [Chakra UI](https://chakra-ui.com/) —— Button 变体/尺寸体系、Drawer 全屏模态样式
+- [AlignUI](https://www.alignui.com/) —— Dropdown 菜单、Drawer 与搜索弹层的中性表面语言
+- [kibo-ui](https://www.kibo-ui.com/) —— Tree（文件树）与 Snippet（代码块）的交互与细节
+- [heroui](https://www.heroui.com/) —— 正文链接的箭头与下划线规范
+- [Uiverse](https://uiverse.io/) —— 加载动画（bright-lizard-8 旋转光圈）
+

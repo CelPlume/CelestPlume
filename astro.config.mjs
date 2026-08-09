@@ -46,6 +46,16 @@ export default defineConfig({
           ],
         },
         {
+          label: 'ChronoSync',
+          translations: { 'zh-CN': '时序同笺' },
+          autogenerate: { directory: 'chronosync' },
+        },
+        {
+          label: 'BookmarkHarbor',
+          translations: { 'zh-CN': 'BookmarkHarbor' },
+          autogenerate: { directory: 'bookmark-harbor' },
+        },
+        {
           label: 'Contribution',
           translations: { 'zh-CN': '贡献' },
           items: [
@@ -92,6 +102,7 @@ export default defineConfig({
       customCss: [
         './src/styles/fonts/fonts-docs.css',
         './src/styles/celestial-docs.css',
+        './src/styles/site-nav.css',
         './src/styles/starlight-plumest.css',
       ],
       head: [
@@ -132,10 +143,18 @@ export default defineConfig({
           'moon',
           'monitor',
           'languages',
+          'chevron-down',
           'arrow-right',
+          'search',
+          'x',
+          'menu',
           'book-open',
           'star',
           'github',
+          'panel-right',
+          'mouse-pointer-click',
+          'link',
+          'message-square',
         ],
       },
     }),
