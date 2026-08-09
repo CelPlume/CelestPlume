@@ -27,7 +27,8 @@ const LOADER_LETTERS = ['L', 'o', 'a', 'd', 'i', 'n', 'g'];
 
 <script is:inline>
   // 加载动画：仅会话内首次进入文档页显示（与主页同款动画），
-  // 字体就绪 + 最少展示 800ms，2.5s 兜底；导航/刷新后不再出现。
+  // 字体就绪 + 最少展示 250ms，1s 兜底；导航/刷新后不再出现；
+  // prefers-reduced-motion 直接隐藏（不展示、不阻塞首屏）。
   (() => {
     const KEY = 'celplume-docs-visited';
     const overlay = document.getElementById('cpd-loader');
@@ -38,13 +39,13 @@ const LOADER_LETTERS = ['L', 'o', 'a', 'd', 'i', 'n', 'g'];
     } catch {
       /* storage unavailable — 视为首次进入 */
     }
-    if (visited) {
+    if (visited || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
       overlay.setAttribute('data-hidden', 'true');
       return;
     }
     const tStart = performance.now();
     const hideLoader = () => {
-      const wait = Math.max(0, 800 - (performance.now() - tStart));
+      const wait = Math.max(0, 250 - (performance.now() - tStart));
       setTimeout(() => {
         overlay.setAttribute('data-hidden', 'true');
         try {
@@ -60,6 +61,6 @@ const LOADER_LETTERS = ['L', 'o', 'a', 'd', 'i', 'n', 'g'];
     } else {
       window.addEventListener('load', hideLoader, { once: true });
     }
-    window.setTimeout(hideLoader, 2500);
+    window.setTimeout(hideLoader, 1000);
   })();
 </script>

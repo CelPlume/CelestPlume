@@ -103,6 +103,17 @@ export default defineConfig({
           tag: 'link',
           attrs: { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: '' },
         },
+        {
+          // 预加载正文字体（Manrope 400）：首绘前就绪，避免 swap 引起 CLS（文档页 CLS 主因）
+          tag: 'link',
+          attrs: {
+            rel: 'preload',
+            as: 'font',
+            type: 'font/woff2',
+            crossorigin: '',
+            href: 'https://cdn.jsdelivr.net/npm/@fontsource/manrope@5.3.0/files/manrope-latin-400-normal.woff2',
+          },
+        },
       ],
     }),
     // MDX：供贡献分类的组件文档嵌入实时预览（纯 TS 构建器，无 React）

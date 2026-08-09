@@ -75,9 +75,9 @@ export const EASINGS = {
    ============================================================ */
 export const LOADER = {
   /** 显示的最短时长（ms），避免加载过快闪烁 */
-  minShowMs: 800,
+  minShowMs: 250,
   /** 兜底隐藏时长（ms） */
-  fallbackMs: 2500,
+  fallbackMs: 1000,
   /** 淡出时长（ms） */
   fadeOutMs: 500,
   /** 字母文案（仅英文 "Loading"，渲染为单字符 span） */

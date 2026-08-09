@@ -525,10 +525,14 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
         await sampleText();
       };
 
+      // 首帧渲染后再启动粒子（不抢占首屏绘制主线程）
+      const startAfterFirstPaint = () => {
+        window.requestAnimationFrame(() => void start());
+      };
       if (document.readyState === 'loading') {
-        window.addEventListener('DOMContentLoaded', () => void start(), { once: true });
+        window.addEventListener('DOMContentLoaded', startAfterFirstPaint, { once: true });
       } else {
-        void start();
+        startAfterFirstPaint();
       }
 
       // —— 主题切换时用新配色重建粒子 ——

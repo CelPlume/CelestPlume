@@ -64,6 +64,14 @@ const navLinks = [
     <!-- Fonts：经 frontmatter 引入 src/styles/fonts/fonts-home.css（按需打包） -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <!-- 预加载正文字体（Manrope 400）：首绘前就绪，避免 font-display: swap 引起 CLS -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@5.3.0/files/manrope-latin-400-normal.woff2"
+    />
 
     <!-- 初始化主页主题（内联，避免 FOUC） -->
     <script is:inline>
@@ -197,25 +205,30 @@ const navLinks = [
     <script>
       import { THEME_STORAGE_KEY, LOADER } from '../styles/celestial-tokens.ts';
 
-      // 1. 加载动画（uiverse 纯 CSS）—— 字体就绪 + 最少展示 800ms，2.5s 兜底
+      // 1. 加载动画（uiverse 纯 CSS）—— 字体就绪 + 最少展示 800ms，1s 兜底；
+      //     prefers-reduced-motion 直接隐藏（不展示、不阻塞首屏）
       const overlay = document.getElementById('cp-loader') as HTMLDivElement | null;
       if (overlay) {
-        const tStart = performance.now();
-        const hideLoader = () => {
-          const wait = Math.max(0, LOADER.minShowMs - (performance.now() - tStart));
-          setTimeout(() => {
-            overlay.dataset.hidden = 'true';
-            setTimeout(() => overlay.remove(), LOADER.fadeOutMs + 80);
-          }, wait);
-        };
-
-        const fontsReady = (document as Document & { fonts?: FontFaceSet }).fonts?.ready;
-        if (fontsReady) {
-          fontsReady.then(hideLoader).catch(hideLoader);
+        if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+          overlay.remove();
         } else {
-          window.addEventListener('load', hideLoader, { once: true });
+          const tStart = performance.now();
+          const hideLoader = () => {
+            const wait = Math.max(0, LOADER.minShowMs - (performance.now() - tStart));
+            setTimeout(() => {
+              overlay.dataset.hidden = 'true';
+              setTimeout(() => overlay.remove(), LOADER.fadeOutMs + 80);
+            }, wait);
+          };
+
+          const fontsReady = (document as Document & { fonts?: FontFaceSet }).fonts?.ready;
+          if (fontsReady) {
+            fontsReady.then(hideLoader).catch(hideLoader);
+          } else {
+            window.addEventListener('load', hideLoader, { once: true });
+          }
+          window.setTimeout(hideLoader, LOADER.fallbackMs);
         }
-        window.setTimeout(hideLoader, LOADER.fallbackMs);
       }
 
       // 2. 主题切换（三态：system → light → dark，默认跟随系统）
