@@ -1,0 +1,199 @@
+---
+/**
+ * SiteNav — 首页 / 文档页共用顶部导航（同一套 Plumest 样式，以主页为准）
+ * ------------------------------------------------------------
+ * 结构：品牌 + 四项导航（首页 / 项目 dropdown / 贡献 / 关于）+ 右侧操作区
+ * （搜索 / 主题三态切换 / 语言切换；文档页经 slot 注入移动端菜单按钮）。
+ * 样式：src/styles/site-nav.css（单一事实来源；docs 页经 :where(.cp-nav)
+ * 兜底主页深色三色，两端视觉完全一致）。
+ * 交互：项目 dropdown 复用 Kit Dropdown 组件（src/lib/ui/components.ts，
+ * hover 打开 + 键盘 + 外点关闭，由 runtime initDropdowns 接管）。
+ * 主页折叠抽屉渲染在 <header> 之外（.cp-nav 带 backdrop-filter，会变成
+ * fixed 后代定位的包含块，抽屉会被压缩到导航高度而不可见）。
+ */
+import { Icon } from 'astro-icon/components';
+import { getUI, PROJECTS, type Locale } from '../styles/celestial-tokens.ts';
+import { dropdown, dropdownItem, Icon as KitIcon } from '../lib/ui';
+
+export interface Props {
+  locale: Locale;
+  pathname: string;
+  /** 仅影响主题图标 / 语言切换钩子（data-cpd-* vs data-cp-*）；视觉无差异 */
+  variant?: 'home' | 'docs';
+}
+
+const { locale, pathname, variant = 'home' } = Astro.props;
+const t = getUI(locale);
+const zh = locale === 'zh';
+const docs = variant === 'docs';
+const zhPrefix = zh ? '/zh' : '';
+
+const homeHref = zh ? '/zh/' : '/';
+const brandName = t.brand.name;
+
+// 语言切换：保持当前路径仅切语言前缀（与旧 Header 逻辑一致）
+const isZhPath = pathname.startsWith('/zh');
+const langHref = isZhPath ? (pathname.replace(/^\/zh/, '') || '/') : `/zh${pathname}`;
+const langLabel = isZhPath ? 'EN' : '中';
+const langTitle = isZhPath ? 'Switch to English' : '切换到中文';
+
+// 导航四项（项目 dropdown 目标从 PROJECTS 取标题，单一事实来源）
+const dropProjects = [
+  { id: 'sdnu-chrono-sync', href: `${zhPrefix}/chronosync/` },
+  { id: 'bookmark-harbor', href: `${zhPrefix}/bookmark-harbor/` },
+].map((p) => {
+  const proj = PROJECTS.find((x) => x.id === p.id);
+  return {
+    id: p.id,
+    label: proj ? (zh ? proj.zh.title : proj.en.title) : p.id,
+    href: p.href,
+    icon: proj?.icon ?? 'lucide:file-text',
+  };
+});
+
+const contributeHref = `${zhPrefix}/contribution/overview/`;
+const aboutHref = `${zhPrefix}/about/`;
+
+// 语言切换钩子：主页 data-cp-lang-switch / 文档页 data-cpd-lang-switch
+const langSwitchAttr = docs ? 'data-cpd-lang-switch' : 'data-cp-lang-switch';
+
+// 项目 dropdown：复用 Kit 的 Dropdown 组件（hover 打开 + 键盘导航）
+const NAV_PROJECT_ICONS: Record<string, string> = {
+  'sdnu-chrono-sync':
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>',
+  'bookmark-harbor':
+    '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/></svg>',
+};
+
+const navProjectsMenu = dropProjects
+  .map((p) =>
+    dropdownItem({
+      label: p.label,
+      href: p.href,
+      icon: NAV_PROJECT_ICONS[p.id] ?? '',
+    }),
+  )
+  .join('');
+
+const navProjectsTrigger = `<span>${t.nav.projects}</span>${KitIcon.chevronDown({ class: 'cp-nav-drop-chevron' })}`;
+---
+
+<header class="cp-nav" data-cp-nav-variant={variant}>
+  <div class="cp-nav-inner">
+    <a href={homeHref} class="cp-nav-brand" aria-label={brandName}>
+      <img
+        src="/images/CelPlume.webp"
+        alt=""
+        class="cp-nav-logo"
+        loading="eager"
+        decoding="async"
+        width="160"
+        height="42"
+      />
+      <span class="cp-nav-brand-name">{brandName}</span>
+    </a>
+
+    <nav class="cp-nav-links" aria-label={zh ? '主导航' : 'Primary'}>
+      <ul>
+        <li><a href={homeHref}>{t.nav.home}</a></li>
+        <li><Fragment set:html={dropdown({ hover: true, triggerClass: 'cp-nav-drop-btn', trigger: navProjectsTrigger, content: navProjectsMenu })} /></li>
+        <li><a href={contributeHref}>{t.nav.contribute}</a></li>
+        <li><a href={aboutHref}>{t.nav.about}</a></li>
+      </ul>
+    </nav>
+
+    <div class="cp-nav-actions">
+      <button
+        type="button"
+        class="cp-nav-action cp-nav-drawer-btn"
+        {...(docs
+          ? { 'data-cpd-drawer-trigger': '', 'data-cpd-drawer-target': 'cpd-nav-drawer' }
+          : { 'data-cp-nav-drawer-trigger': '' })}
+        aria-label={zh ? '打开导航' : 'Open navigation'}
+        aria-expanded="false"
+      >
+        <Icon name="lucide:menu" size={18} aria-hidden="true" />
+      </button>
+      <slot name="actions" />
+      <button
+        type="button"
+        id="cp-theme-toggle"
+        class="cp-nav-action"
+        data-cpd-theme-toggle
+        aria-label={t.nav.toggleTheme}
+        title={t.nav.toggleTheme}
+      >
+        <Icon name="lucide:sun" class={docs ? 'cpd-theme-icon cpd-theme-icon-sun' : 'cp-icon cp-icon-sun'} size={18} aria-hidden="true" />
+        <Icon name="lucide:moon" class={docs ? 'cpd-theme-icon cpd-theme-icon-moon' : 'cp-icon cp-icon-moon'} size={18} aria-hidden="true" />
+        <Icon name="lucide:monitor" class={docs ? 'cpd-theme-icon cpd-theme-icon-monitor' : 'cp-icon cp-icon-system'} size={18} aria-hidden="true" />
+      </button>
+      <a class="cp-nav-action" href={langHref} title={langTitle} aria-label={langTitle} {...{ [langSwitchAttr]: '' }}>
+        <Icon name="lucide:languages" size={18} aria-hidden="true" />
+        <span class="cp-nav-action-txt">{langLabel}</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+{!docs && (
+  <div class="cp-nav-drawer" data-cp-nav-drawer data-cp-open="false">
+    <div class="cp-nav-drawer-overlay" data-cp-nav-drawer-overlay></div>
+    <aside class="cp-nav-drawer-panel" role="dialog" aria-modal="true" aria-label={zh ? '导航菜单' : 'Navigation menu'}>
+      <div class="cp-nav-drawer-header">
+        <span class="cp-nav-drawer-title">{brandName}</span>
+        <button
+          type="button"
+          class="cp-nav-drawer-close"
+          data-cp-nav-drawer-close
+          aria-label={zh ? '关闭导航' : 'Close navigation'}
+        >
+          <Icon name="lucide:x" size={18} aria-hidden="true" />
+        </button>
+      </div>
+      <div class="cp-nav-drawer-body">
+        <nav class="cp-nav-drawer-nav" aria-label={zh ? '导航菜单' : 'Navigation menu'}>
+          <a href={homeHref}>{t.nav.home}</a>
+          <p class="cp-nav-drawer-heading">{t.nav.projects}</p>
+          {dropProjects.map((p) => (
+            <a href={p.href}>
+              <Icon name={p.icon} size={16} aria-hidden="true" />
+              {p.label}
+            </a>
+          ))}
+          <a href={contributeHref}>{t.nav.contribute}</a>
+          <a href={aboutHref}>{t.nav.about}</a>
+        </nav>
+        <div class="cp-nav-drawer-foot">
+          <a class="cp-nav-drawer-lang" href={langHref} title={langTitle} aria-label={langTitle} {...{ [langSwitchAttr]: '' }}>
+            <Icon name="lucide:languages" size={16} aria-hidden="true" />
+            <span class="cp-nav-drawer-lang-txt">{langLabel}</span>
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+)}
+
+<script>
+  // 主页折叠导航抽屉（docs 页用 Starlight 侧边栏抽屉，此面板不渲染）
+  const drawer = document.querySelector('[data-cp-nav-drawer]');
+  const drawerTrigger = document.querySelector('[data-cp-nav-drawer-trigger]');
+  if (drawer && drawerTrigger) {
+    const setOpen = (open: boolean) => {
+      drawer.setAttribute('data-cp-open', open ? 'true' : 'false');
+      drawerTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    };
+    drawerTrigger.addEventListener('click', () => {
+      setOpen(drawer.getAttribute('data-cp-open') !== 'true');
+    });
+    drawer.querySelector('[data-cp-nav-drawer-overlay]')?.addEventListener('click', () => setOpen(false));
+    drawer.querySelector('[data-cp-nav-drawer-close]')?.addEventListener('click', () => setOpen(false));
+    drawer.addEventListener('click', (event) => {
+      const target = event.target as Element | null;
+      if (target && target.closest('a[href]')) setOpen(false);
+    });
+    window.addEventListener('keydown', (event) => {
+      if ((event as KeyboardEvent).key === 'Escape') setOpen(false);
+    });
+  }
+</script>

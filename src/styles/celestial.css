@@ -40,7 +40,7 @@
   --cp-glow-mid:       rgba(184, 197, 214, 0.2);
 
   /* 字体 */
-  --font-display: 'Cormorant Garamond', 'Noto Serif SC', Georgia, serif;
+  --font-display: 'Libertine', 'LxgwNeoZhiSong', Georgia, serif;
   --font-serif:   'Noto Serif SC', 'Cormorant Garamond', Georgia, serif;
   --font-sans:    'Inter', system-ui, -apple-system, sans-serif;
 
@@ -309,139 +309,6 @@ main#main {
   }
 }
 
-/* ============================================================
-   4. 导航
-   ============================================================ */
-.cp-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 50;
-  height: var(--sl-nav-height);
-  background: linear-gradient(180deg,
-    color-mix(in srgb, var(--cp-night-deep) 85%, transparent),
-    color-mix(in srgb, var(--cp-night-deep) 55%, transparent));
-  backdrop-filter: saturate(160%) blur(14px);
-  -webkit-backdrop-filter: saturate(160%) blur(14px);
-  border-bottom: 1px solid var(--cp-border);
-  transition: background-color 0.4s ease, border-color 0.4s ease;
-}
-.cp-nav-inner {
-  height: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-}
-
-.cp-nav-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.75rem;
-  text-decoration: none;
-  color: inherit;
-  flex-shrink: 0;
-}
-.cp-nav-logo {
-  height: 42px;
-  width: auto;
-  display: block;
-  border-radius: 10px;
-  overflow: hidden;
-}
-.cp-nav-brand-name {
-  font-family: var(--font-display);
-  font-size: 1.45rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  background: linear-gradient(135deg, var(--cp-pearl), var(--cp-gold-soft));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-:root[data-home-theme='light'] .cp-nav-brand-name {
-  background: linear-gradient(135deg, #1a1a2e, #a8813a);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
-
-.cp-nav-links { flex: 1; display: flex; justify-content: center; }
-.cp-nav-links ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: none;
-  gap: 0.25rem;
-  align-items: center;
-}
-.cp-nav-links a {
-  display: inline-block;
-  padding: 0.55rem 0.95rem;
-  border-radius: 10px;
-  color: var(--cp-silver-soft);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  transition: color 0.2s ease, background 0.2s ease;
-  position: relative;
-}
-.cp-nav-links a:hover {
-  color: var(--cp-pearl);
-  background: var(--cp-surface-hover);
-}
-.cp-nav-links a:hover::after {
-  content: '';
-  position: absolute;
-  bottom: 4px; left: 50%;
-  width: 22px; height: 1px;
-  transform: translateX(-50%);
-  background: linear-gradient(90deg, transparent, var(--cp-gold-soft), transparent);
-}
-@media (min-width: 900px) {
-  .cp-nav-links ul { display: inline-flex; }
-}
-
-.cp-nav-actions {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.cp-nav-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.45rem 0.7rem;
-  border-radius: 10px;
-  color: var(--cp-silver-soft);
-  text-decoration: none;
-  border: 1px solid var(--cp-border-strong);
-  background: var(--cp-surface);
-  transition: all 0.2s ease;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 0.9rem;
-  line-height: 1;
-}
-.cp-nav-action:hover {
-  color: var(--cp-gold-pale);
-  border-color: var(--cp-border-hover);
-  background: var(--cp-surface-hover);
-}
-.cp-nav-action .cp-nav-action-txt { font-size: 0.82rem; letter-spacing: 0.05em; }
-
-/* 主题按钮: 三态 —— 深色→月亮, 浅色→太阳, 跟随系统→显示器（按模式显示，与文档页一致） */
-#cp-theme-toggle .cp-icon-sun,
-#cp-theme-toggle .cp-icon-moon,
-#cp-theme-toggle .cp-icon-system { display: none; }
-:root[data-home-theme-mode='dark']   #cp-theme-toggle .cp-icon-moon   { display: block; }
-:root[data-home-theme-mode='light']  #cp-theme-toggle .cp-icon-sun    { display: block; }
-:root[data-home-theme-mode='system'] #cp-theme-toggle .cp-icon-system { display: block; }
 
 /* ============================================================
    5. Hero
@@ -1155,4 +1022,59 @@ main#main {
   .cp-hero-ctas {
     transition: none !important;
   }
+}
+
+/* ============================================================
+   13. 正文链接（细下划线淡显，hover 变实加深；
+       供关于页等主页内富文本容器使用，类名 .cp-article）
+   ============================================================ */
+.cp-article a {
+  color: var(--cp-gold);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--cp-gold) 35%, transparent);
+  transition: color 0.15s ease, text-decoration-color 0.15s ease, text-decoration-thickness 0.15s ease;
+}
+.cp-article a::after {
+  content: '';
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-left: 0.2em;
+  vertical-align: -0.125em;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='m12 5 7 7-7 7'/%3E%3C/svg%3E") center / contain no-repeat;
+  opacity: 0.7;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+/* 外链：右上箭头（↗）替代右箭头（与文档页一致） */
+.cp-article a[href^='http']::after {
+  width: 0.8em;
+  height: 0.8em;
+  margin-left: 0.25em;
+  vertical-align: 0.3em;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 7h10v10'/%3E%3Cpath d='M7 17 17 7'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 7h10v10'/%3E%3Cpath d='M7 17 17 7'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.cp-article a:hover {
+  color: var(--cp-pearl);
+  text-decoration-color: var(--cp-gold-soft);
+  text-decoration-thickness: 1.5px;
+}
+.cp-article a:hover::after {
+  opacity: 1;
+  transform: translateX(1px);
+}
+.cp-article a:focus-visible {
+  outline: 2px solid var(--cp-gold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+/* 组件按钮类链接（主页富文本容器内的 cp-btn）：禁止下划线 / 箭头 */
+.cp-article a.cp-btn,
+.cp-article a.cp-btn::after {
+  text-decoration: none;
+  content: none;
 }

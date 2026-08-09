@@ -1,10 +1,29 @@
 ---
 // Sidebar 覆盖：把 Starlight 解析好的侧边栏树渲染为 Plumest 风格侧边栏（kit renderSidebar）。
+// - 桌面侧栏：只保留包含当前页面的顶层分组（分组过滤）
+// - 移动端抽屉（nav drawer）：全站导航树 —— 横屏四项导航（首页/项目/贡献/关于）默认展开，
+//   项目下拉的每篇文章树默认折叠，点击展开，点标题跳转对应文章
 import { renderSidebar } from '../../lib/ui/sidebar';
 import { Icon } from '../../lib/ui/icons';
 import type { NavNode } from '../../lib/ui/types';
 
 const { sidebar, siteTitle, hasSidebar } = Astro.locals.starlightRoute;
+const isZh = Astro.locals.starlightRoute.lang.startsWith('zh');
+const zhPrefix = isZh ? '/zh' : '';
+const pathname = Astro.url.pathname;
+
+// 按顶部菜单分组：只保留包含当前页面的顶层分组（时序同笺 → 仅 ChronoSync 侧边栏）
+function entryMatchesPath(entries: typeof sidebar, pathname: string): boolean {
+  return entries.some((entry) =>
+    entry.type === 'link' ? entry.href === pathname : entryMatchesPath(entry.entries, pathname),
+  );
+}
+
+const filtered = hasSidebar
+  ? sidebar.filter((entry) =>
+      entry.type === 'link' ? entry.href === pathname : entryMatchesPath(entry.entries, pathname),
+    )
+  : [];
 
 function toNav(entries: typeof sidebar): NavNode[] {
   return entries.map((entry) => {
@@ -25,12 +44,68 @@ function toNav(entries: typeof sidebar): NavNode[] {
   });
 }
 
+// 全站导航树（nav drawer）：四项导航 + 二级菜单 + 每项下的文章树。
+// 顶层分组按 Starlight 侧栏配置顺序：Guides / ChronoSync / BookmarkHarbor / Contribution；
+// 项目组（ChronoSync + BookmarkHarbor）收进「项目」导航，其文章树默认折叠。
+function buildDrawerNav(): NavNode[] {
+  const groups = sidebar.filter((e) => e.type === 'group');
+  const guides = groups[0];
+  const contribution = groups[groups.length - 1];
+  const projectGroups = groups.slice(1, -1);
+
+  // 顶层分组（Guides / Contribution 等）只是容器：直接展开其条目作为二级菜单；
+  // 二级及以下的分组是文章树，默认折叠、点击展开
+  const asSecondary = (entries: typeof sidebar): NavNode[] =>
+    toNav(entries).map((n) => (n.type === 'folder' ? { ...n, defaultOpen: false } : n));
+
+  const nav: NavNode[] = [];
+  if (guides) {
+    nav.push({
+      type: 'folder',
+      label: isZh ? '首页' : 'Home',
+      defaultOpen: true,
+      children: asSecondary(guides.entries),
+    });
+  }
+  if (projectGroups.length > 0) {
+    nav.push({
+      type: 'folder',
+      label: isZh ? '项目' : 'Projects',
+      defaultOpen: true,
+      children: projectGroups.map((g) => ({
+        type: 'folder',
+        label: g.label,
+        defaultOpen: false, // 每篇项目下的文章树默认折叠，点击展开
+        children: asSecondary(g.entries),
+      })),
+    });
+  }
+  if (contribution) {
+    nav.push({
+      type: 'folder',
+      label: isZh ? '贡献' : 'Contribute',
+      defaultOpen: true,
+      children: asSecondary(contribution.entries),
+    });
+  }
+  nav.push({
+    type: 'link',
+    label: isZh ? '关于' : 'About',
+    href: `${zhPrefix}/about/`,
+  });
+  return nav;
+}
+
 const html = hasSidebar
   ? renderSidebar({
-      title: Astro.locals.starlightRoute.lang.startsWith('zh') ? '天空之翼' : siteTitle,
-      tree: toNav(sidebar),
-      pathname: Astro.url.pathname,
+      title: isZh ? '天空之翼' : siteTitle,
+      tree: toNav(filtered),
+      drawerNav: buildDrawerNav(),
+      pathname,
       defaultOpenLevel: 0,
+      labels: isZh
+        ? { close: '关闭', tree: '站点导航', collapse: '折叠侧边栏' }
+        : undefined,
     })
   : '';
 ---
@@ -41,7 +116,7 @@ const html = hasSidebar
     class="cpd-btn cpd-btn-ghost cpd-sidebar-expand"
     type="button"
     data-cpd-expand
-    aria-label="Expand Sidebar"
+    aria-label={isZh ? '展开侧边栏' : 'Expand Sidebar'}
   >
     <Fragment set:html={Icon.panelLeft({})} />
   </button>

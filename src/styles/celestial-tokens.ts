@@ -345,15 +345,14 @@ export interface UiCopy {
   meta: { title: string; description: string; ogLocale: string };
   brand: { name: string; footerSubtitle: string };
   nav: {
+    home: string;
+    /** 项目 dropdown 触发词（名字待定，先占位） */
     projects: string;
-    philosophy: string;
-    join: string;
-    docs: string;
-    docsHref: string;
+    /** 贡献导航词（名字待定，先占位） */
+    contribute: string;
+    about: string;
     toggleTheme: string;
     switchLang: string;
-    switchLangHref: string;
-    github: string;
   };
   hero: {
     particleText: string;
@@ -445,15 +444,12 @@ export const UI_EN: UiCopy = {
   },
   brand: { name: 'CelPlume', footerSubtitle: 'Code as scripture' },
   nav: {
-    projects: 'Constellations',
-    philosophy: 'Scripture',
-    join: 'Invocation',
-    docs: 'Codex',
-    docsHref: '/guides/example/',
+    home: 'Home',
+    projects: 'Projects',
+    contribute: 'Contribute',
+    about: 'About',
     toggleTheme: 'Toggle theme',
     switchLang: '中',
-    switchLangHref: '/zh/',
-    github: 'GitHub',
   },
   hero: {
     particleText: 'Celest Plume',
@@ -499,15 +495,12 @@ export const UI_ZH: UiCopy = {
   },
   brand: { name: '天空之翼', footerSubtitle: '代码即经卷' },
   nav: {
-    projects: '星座',
-    philosophy: '典章',
-    join: '召请',
-    docs: '经卷',
-    docsHref: '/zh/guides/example/',
+    home: '首页',
+    projects: '项目',
+    contribute: '贡献',
+    about: '关于',
     toggleTheme: '切换主题',
     switchLang: 'EN',
-    switchLangHref: '/',
-    github: 'GitHub',
   },
   hero: {
     particleText: 'Celest Plume',

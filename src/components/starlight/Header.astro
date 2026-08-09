@@ -1,57 +1,12 @@
 ---
-// Header 覆盖：Plumest 风格顶部栏（品牌 + 搜索 + 语言切换 + 主题切换）
-import Search from 'virtual:starlight/components/Search';
-import config from 'virtual:starlight/user-config';
-import { themeToggle } from '../../lib/ui/components';
-import { Icon } from '../../lib/ui/icons';
+// Header 覆盖：与主页共用 SiteNav 顶部导航（同一套 Plumest 样式）+ 主页同款
+// SiteSearch 搜索。菜单按钮（折叠导航抽屉入口）已内置于 SiteNav，按屏宽显隐。
+import SiteNav from '../SiteNav.astro';
+import SiteSearch from '../SiteSearch.astro';
 
-const { siteTitleHref, hasSidebar } = Astro.locals.starlightRoute;
-const shouldRenderSearch =
-  config.pagefind || config.components.Search !== '@astrojs/starlight/components/Search.astro';
-
-// 语言切换（与主页同款）：保持当前路径，仅切语言前缀
-const pathname = Astro.url.pathname;
-const isZh = pathname.startsWith('/zh');
-const langHref = isZh ? (pathname.replace(/^\/zh/, '') || '/') : `/zh${pathname}`;
-const langLabel = isZh ? 'EN' : '中';
-const brandName = isZh ? '天空之翼' : 'CelPlume';
-const langTitle = isZh ? 'Switch to English' : '切换到中文';
+const isZh = Astro.url.pathname.startsWith('/zh');
 ---
 
-<header class="cpd-docs-header">
-  {hasSidebar && (
-    <button
-      type="button"
-      class="cpd-btn cpd-btn-ghost cpd-docs-menu"
-      data-cpd-drawer-trigger
-      aria-label={Astro.locals.t('sidebarNav.accessibleLabel')}
-    >
-      <Fragment set:html={Icon.panelLeft({})} />
-    </button>
-  )}
-  <a class="cpd-docs-brand" href={siteTitleHref}>
-    <img
-      src="/images/CelPlume_favicon_256.jpg"
-      alt=""
-      width="20"
-      height="20"
-      class="cpd-docs-brand-logo"
-    />
-    <span class="cpd-docs-brand-text">{brandName}</span>
-  </a>
-  <div class="cpd-docs-header-grow" />
-  <div class="cpd-docs-header-actions">
-    {shouldRenderSearch && <Search />}
-    <a
-      class="cpd-btn cpd-btn-ghost cpd-docs-lang"
-      href={langHref}
-      title={langTitle}
-      aria-label={langTitle}
-      data-cpd-lang-switch
-    >
-      <Fragment set:html={Icon.languages({})} />
-      <span class="cpd-docs-lang-txt">{langLabel}</span>
-    </a>
-    <Fragment set:html={themeToggle(isZh ? '切换主题' : 'Toggle theme')} />
-  </div>
-</header>
+<SiteNav variant="docs" locale={isZh ? 'zh' : 'en'} pathname={Astro.url.pathname}>
+  <SiteSearch slot="actions" locale={isZh ? 'zh' : 'en'} />
+</SiteNav>

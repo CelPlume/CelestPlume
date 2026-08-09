@@ -9,7 +9,7 @@
 
 /* 0. Starlight 变量映射（随 --cpd-* 深浅切换） */
 :root {
-  --sl-nav-height: 3.5rem;
+  --sl-nav-height: 4.5rem;
   --sl-mobile-toc-height: 0rem;
   --sl-content-width: 100%;
   --sl-main-pad: 0rem;
@@ -42,72 +42,11 @@
   min-height: 100vh;
 }
 
-.cpd-docs-header {
-  position: fixed;
-  inset-inline: 0;
-  top: 0;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  height: var(--sl-nav-height);
-  padding-inline: 1rem;
-  border-bottom: 1px solid var(--cpd-border);
-  background: color-mix(in oklab, var(--cpd-background) 82%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-.cpd-docs-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--cpd-foreground);
-  text-decoration: none;
-}
-.cpd-docs-brand:hover {
-  text-decoration: none;
-}
-/* 品牌文字与首页 nav 一致：Libertine/霞鹜衬线、加粗（zh 显示"天空之翼"） */
-.cpd-docs-brand-text {
-  font-family: var(--cpd-font-serif);
-  font-weight: 700;
-  font-size: 1.05rem;
-  letter-spacing: 0.01em;
-}
-.cpd-docs-brand-logo {
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 4px;
-}
-.cpd-docs-menu {
-  display: none;
-}
-.cpd-docs-header-grow {
-  flex: 1;
-}
-.cpd-docs-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
+/* 顶部导航：与主页共用 SiteNav（同一套样式，见 site-nav.css）；
+   此处仅保留文档页特有的菜单按钮（所有屏宽显示，打开右侧抽屉） */
 .cpd-docs-icon-btn svg {
   width: 1.125rem;
   height: 1.125rem;
-}
-/* 语言切换（主页同款：languages 图标 + 文本） */
-.cpd-docs-lang {
-  gap: 0.4rem;
-}
-.cpd-docs-lang svg {
-  width: 1.125rem;
-  height: 1.125rem;
-}
-.cpd-docs-lang-txt {
-  font-size: 0.82rem;
-  letter-spacing: 0.05em;
-  line-height: 1;
 }
 
 /* 侧栏列：固定、独立滚动（Plumest 行为） */
@@ -223,7 +162,7 @@
   color: var(--cpd-muted-foreground);
 }
 .cpd-content-panel > .cpd-breadcrumb {
-  margin-bottom: 0.25rem;
+  margin: 1rem 0 0.875rem;
 }
 /* Starlight 给标题包 .sl-heading-wrapper 并加 43.5px 默认 margin，
    与 .cpd-article 的 gap + 标题自身 margin 叠加成"一大块"；这里中和，间距交给 kit 排版 */
@@ -307,34 +246,7 @@
   opacity: 1;
 }
 
-/* 4. 搜索触发按钮（Starlight pagefind）→ Plumest 搜索框观感 */
-site-search button[data-open-modal] {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  height: 2.125rem;
-  min-width: 14rem;
-  padding-inline: 0.625rem;
-  border: 1px solid var(--cpd-border);
-  border-radius: 8px;
-  background: var(--cpd-card);
-  color: var(--cpd-muted-foreground);
-  font-size: 0.8125rem;
-  font-weight: 400;
-  cursor: pointer;
-}
-site-search button[data-open-modal]:hover {
-  background: var(--cpd-secondary);
-}
-site-search button[data-open-modal] kbd {
-  margin-inline-start: auto;
-  padding: 0.0625rem 0.3125rem;
-  border: 1px solid var(--cpd-border);
-  border-radius: 4px;
-  background: var(--cpd-background);
-  font-size: 0.6875rem;
-  color: var(--cpd-muted-foreground);
-}
+/* 4.（搜索：文档页与主页共用 SiteSearch，样式见 site-nav.css .cp-search-*） */
 
 /* 5. 页脚（EditLink / LastUpdated / Pagination） */
 .cpd-content-panel footer,
@@ -382,25 +294,12 @@ site-search button[data-open-modal] kbd {
 
 /* 7. 移动端 */
 @media (max-width: 47.9375rem) {
-  .cpd-docs-menu {
-    display: inline-flex;
-  }
-  .cpd-sidebar-shell {
-    display: none;
-  }
+  /* 桌面侧栏列整体隐藏会导致其内部的抽屉容器一并隐藏（fixed 元素尺寸归零）；
+     这里只由 celestial-docs.css 隐藏桌面栏本体，抽屉保持可用 */
   .cpd-main-frame {
     margin-inline-start: 0;
   }
   .cpd-content-panel {
     padding: 0.5rem 1.25rem 0;
-  }
-  site-search button[data-open-modal] {
-    min-width: 2.125rem;
-    width: 2.125rem;
-    padding-inline: 0;
-    justify-content: center;
-  }
-  site-search button[data-open-modal] > :not(svg) {
-    display: none;
   }
 }
