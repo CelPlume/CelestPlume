@@ -1,28 +1,42 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import mdx from '@astrojs/mdx';
 import icon from 'astro-icon';
+
+/**
+ * 把 Docs Kit 运行时注入所有页面。
+ * Starlight 覆盖组件中的 <script> import 会被剥离，故用 Astro 核心 injectScript。
+ */
+function celestialUiRuntime() {
+  return {
+    name: 'celestial-ui-runtime',
+    hooks: {
+      /** @param {import('astro').HookParameters<'astro:config:setup'>} params */
+      'astro:config:setup'(params) {
+        params.injectScript('page', 'import "/src/scripts/celestial-docs-runtime.ts";');
+      },
+    },
+  };
+}
 
 // https://astro.build/config
 export default defineConfig({
+  trailingSlash: 'always',
   integrations: [
+    celestialUiRuntime(),
     starlight({
       // English (root locale) — CelPlume is the short brand; long name "Celest Plume" appears in home hero
       title: 'CelPlume',
       description: 'Casting scales of old, spread wings to realms untold.',
       // Starlight favicon — 256px jpg
       favicon: '/images/CelPlume_favicon_256.jpg',
-      // Document sidebar/topbar logo
-      logo: {
-        src: './public/images/CelPlume_favicon_256.jpg',
-        alt: 'CelPlume',
-        replacesTitle: true,
-      },
       defaultLocale: 'root',
       locales: {
         root: { label: 'English', lang: 'en' },
         zh: { label: '简体中文', lang: 'zh-CN' },
       },
+      // 文档侧边栏树（同时是 Pagefind / sitemap / 分页的数据源）
       sidebar: [
         {
           label: 'Guides',
@@ -31,33 +45,68 @@ export default defineConfig({
             { label: 'Introduction', translations: { 'zh-CN': '介绍' }, link: '/guides/example/' },
           ],
         },
+        {
+          label: 'Contribution',
+          translations: { 'zh-CN': '贡献' },
+          items: [
+            {
+              label: 'Overview',
+              translations: { 'zh-CN': '概述' },
+              link: '/contribution/overview/',
+            },
+            {
+              label: 'Styles',
+              translations: { 'zh-CN': '样式规范' },
+              link: '/contribution/styles/',
+            },
+            {
+              label: 'Components',
+              translations: { 'zh-CN': '组件文档' },
+              autogenerate: { directory: 'contribution/components' },
+            },
+          ],
+        },
       ],
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/CelPlume/CelestPlume' },
       ],
+      // ClerkTOC 层级：h2–h4
+      tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
+      // 用 Plumest 风格的组件整体替换 Starlight 可见外壳
+      components: {
+        PageFrame: './src/components/starlight/PageFrame.astro',
+        Header: './src/components/starlight/Header.astro',
+        Sidebar: './src/components/starlight/Sidebar.astro',
+        TwoColumnContent: './src/components/starlight/TwoColumnContent.astro',
+        PageSidebar: './src/components/starlight/PageSidebar.astro',
+        ContentPanel: './src/components/starlight/ContentPanel.astro',
+        PageTitle: './src/components/starlight/PageTitle.astro',
+        MarkdownContent: './src/components/starlight/MarkdownContent.astro',
+        Pagination: './src/components/starlight/Pagination.astro',
+        ThemeProvider: './src/components/starlight/ThemeProvider.astro',
+        ThemeSelect: './src/components/starlight/ThemeSelect.astro',
+        MobileMenuToggle: './src/components/starlight/MobileMenuToggle.astro',
+        MobileMenuFooter: './src/components/starlight/MobileMenuFooter.astro',
+      },
+      // Docs Kit 样式 + Starlight 外壳中和（均不进入主页）
+      customCss: [
+        './src/styles/fonts/fonts-docs.css',
+        './src/styles/celestial-docs.css',
+        './src/styles/starlight-plumest.css',
+      ],
       head: [
         {
           tag: 'link',
-          attrs: { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+          attrs: { rel: 'preconnect', href: 'https://cdn.jsdelivr.net' },
         },
         {
           tag: 'link',
-          attrs: { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        },
-        {
-          tag: 'link',
-          attrs: {
-            rel: 'stylesheet',
-            href: 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap',
-          },
-        },
-        // 主页 favicon 统一使用 256px jpg（与首页一致）
-        {
-          tag: 'link',
-          attrs: { rel: 'icon', type: 'image/jpeg', href: '/images/CelPlume_favicon_256.jpg' },
+          attrs: { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: '' },
         },
       ],
     }),
+    // MDX：供贡献分类的组件文档嵌入实时预览（纯 TS 构建器，无 React）
+    mdx(),
     // 图标: Iconify 本地图标集（@iconify-json/lucide），禁止 emoji
     icon({
       include: {
@@ -70,6 +119,7 @@ export default defineConfig({
           'sparkles',
           'sun',
           'moon',
+          'monitor',
           'languages',
           'arrow-right',
           'book-open',

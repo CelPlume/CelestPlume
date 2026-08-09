@@ -1,0 +1,16 @@
+---
+// Pagination 覆盖：Plumest 风格前后页卡片。
+import { pagination } from '../../lib/ui/components';
+
+const { pagination: links } = Astro.locals.starlightRoute;
+const zh = Astro.locals.starlightRoute.lang.startsWith('zh');
+const previous = links.prev ? { title: links.prev.label, href: links.prev.href } : undefined;
+const next = links.next ? { title: links.next.label, href: links.next.href } : undefined;
+---
+
+<Fragment
+  set:html={pagination(previous, next, {
+    previous: zh ? '上一页' : 'Previous Page',
+    next: zh ? '下一页' : 'Next Page',
+  })}
+/>

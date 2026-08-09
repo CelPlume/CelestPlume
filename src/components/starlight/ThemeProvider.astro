@@ -1,0 +1,54 @@
+---
+// ThemeProvider 覆盖：接管主题初始化（celplume-theme 键，三态 dark/light/system，
+// 无记录时默认跟随系统），并同步 Starlight 的 html[data-theme] 以跟随残留 sl 样式。
+// 数据流（单向，杜绝 MutationObserver 死锁）：
+//   kit 运行时写 html[data-cpd-theme]（实际深浅）+ html[data-cpd-theme-mode]（模式）
+//   本脚本只读 data-cpd-theme → 镜像写 data-theme + 存储；绝不回写 data-cpd-theme。
+---
+
+<script is:inline>
+  (() => {
+    const KEY = 'celplume-theme';
+    const root = document.documentElement;
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const resolve = (mode) => (mode === 'system' ? (media.matches ? 'dark' : 'light') : mode);
+    const syncStarlight = (resolved) => root.setAttribute('data-theme', resolved);
+
+    const apply = (mode) => {
+      root.setAttribute('data-cpd-theme', resolve(mode));
+      root.setAttribute('data-cpd-theme-mode', mode);
+      syncStarlight(resolve(mode));
+      try {
+        localStorage.setItem(KEY, mode);
+      } catch {
+        /* storage unavailable (private mode) — attributes still apply */
+      }
+    };
+
+    let t = null;
+    try {
+      t = localStorage.getItem(KEY);
+    } catch {
+      /* storage unavailable — fall through to system default */
+    }
+    if (t !== 'dark' && t !== 'light' && t !== 'system') t = 'system';
+    apply(t);
+
+    // system 模式下跟随系统偏好变化（media change 时重算 data-cpd-theme）
+    media.addEventListener('change', () => {
+      if ((root.getAttribute('data-cpd-theme-mode') ?? 'system') === 'system') apply('system');
+    });
+
+    // kit runtime 更新 data-cpd-theme / data-cpd-theme-mode；
+    // 此处仅镜像 data-theme 并持久化模式，绝不写 data-cpd-theme（否则观察器自触发死锁）。
+    new MutationObserver(() => {
+      const mode = root.getAttribute('data-cpd-theme-mode') ?? 'system';
+      syncStarlight(resolve(mode));
+      try {
+        localStorage.setItem(KEY, mode);
+      } catch {
+        /* ignore */
+      }
+    }).observe(root, { attributes: true, attributeFilter: ['data-cpd-theme'] });
+  })();
+</script>

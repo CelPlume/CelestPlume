@@ -1,0 +1,33 @@
+---
+// PageTitle 覆盖：Plumest 风格面包屑 + 标题 + 描述。
+import { breadcrumb } from '../../lib/ui/components';
+
+const { entry, sidebar } = Astro.locals.starlightRoute;
+
+/** 在侧边栏树中查找当前页所在分组链（Plumest 面包屑：首页 / 分组 / 当前页） */
+function findCrumbPath(entries: typeof sidebar, href: string, trail: string[] = []): string[] | null {
+  for (const e of entries) {
+    if (e.type === 'group') {
+      const found = findCrumbPath(e.entries, href, [...trail, e.label]);
+      if (found) return found;
+    } else if (e.href === href || href.startsWith(e.href.replace(/\/$/, '') + '/')) {
+      return trail;
+    }
+  }
+  return null;
+}
+
+const zh = Astro.locals.starlightRoute.lang.startsWith('zh');
+const home = zh ? '/zh/' : '/';
+const homeName = zh ? '首页' : 'Home';
+const crumbs = findCrumbPath(sidebar, Astro.url.pathname) ?? [];
+const crumbHtml = breadcrumb([
+  { name: homeName, href: home },
+  ...crumbs.map((name) => ({ name })),
+  { name: entry.data.title },
+]);
+---
+
+<Fragment set:html={crumbHtml} />
+<h1 class="cpd-docs-title">{entry.data.title}</h1>
+{entry.data.description && <p class="cpd-docs-description">{entry.data.description}</p>}

@@ -1,0 +1,18 @@
+---
+// PageSidebar 覆盖：ClerkTOC（kit renderToc，Plumest 风格主色连接线 + 步骤圆徽），
+// 数据来自 Starlight 解析好的 toc.items。
+import { renderToc } from '../../lib/ui/toc';
+
+const { toc } = Astro.locals.starlightRoute;
+// 过滤 Overview 伪条目（Starlight 的 slug 为 "_top"，指向页面顶部且页面无此锚点，
+// 无法被 IntersectionObserver 激活，会导致轨道初始位置偏下、首项无线覆盖）
+const items = (toc?.items ?? [])
+  .filter((item) => item.slug && item.slug !== '_top')
+  .map((item) => ({
+    url: `#${item.slug}`,
+    title: item.text,
+    depth: item.depth,
+  }));
+---
+
+<Fragment set:html={renderToc(items, { title: Astro.locals.t('tableOfContents.onThisPage') })} />

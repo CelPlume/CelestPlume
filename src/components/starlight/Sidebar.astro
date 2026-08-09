@@ -1,0 +1,48 @@
+---
+// Sidebar 覆盖：把 Starlight 解析好的侧边栏树渲染为 Plumest 风格侧边栏（kit renderSidebar）。
+import { renderSidebar } from '../../lib/ui/sidebar';
+import { Icon } from '../../lib/ui/icons';
+import type { NavNode } from '../../lib/ui/types';
+
+const { sidebar, siteTitle, hasSidebar } = Astro.locals.starlightRoute;
+
+function toNav(entries: typeof sidebar): NavNode[] {
+  return entries.map((entry) => {
+    if (entry.type === 'group') {
+      return {
+        type: 'folder',
+        label: entry.label,
+        defaultOpen: !entry.collapsed,
+        children: toNav(entry.entries),
+      } satisfies NavNode;
+    }
+    return {
+      type: 'link',
+      label: entry.label,
+      href: entry.href,
+      external: entry.attrs?.target === '_blank',
+    } satisfies NavNode;
+  });
+}
+
+const html = hasSidebar
+  ? renderSidebar({
+      title: Astro.locals.starlightRoute.lang.startsWith('zh') ? '天空之翼' : siteTitle,
+      tree: toNav(sidebar),
+      pathname: Astro.url.pathname,
+      defaultOpenLevel: 0,
+    })
+  : '';
+---
+
+<Fragment set:html={html} />
+{hasSidebar && (
+  <button
+    class="cpd-btn cpd-btn-ghost cpd-sidebar-expand"
+    type="button"
+    data-cpd-expand
+    aria-label="Expand Sidebar"
+  >
+    <Fragment set:html={Icon.panelLeft({})} />
+  </button>
+)}

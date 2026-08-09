@@ -1,0 +1,13 @@
+---
+// TwoColumnContent 覆盖：主列 + 右侧 ClerkTOC 列（Plumest 双栏）。
+const { toc } = Astro.locals.starlightRoute;
+---
+
+<div class="cpd-two-col">
+  {toc && (
+    <aside class="cpd-toc-shell" aria-label={Astro.locals.t('tableOfContents.onThisPage')}>
+      <slot name="right-sidebar" />
+    </aside>
+  )}
+  <div class="cpd-main-pane"><slot /></div>
+</div>

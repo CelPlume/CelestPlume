@@ -1,0 +1,65 @@
+---
+// PageFrame 覆盖：自绘 Plumest 外壳（固定头部 + 侧栏列 + 主列），
+// 完全绕开 Starlight 的 .page/.header/.sidebar/.main-frame 布局样式。
+// 同时注入与主页完全同款的加载动画（Uiverse bright-lizard-8：彩虹光圈 + 字母跳动），
+// 仅首次进入文档页显示（sessionStorage 标记），页面内导航不再加载。
+
+const { hasSidebar } = Astro.locals.starlightRoute;
+const LOADER_LETTERS = ['L', 'o', 'a', 'd', 'i', 'n', 'g'];
+---
+
+<div class="cpd-loader" id="cpd-loader" role="status" aria-label="Loading" aria-hidden="true">
+  <div class="cpd-loader-wrapper">
+    {LOADER_LETTERS.map((ch) => <span class="cpd-loader-letter">{ch}</span>)}
+    <div class="cpd-loader-ring"></div>
+  </div>
+</div>
+
+<div class="cpd-page">
+  <slot name="header" />
+  {hasSidebar && (
+    <div class="cpd-sidebar-shell">
+      <slot name="sidebar" />
+    </div>
+  )}
+  <div class="cpd-main-frame"><slot /></div>
+</div>
+
+<script is:inline>
+  // 加载动画：仅会话内首次进入文档页显示（与主页同款动画），
+  // 字体就绪 + 最少展示 800ms，2.5s 兜底；导航/刷新后不再出现。
+  (() => {
+    const KEY = 'celplume-docs-visited';
+    const overlay = document.getElementById('cpd-loader');
+    if (!overlay) return;
+    let visited = false;
+    try {
+      visited = sessionStorage.getItem(KEY) !== null;
+    } catch {
+      /* storage unavailable — 视为首次进入 */
+    }
+    if (visited) {
+      overlay.setAttribute('data-hidden', 'true');
+      return;
+    }
+    const tStart = performance.now();
+    const hideLoader = () => {
+      const wait = Math.max(0, 800 - (performance.now() - tStart));
+      setTimeout(() => {
+        overlay.setAttribute('data-hidden', 'true');
+        try {
+          sessionStorage.setItem(KEY, '1');
+        } catch {
+          /* ignore */
+        }
+      }, wait);
+    };
+    const fontsReady = (document).fonts?.ready;
+    if (fontsReady) {
+      fontsReady.then(hideLoader).catch(hideLoader);
+    } else {
+      window.addEventListener('load', hideLoader, { once: true });
+    }
+    window.setTimeout(hideLoader, 2500);
+  })();
+</script>
