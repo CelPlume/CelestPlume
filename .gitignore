@@ -1,5 +1,7 @@
 # Build output
 dist/
+# Local reference clone (gitignored)
+reference/
 # Dependencies
 node_modules/
 # Astro
