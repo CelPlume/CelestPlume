@@ -1,6 +1,6 @@
 ---
 title: Files
-description: File-tree explorer with collapsible folders.
+description: File tree — collapsible folders, indent lines.
 sidebar:
   order: 7
 ---
@@ -8,72 +8,78 @@ sidebar:
 import Preview from '../../../../components/kit/Preview.astro';
 import { files, folder, file as fileRow } from '../../../../lib/ui';
 
-`files()` renders a Plumest-style file tree. Folders are native `<details>`
-elements, so they collapse without JavaScript.
+`files()` renders a file tree: folder rows toggle with a rotating chevron,
+folder icons swap between open/closed states, and child rows sit on an
+indent line (`lines: false` hides the guides).
 
-## Nested tree
+## Simple tree
 
 <Preview
   label="Folders + files"
-  html={files([
-    folder('<span>src</span>', { label: 'src' }),
-    folder('<span>lib</span>', { label: 'lib' }),
-    fileRow('ui'),
-    fileRow('tokens.ts'),
-    fileRow('components.ts'),
-    fileRow('index.ts'),
-  ])}
+  html={files(
+    folder(fileRow('src') + fileRow('lib') + fileRow('ui'), { name: 'src' }) +
+      folder(fileRow('tokens.ts') + fileRow('components.ts'), { name: 'lib' }),
+  )}
 />
 
 ```ts
-files([
-  folder('<span>src</span>', { label: 'src' }),
-  folder('<span>lib</span>', { label: 'lib' }),
-  fileRow('ui'),
-  fileRow('tokens.ts'),
-  fileRow('components.ts'),
-  fileRow('index.ts'),
-]);
+files(
+  folder(fileRow('src') + fileRow('lib') + fileRow('ui'), { name: 'src' }) +
+    folder(fileRow('tokens.ts') + fileRow('components.ts'), { name: 'lib' }),
+);
 ```
 
-## Folder open by default
+## Open by default
 
 <Preview
   label="defaultOpen folder"
-  html={files([
-    folder('<span>src</span>', { label: 'src', defaultOpen: true }),
-    fileRow('styles'),
-    fileRow('celestial-docs.css'),
-    folder('<span>scripts</span>', { label: 'scripts' }),
-    fileRow('build.ts'),
-  ])}
+  html={files(
+    folder(fileRow('styles') + fileRow('celestial-docs.css'), { name: 'styles', defaultOpen: true }) +
+      folder(fileRow('build.ts'), { name: 'scripts' }),
+  )}
 />
 
 ```ts
-files([
-  folder('<span>src</span>', { label: 'src', defaultOpen: true }),
-  fileRow('styles'),
-  fileRow('celestial-docs.css'),
-  folder('<span>scripts</span>', { label: 'scripts' }),
-  fileRow('build.ts'),
-]);
+files(
+  folder(fileRow('styles') + fileRow('celestial-docs.css'), { name: 'styles', defaultOpen: true }) +
+    folder(fileRow('build.ts'), { name: 'scripts' }),
+);
+```
+
+## Without lines
+
+<Preview
+  label="lines: false"
+  html={files(
+    folder(fileRow('Homepage') + fileRow('About Page'), { name: 'Website Redesign', defaultOpen: true }) +
+      fileRow('README.md'),
+    { lines: false },
+  )}
+/>
+
+```ts
+files(
+  folder(fileRow('Homepage') + fileRow('About Page'), { name: 'Website Redesign', defaultOpen: true }) +
+    fileRow('README.md'),
+  { lines: false },
+);
 ```
 
 ## Custom icons
 
 <Preview
   label="Custom file icon"
-  html={files([
-    fileRow('package.json', '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>'),
-    fileRow('README.md'),
-  ])}
+  html={files(
+    fileRow('package.json', '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>') +
+      fileRow('README.md'),
+  )}
 />
 
 ```ts
-files([
-  fileRow('package.json', '<svg …>…</svg>'), // any inline SVG string
-  fileRow('README.md'),
-]);
+files(
+  fileRow('package.json', '<svg …>…</svg>') + // any inline SVG string
+    fileRow('README.md'),
+);
 ```
 
 ## API
@@ -81,11 +87,12 @@ files([
 | Function | Signature | Description |
 | --- | --- | --- |
 | `file(name, icon?)` | `(string, string?) => string` | A file row (custom SVG icon optional). |
-| `folder(children, { label, defaultOpen? })` | — | A collapsible folder row. |
-| `files(children)` | `(string) => string` | The tree container. |
+| `folder(children, { name, defaultOpen?, icon?, openIcon? })` | — | A collapsible folder row; the icon swaps to `openIcon` when open. |
+| `files(children, { lines? })` | — | The tree container; `lines: false` hides the indent guides. |
 
 ## Notes
 
-- `folder(children, …)` takes **pre-built HTML** for its label span, allowing
-  independent styling of the folder name.
-- Folder rows with children are indented by one `--cpd-spacing` step per level.
+- Folder rows are buttons wired by the runtime (`data-cpd-folder-toggle`),
+  not native `<details>`.
+- `folder()` takes pre-built HTML for its children; nest folders freely for
+  deeper trees.

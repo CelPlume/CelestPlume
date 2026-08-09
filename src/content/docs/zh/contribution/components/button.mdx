@@ -1,0 +1,152 @@
+---
+title: Button 按钮
+description: 按钮组件——六种变体、三种尺寸、链接或原生按钮。
+sidebar:
+  order: 15
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { button } from '../../../../../lib/ui';
+
+`button()` 构建按钮：`variant` 切换 Solid / Subtle / Surface /
+Outline / Ghost / Plain，`size` 切换 sm / md / lg。传入 `href` 时渲染
+`<a>`，否则渲染原生 `<button type="button">`。
+
+## 变体
+
+<Preview
+  label="全部变体"
+  html={[
+    button({ label: 'Solid', variant: 'solid' }),
+    button({ label: 'Subtle', variant: 'subtle' }),
+    button({ label: 'Surface', variant: 'surface' }),
+    button({ label: 'Outline', variant: 'outline' }),
+    button({ label: 'Ghost', variant: 'ghost' }),
+    button({ label: 'Plain', variant: 'plain' }),
+  ].join(' ')}
+/>
+
+```ts
+button({ label: 'Solid', variant: 'solid' });
+button({ label: 'Subtle', variant: 'subtle' });
+button({ label: 'Surface', variant: 'surface' });
+button({ label: 'Outline', variant: 'outline' });
+button({ label: 'Ghost', variant: 'ghost' });
+button({ label: 'Plain', variant: 'plain' });
+```
+
+## 尺寸
+
+<Preview
+  label="sm / md / lg"
+  html={[
+    button({ label: '小号', size: 'sm', variant: 'outline' }),
+    button({ label: '中号', size: 'md', variant: 'outline' }),
+    button({ label: '大号', size: 'lg', variant: 'outline' }),
+  ].join(' ')}
+/>
+
+```ts
+button({ label: '小号', size: 'sm', variant: 'outline' });
+button({ label: '中号', size: 'md', variant: 'outline' });
+button({ label: '大号', size: 'lg', variant: 'outline' });
+```
+
+## 图标
+
+图标渲染在文本前；任意内联 SVG 字符串均可。
+
+<Preview
+  label="图标 + solid"
+  html={button({
+    label: '联系我们',
+    variant: 'solid',
+    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  })}
+/>
+
+```ts
+button({
+  label: '联系我们',
+  variant: 'solid',
+  icon: '<svg …>…</svg>', // 任意内联 SVG 字符串
+});
+```
+
+## 作为链接
+
+传入 `href` 时按钮渲染为 `<a>`；`external` 在新标签页打开。
+
+<Preview
+  label="链接形态"
+  html={button({
+    label: '开始使用',
+    href: '/guides/example/',
+    variant: 'solid',
+  })}
+/>
+
+```ts
+button({ label: '开始使用', href: '/guides/example/', variant: 'solid' });
+```
+
+## 颜色
+
+`color` 从 Kit 语义色令牌选取色板
+（primary / info / success / warning / error / idea）。solid 以该颜色为底、
+白色文字。
+
+<Preview
+  label="solid 色板"
+  html={[
+    button({ label: 'Info', variant: 'solid', color: 'info' }),
+    button({ label: 'Success', variant: 'solid', color: 'success' }),
+    button({ label: 'Warning', variant: 'solid', color: 'warning' }),
+    button({ label: 'Error', variant: 'solid', color: 'error' }),
+    button({ label: 'Idea', variant: 'solid', color: 'idea' }),
+  ].join(' ')}
+/>
+
+```ts
+button({ label: 'Info', variant: 'solid', color: 'info' });
+button({ label: 'Success', variant: 'solid', color: 'success' });
+button({ label: 'Warning', variant: 'solid', color: 'warning' });
+button({ label: 'Error', variant: 'solid', color: 'error' });
+button({ label: 'Idea', variant: 'solid', color: 'idea' });
+```
+
+outline 沿用同一色板：
+
+<Preview
+  label="outline 色板"
+  html={[
+    button({ label: 'Info', variant: 'outline', color: 'info' }),
+    button({ label: 'Success', variant: 'outline', color: 'success' }),
+    button({ label: 'Warning', variant: 'outline', color: 'warning' }),
+    button({ label: 'Error', variant: 'outline', color: 'error' }),
+    button({ label: 'Idea', variant: 'outline', color: 'idea' }),
+  ].join(' ')}
+/>
+
+```ts
+button({ label: 'Info', variant: 'outline', color: 'info' });
+```
+
+## 参数
+
+| 参数 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `label` | `string` | — | 按钮文本（必填）。 |
+| `href` | `string` | — | 目标地址——渲染 `<a>` 而非 `<button>`。 |
+| `variant` | `'solid' \| 'subtle' \| 'surface' \| 'outline' \| 'ghost' \| 'plain'` | `'solid'` | 视觉风格。 |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 高度与内边距（2rem / 2.5rem / 3rem）。 |
+| `color` | `'primary' \| 'info' \| 'success' \| 'warning' \| 'error' \| 'idea'` | `'primary'` | 色板，来自 Kit 语义色令牌。 |
+| `icon` | `string` | `''` | 置于文本前的原始 SVG 字符串。 |
+| `external` | `boolean` | `false` | 配合 `href`：在新标签页打开链接。 |
+| `attrs` | `Record<string, string>` | — | 附加 HTML 属性（如 `data-cpd-drawer-trigger`）。 |
+
+## 注意
+
+- 浅色 hover 压暗、深色 hover 提亮（`color-mix`）；
+  focus 显示 2px ring（`--cpd-ring`）；disabled 半透明。
+- 圆角 `0.375rem`；字重 600；`line-height: 1`。

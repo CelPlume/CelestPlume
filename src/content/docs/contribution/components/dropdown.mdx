@@ -1,0 +1,124 @@
+---
+title: Dropdown
+description: Menu — trigger, items, groups, separators.
+sidebar:
+  order: 18
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { dropdown, dropdownItem, dropdownGroup, dropdownSeparator, Icon } from '../../../../lib/ui';
+
+`dropdown()` builds a menu: the trigger toggles a panel with 16px corners,
+8px padding and a gray hover veil on items. The menu width auto-fits the
+longest item (capped at 300px; override with `width`). It only opens on
+user action — click the trigger, click outside or press `Escape` to close.
+
+## Default
+
+<Preview
+  label="Click the trigger"
+  html={dropdown({
+    trigger: '<span>Actions</span>' + Icon.chevronDown({}),
+    content:
+      dropdownItem({ label: 'Edit' }) +
+      dropdownItem({ label: 'Duplicate' }) +
+      dropdownItem({ label: 'Archive' }) +
+      dropdownItem({ label: 'Delete' }),
+  })}
+/>
+
+```ts
+dropdown({
+  trigger: '<span>Actions</span>' + Icon.chevronDown({}),
+  content:
+    dropdownItem({ label: 'Edit' }) +
+    dropdownItem({ label: 'Duplicate' }) +
+    dropdownItem({ label: 'Archive' }) +
+    dropdownItem({ label: 'Delete' }),
+});
+```
+
+## Icons and shortcuts
+
+`icon` renders a 20px leading icon (muted, vertically centered), `shortcut`
+a right-aligned kbd. Click the trigger to open.
+
+<Preview
+  label="Click to open"
+  html={dropdown({
+    trigger: '<span>Actions</span>' + Icon.chevronDown({}),
+    content:
+      dropdownItem({ label: 'New file', icon: Icon.file() }) +
+      dropdownItem({ label: 'Copy', shortcut: '⌘C' }) +
+      dropdownItem({ label: 'Paste', shortcut: '⌘V' }),
+  })}
+/>
+
+```ts
+dropdownItem({ label: 'New file', icon: Icon.file() });
+dropdownItem({ label: 'Copy', shortcut: '⌘C' });
+```
+
+## Groups and separator
+
+`dropdownGroup(label, items)` renders an uppercase group label;
+`dropdownSeparator()` a hairline divider.
+
+<Preview
+  label="Grouped — click to open"
+  html={dropdown({
+    trigger: '<span>Manage</span>' + Icon.chevronDown({}),
+    content:
+      dropdownGroup('Account', dropdownItem({ label: 'Profile' }) + dropdownItem({ label: 'Settings' })) +
+      dropdownSeparator() +
+      dropdownGroup(undefined, dropdownItem({ label: 'Sign out' })),
+  })}
+/>
+
+```ts
+dropdownGroup('Account', dropdownItem({ label: 'Profile' }) + dropdownItem({ label: 'Settings' })) +
+  dropdownSeparator() +
+  dropdownGroup(undefined, dropdownItem({ label: 'Sign out' }));
+```
+
+## Links and disabled
+
+With `href` an item renders as a link (click navigates and closes the menu);
+`disabled` dims the item.
+
+<Preview
+  label="Links + disabled — click to open"
+  html={dropdown({
+    trigger: '<span>More</span>' + Icon.chevronDown({}),
+    content:
+      dropdownItem({ label: 'Open docs', href: '/contribution/components/' }) +
+      dropdownItem({ label: 'View on GitHub', href: 'https://github.com/CelPlume/CelestPlume' }) +
+      dropdownItem({ label: 'Unavailable', disabled: true }),
+  })}
+/>
+
+```ts
+dropdownItem({ label: 'Open docs', href: '/contribution/components/' });
+dropdownItem({ label: 'Unavailable', disabled: true });
+```
+
+## API
+
+| Function | Description |
+| --- | --- |
+| `dropdown({ trigger, content, open?, width?, hover?, triggerClass? })` | Wrapper: trigger button + menu (`data-cpd-dropdown-*`). |
+| `dropdownItem({ label, icon?, shortcut?, disabled?, href? })` | A menu item row. |
+| `dropdownGroup(label?, items)` | Group with an optional uppercase label. |
+| `dropdownLabel(label)` | Standalone group label. |
+| `dropdownSeparator()` | Hairline divider. |
+
+## Notes
+
+- Interaction is wired by the runtime: trigger toggles, outside click /
+  `Escape` close, item click closes.
+- Pixel spec: panel auto-fits the longest item (max 300px), `rounded-2xl`,
+  `p-2`, `gap-1`, a medium shadow + 1px inset ring, item `p-2` /
+  `rounded-lg` / 13px text, hover gray veil, icon 20px muted and
+  vertically centered.
+- The site navigation's project dropdown is a separate real-world instance
+  of the same visual language, not this component.

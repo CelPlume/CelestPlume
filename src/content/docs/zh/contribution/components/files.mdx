@@ -1,6 +1,6 @@
 ---
 title: Files 文件树
-description: 带可折叠目录的文件树浏览器。
+description: 文件树——可折叠目录与缩进线。
 sidebar:
   order: 7
 ---
@@ -8,72 +8,77 @@ sidebar:
 import Preview from '../../../../../components/kit/Preview.astro';
 import { files, folder, file as fileRow } from '../../../../../lib/ui';
 
-`files()` 渲染 Plumest 风格文件树。目录是原生 `<details>` 元素，无需
-JavaScript 即可折叠。
+`files()` 渲染文件树：目录行带旋转 chevron 切换，
+文件夹图标随开关状态切换，子行落在缩进线上（`lines: false` 隐藏）。
 
-## 嵌套树
+## 简单树
 
 <Preview
   label="目录 + 文件"
-  html={files([
-    folder('<span>src</span>', { label: 'src' }),
-    folder('<span>lib</span>', { label: 'lib' }),
-    fileRow('ui'),
-    fileRow('tokens.ts'),
-    fileRow('components.ts'),
-    fileRow('index.ts'),
-  ])}
+  html={files(
+    folder(fileRow('src') + fileRow('lib') + fileRow('ui'), { name: 'src' }) +
+      folder(fileRow('tokens.ts') + fileRow('components.ts'), { name: 'lib' }),
+  )}
 />
 
 ```ts
-files([
-  folder('<span>src</span>', { label: 'src' }),
-  folder('<span>lib</span>', { label: 'lib' }),
-  fileRow('ui'),
-  fileRow('tokens.ts'),
-  fileRow('components.ts'),
-  fileRow('index.ts'),
-]);
+files(
+  folder(fileRow('src') + fileRow('lib') + fileRow('ui'), { name: 'src' }) +
+    folder(fileRow('tokens.ts') + fileRow('components.ts'), { name: 'lib' }),
+);
 ```
 
-## 默认展开的目录
+## 默认展开
 
 <Preview
   label="defaultOpen 目录"
-  html={files([
-    folder('<span>src</span>', { label: 'src', defaultOpen: true }),
-    fileRow('styles'),
-    fileRow('celestial-docs.css'),
-    folder('<span>scripts</span>', { label: 'scripts' }),
-    fileRow('build.ts'),
-  ])}
+  html={files(
+    folder(fileRow('styles') + fileRow('celestial-docs.css'), { name: 'styles', defaultOpen: true }) +
+      folder(fileRow('build.ts'), { name: 'scripts' }),
+  )}
 />
 
 ```ts
-files([
-  folder('<span>src</span>', { label: 'src', defaultOpen: true }),
-  fileRow('styles'),
-  fileRow('celestial-docs.css'),
-  folder('<span>scripts</span>', { label: 'scripts' }),
-  fileRow('build.ts'),
-]);
+files(
+  folder(fileRow('styles') + fileRow('celestial-docs.css'), { name: 'styles', defaultOpen: true }) +
+    folder(fileRow('build.ts'), { name: 'scripts' }),
+);
+```
+
+## 无缩进线
+
+<Preview
+  label="lines: false"
+  html={files(
+    folder(fileRow('首页') + fileRow('关于'), { name: '网站改版', defaultOpen: true }) +
+      fileRow('README.md'),
+    { lines: false },
+  )}
+/>
+
+```ts
+files(
+  folder(fileRow('首页') + fileRow('关于'), { name: '网站改版', defaultOpen: true }) +
+    fileRow('README.md'),
+  { lines: false },
+);
 ```
 
 ## 自定义图标
 
 <Preview
   label="自定义文件图标"
-  html={files([
-    fileRow('package.json', '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>'),
-    fileRow('README.md'),
-  ])}
+  html={files(
+    fileRow('package.json', '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>') +
+      fileRow('README.md'),
+  )}
 />
 
 ```ts
-files([
-  fileRow('package.json', '<svg …>…</svg>'), // 任意内联 SVG 字符串
-  fileRow('README.md'),
-]);
+files(
+  fileRow('package.json', '<svg …>…</svg>') + // 任意内联 SVG 字符串
+    fileRow('README.md'),
+);
 ```
 
 ## API
@@ -81,10 +86,11 @@ files([
 | 函数 | 签名 | 说明 |
 | --- | --- | --- |
 | `file(name, icon?)` | `(string, string?) => string` | 文件行（可传自定义 SVG 图标）。 |
-| `folder(children, { label, defaultOpen? })` | — | 可折叠目录行。 |
-| `files(children)` | `(string) => string` | 树容器。 |
+| `folder(children, { name, defaultOpen?, icon?, openIcon? })` | — | 可折叠目录行；打开时图标切换为 `openIcon`。 |
+| `files(children, { lines? })` | — | 树容器；`lines: false` 隐藏缩进线。 |
 
 ## 注意
 
-- `folder(children, …)` 的 label 接收**预构建 HTML**，便于独立样式化目录名。
-- 每层子项按一个 `--cpd-spacing` 步长缩进。
+- 目录行是由运行时接线的按钮（`data-cpd-folder-toggle`），不是原生
+  `<details>`。
+- `folder()` 接收预构建 HTML 作为子内容；可自由嵌套更深层级。

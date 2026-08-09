@@ -47,13 +47,40 @@ codeBlock({
 });
 ```
 
+## Snippet（多文件）
+
+传入 `tabs` 可渲染多文件 Snippet：头部按文件渲染一个
+标签；复制按钮复制当前激活标签的内容。
+
+<Preview
+  label="带标签的 Snippet"
+  html={codeBlock({
+    lang: 'ts',
+    tabs: [
+      { label: 'drawer.ts', code: 'export function renderDrawer(options) {\n  // ...\n}\n' },
+      { label: 'runtime.ts', code: 'export function initDrawers(root) {\n  // ...\n}\n' },
+    ],
+  })}
+/>
+
+```ts
+codeBlock({
+  lang: 'ts',
+  tabs: [
+    { label: 'drawer.ts', code: 'export function renderDrawer(options) {\n  // ...\n}\n' },
+    { label: 'runtime.ts', code: 'export function initDrawers(root) {\n  // ...\n}\n' },
+  ],
+});
+```
+
 ## 参数
 
 | 参数 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `code` | `string` | — | 代码文本（必填）。 |
+| `code` | `string` | — | 代码文本（省略 `tabs` 时必填）。 |
 | `filename` | `string` | `''` | 文件名头——同时启用复制按钮。 |
 | `lang` | `string` | `''` | 语言提示类（`language-<lang>`），不做语法高亮。 |
+| `tabs` | `CodeBlockTab[]` | — | 多文件 Snippet：每文件 `{ label, code }`；头部渲染标签，复制按钮复制当前标签。 |
 
 ## 注意
 

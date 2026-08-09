@@ -1,0 +1,68 @@
+---
+title: Modal
+description: Overlay dialog with a blurred backdrop, header, body and footer.
+sidebar:
+  order: 19
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { modal, button, Icon } from '../../../../lib/ui';
+
+`modal()` builds an overlay dialog: a blurred backdrop centers a 400px
+rounded-20 card with an optional icon header, body and footer. It opens only
+on user action — a trigger button with `data-cpd-modal-trigger` +
+`data-cpd-modal-target`; Escape, the backdrop or the header close button
+dismiss it.
+
+## Trigger
+
+<Preview
+  label="Click to open"
+  html={button({
+    label: 'Open modal',
+    variant: 'solid',
+    attrs: {
+      'data-cpd-modal-trigger': '',
+      'data-cpd-modal-target': 'modal-demo',
+    },
+  }) + modal({
+    id: 'modal-demo',
+    title: 'Delete project',
+    description: 'This action cannot be undone.',
+    icon: Icon.triangleAlert(),
+    content: '<p class="cpd-modal-note">Are you sure you want to delete this project? All data will be lost.</p>',
+    footer:
+      button({ label: 'Cancel', variant: 'ghost' }) +
+      button({ label: 'Delete', variant: 'solid', color: 'error' }),
+  })}
+/>
+
+```ts
+modal({
+  id: 'modal-demo',
+  title: 'Delete project',
+  description: 'This action cannot be undone.',
+  icon: Icon.triangleAlert(),
+  content: '<p>Are you sure you want to delete this project?</p>',
+  footer:
+    button({ label: 'Cancel', variant: 'ghost' }) +
+    button({ label: 'Delete', variant: 'solid', color: 'error' }),
+});
+```
+
+## API
+
+| Function | Description |
+| --- | --- |
+| `modal({ id, title, description?, icon?, content, footer?, open?, closeLabel?, width? })` | Overlay + panel with a close button, optional header (icon circle + title + description), body and footer. |
+
+## Notes
+
+- Trigger: `data-cpd-modal-trigger` + `data-cpd-modal-target="<id>"`;
+  Escape, backdrop click and the close button dismiss.
+- Pixel spec: backdrop `rgba(3, 6, 12, 0.6)` + `blur(10px)`, 16px padding,
+  vertical scroll; panel max-width 400px, `rounded-20` (20px), white
+  surface, medium shadow, fade + zoom-in 95%; close button 40px ghost at
+  `top-4 right-4`; header `py-4 pl-5 pr-14` with a bottom hairline, 40px
+  icon ring, 13px semibold title and 13px muted description; body `p-5`;
+  footer hairline-top `px-5 py-4`.

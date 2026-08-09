@@ -1,0 +1,95 @@
+---
+title: Drawer
+description: A slide-in side panel for navigation and secondary content.
+sidebar:
+  order: 16
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { renderDrawer, button } from '../../../../lib/ui';
+
+A Drawer slides a panel in from the right edge. The base style has a blur
+backdrop and a panel below the nav; pass `fullscreen: true` for the
+fullscreen modal variant — a 50% black backdrop, a high-shadow panel with
+an 8px start-side radius and a 28rem default width, a clearly different
+style. It overlays the whole project while open — the docs below show only
+the trigger button; click it to open the drawer (Escape, the overlay or the
+header close button dismiss it).
+
+## Trigger
+
+The drawer is always a fixed, viewport-wide overlay. Only a trigger button
+is shown here; `data-cpd-drawer-target` points it at the drawer it opens.
+
+<Preview
+  label="Trigger button"
+  html={button({
+    label: 'Open drawer',
+    variant: 'solid',
+    attrs: {
+      'data-cpd-drawer-trigger': '',
+      'data-cpd-drawer-target': 'drawer-demo',
+    },
+  }) + renderDrawer({
+    id: 'drawer-demo',
+    fullscreen: true,
+    title: 'Navigation',
+    content: [
+      `<a class="cpd-link cpd-link-inline" href="#">Home</a>`,
+      `<a class="cpd-link cpd-link-inline" href="#">Projects</a>`,
+      `<a class="cpd-link cpd-link-inline" href="#">About</a>`,
+    ].join('<br />'),
+  })}
+/>
+
+```ts
+// 触发按钮复用 Button 组件（attrs 注入抽屉钩子）
+button({
+  label: 'Open drawer',
+  variant: 'solid',
+  attrs: {
+    'data-cpd-drawer-trigger': '',
+    'data-cpd-drawer-target': 'drawer-demo',
+  },
+});
+
+const drawer = renderDrawer({
+  id: 'drawer-demo',
+  fullscreen: true, // 全屏模态变体（区别于基础样式）
+  title: 'Navigation',
+  content: [
+    '<a class="cpd-link cpd-link-inline" href="#">Home</a>',
+    '<a class="cpd-link cpd-link-inline" href="#">Projects</a>',
+    '<a class="cpd-link cpd-link-inline" href="#">About</a>',
+  ].join('<br />'),
+});
+```
+
+## Props
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `title` | `string` | — | Panel title; also used as `aria-label`. |
+| `content` | `string` | `''` | Body HTML. |
+| `open` | `boolean` | `false` | Initial open state (`data-cpd-open`). |
+| `side` | `'right'` | `'right'` | Slide direction; RTL flips automatically. |
+| `width` | `string` | `var(--cpd-drawer-width, 28rem)` | Panel width (default 28rem). |
+| `maxWidth` | `string` | `100dvw` | Panel max width. |
+| `id` | `string` | — | Panel id; triggers reference it via `data-cpd-drawer-target`. |
+| `closeLabel` | `string` | `'Close'` | Close button `aria-label`. |
+| `fullscreen` | `boolean` | `false` | Fullscreen modal variant: 50% black backdrop (no blur), high shadow, 28rem width, 8px start radius. |
+
+## Notes
+
+- Fullscreen variant spec: backdrop `rgb(0 0 0 / 0.5)` (no blur), panel
+  `0 25px 50px -12px rgb(0 0 0 / 0.25)` shadow, start-side radius 0.5rem,
+  default width 28rem, slide-in-right + fade (200ms), header
+  `1.25rem 1.25rem 0.25rem` with an `lg` semibold title and a ghost close
+  button top-right, body scrolls with `px-5 pb-5`.
+- The base style (no `fullscreen`) keeps the blur backdrop and the
+  below-nav panel — the docs site's mobile sidebar is a plain Drawer,
+  unchanged.
+- Each drawer opens and closes independently (`data-cpd-drawer-target`).
+  The demo above is a standalone instance, never connected to the site nav
+  drawer.
+- Interaction is wired by the kit runtime through `data-cpd-drawer-*` hooks.

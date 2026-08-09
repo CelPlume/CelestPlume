@@ -1,0 +1,66 @@
+---
+title: Modal 弹窗
+description: 带模糊遮罩、头部、主体与底部的覆盖式弹窗。
+sidebar:
+  order: 19
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { modal, button, Icon } from '../../../../../lib/ui';
+
+`modal()` 构建覆盖式弹窗：模糊遮罩居中显示 400px 圆角 20 的卡片，含
+可选图标头部、主体与底部。仅在用户操作时打开——触发按钮带
+`data-cpd-modal-trigger` + `data-cpd-modal-target`；按 `Escape`、点击
+遮罩或头部关闭按钮可关闭。
+
+## 触发
+
+<Preview
+  label="点击打开"
+  html={button({
+    label: '打开弹窗',
+    variant: 'solid',
+    attrs: {
+      'data-cpd-modal-trigger': '',
+      'data-cpd-modal-target': 'modal-demo',
+    },
+  }) + modal({
+    id: 'modal-demo',
+    title: '删除项目',
+    description: '此操作不可撤销。',
+    icon: Icon.triangleAlert(),
+    content: '<p class="cpd-modal-note">确定要删除该项目吗？所有数据将丢失。</p>',
+    footer:
+      button({ label: '取消', variant: 'ghost' }) +
+      button({ label: '删除', variant: 'solid', color: 'error' }),
+  })}
+/>
+
+```ts
+modal({
+  id: 'modal-demo',
+  title: '删除项目',
+  description: '此操作不可撤销。',
+  icon: Icon.triangleAlert(),
+  content: '<p>确定要删除该项目吗？</p>',
+  footer:
+    button({ label: '取消', variant: 'ghost' }) +
+    button({ label: '删除', variant: 'solid', color: 'error' }),
+});
+```
+
+## API
+
+| 函数 | 说明 |
+| --- | --- |
+| `modal({ id, title, description?, icon?, content, footer?, open?, closeLabel?, width? })` | 遮罩 + 面板（关闭按钮、可选图标头部、主体、底部）。 |
+
+## Notes
+
+- 触发：`data-cpd-modal-trigger` + `data-cpd-modal-target="<id>"`；
+  `Escape`、点击遮罩、关闭按钮均可关闭。
+- 像素规范：遮罩 `rgba(3, 6, 12, 0.6)` + `blur(10px)`、16px 内边距、
+  可纵向滚动；面板最大宽 400px、圆角 20、白底、中投影、fade +
+  zoom-in 95%；关闭按钮 40px ghost 位于 `top-4 right-4`；头部
+  `py-4 pl-5 pr-14` + 底部发丝线、40px 图标圆环、13px 半粗标题与
+  13px 弱色描述；主体 `p-5`；底部发丝线 `px-5 py-4`。

@@ -1,0 +1,120 @@
+---
+title: Dropdown 下拉菜单
+description: 菜单组件——触发、菜单项、分组、分隔线。
+sidebar:
+  order: 18
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { dropdown, dropdownItem, dropdownGroup, dropdownSeparator, Icon } from '../../../../../lib/ui';
+
+`dropdown()` 构建菜单：触发按钮切换面板，16px 圆角、
+8px 内边距、菜单项灰遮罩 hover。菜单宽度按最长项自适应（封顶 300px，
+可用 `width` 覆盖）。仅在用户操作时打开——点击触发打开，点击外部或按
+`Escape` 关闭。
+
+## 默认
+
+<Preview
+  label="点击触发"
+  html={dropdown({
+    trigger: '<span>操作</span>' + Icon.chevronDown({}),
+    content:
+      dropdownItem({ label: '编辑' }) +
+      dropdownItem({ label: '复制' }) +
+      dropdownItem({ label: '归档' }) +
+      dropdownItem({ label: '删除' }),
+  })}
+/>
+
+```ts
+dropdown({
+  trigger: '<span>操作</span>' + Icon.chevronDown({}),
+  content:
+    dropdownItem({ label: '编辑' }) +
+    dropdownItem({ label: '复制' }) +
+    dropdownItem({ label: '归档' }) +
+    dropdownItem({ label: '删除' }),
+});
+```
+
+## 图标与快捷键
+
+`icon` 渲染 20px 前置图标（弱色，垂直居中），`shortcut` 渲染右侧 kbd。
+点击触发打开。
+
+<Preview
+  label="点击打开"
+  html={dropdown({
+    trigger: '<span>操作</span>' + Icon.chevronDown({}),
+    content:
+      dropdownItem({ label: '新建文件', icon: Icon.file() }) +
+      dropdownItem({ label: '复制', shortcut: '⌘C' }) +
+      dropdownItem({ label: '粘贴', shortcut: '⌘V' }),
+  })}
+/>
+
+```ts
+dropdownItem({ label: '新建文件', icon: Icon.file() });
+dropdownItem({ label: '复制', shortcut: '⌘C' });
+```
+
+## 分组与分隔线
+
+`dropdownGroup(label, items)` 渲染大写分组标题；`dropdownSeparator()` 渲染
+发丝分隔线。
+
+<Preview
+  label="分组——点击打开"
+  html={dropdown({
+    trigger: '<span>管理</span>' + Icon.chevronDown({}),
+    content:
+      dropdownGroup('账户', dropdownItem({ label: '个人资料' }) + dropdownItem({ label: '设置' })) +
+      dropdownSeparator() +
+      dropdownGroup(undefined, dropdownItem({ label: '退出登录' })),
+  })}
+/>
+
+```ts
+dropdownGroup('账户', dropdownItem({ label: '个人资料' }) + dropdownItem({ label: '设置' })) +
+  dropdownSeparator() +
+  dropdownGroup(undefined, dropdownItem({ label: '退出登录' }));
+```
+
+## 链接与禁用
+
+传入 `href` 时菜单项渲染为链接（点击跳转并关闭菜单）；`disabled` 置灰。
+
+<Preview
+  label="链接 + 禁用——点击打开"
+  html={dropdown({
+    trigger: '<span>更多</span>' + Icon.chevronDown({}),
+    content:
+      dropdownItem({ label: '打开文档', href: '/zh/contribution/components/' }) +
+      dropdownItem({ label: '查看 GitHub', href: 'https://github.com/CelPlume/CelestPlume' }) +
+      dropdownItem({ label: '不可用', disabled: true }),
+  })}
+/>
+
+```ts
+dropdownItem({ label: '打开文档', href: '/zh/contribution/components/' });
+dropdownItem({ label: '不可用', disabled: true });
+```
+
+## API
+
+| 函数 | 说明 |
+| --- | --- |
+| `dropdown({ trigger, content, open?, width?, hover?, triggerClass? })` | 外层：触发按钮 + 菜单（`data-cpd-dropdown-*`）。 |
+| `dropdownItem({ label, icon?, shortcut?, disabled?, href? })` | 菜单项行。 |
+| `dropdownGroup(label?, items)` | 带可选大写标题的分组。 |
+| `dropdownLabel(label)` | 独立分组标题。 |
+| `dropdownSeparator()` | 发丝分隔线。 |
+
+## Notes
+
+- 交互由运行时接线：触发切换、外点 / `Escape` 关闭、项点击关闭。
+- 像素规范：面板按最长项自适应（封顶 300px）、`rounded-2xl`、`p-2`、
+  `gap-1`、中投影 + 1px 内描边、项 `p-2` / `rounded-lg` / 13px 文本、
+  hover 灰遮罩、图标 20px 弱色且垂直居中。
+- 站点导航的项目 dropdown 是同一视觉语言下的独立真实实例，并非本组件。

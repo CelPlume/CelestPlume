@@ -48,13 +48,40 @@ codeBlock({
 });
 ```
 
+## Snippet (multiple files)
+
+Pass `tabs` to render a multi-file snippet: the header shows one tab per
+file; the copy button copies the active tab.
+
+<Preview
+  label="Snippet with tabs"
+  html={codeBlock({
+    lang: 'ts',
+    tabs: [
+      { label: 'drawer.ts', code: 'export function renderDrawer(options) {\n  // ...\n}\n' },
+      { label: 'runtime.ts', code: 'export function initDrawers(root) {\n  // ...\n}\n' },
+    ],
+  })}
+/>
+
+```ts
+codeBlock({
+  lang: 'ts',
+  tabs: [
+    { label: 'drawer.ts', code: 'export function renderDrawer(options) {\n  // ...\n}\n' },
+    { label: 'runtime.ts', code: 'export function initDrawers(root) {\n  // ...\n}\n' },
+  ],
+});
+```
+
 ## Props
 
 | Option | Type | Default | Description |
 | --- | --- | --- | --- |
-| `code` | `string` | — | Code text (required). |
+| `code` | `string` | — | Code text (required when `tabs` is omitted). |
 | `filename` | `string` | `''` | Filename shown in the header — also enables the copy button. |
 | `lang` | `string` | `''` | Language hint class (`language-<lang>`), no syntax highlighting. |
+| `tabs` | `CodeBlockTab[]` | — | Multi-file snippet: `{ label, code }` per file; header renders tabs and the copy button copies the active tab. |
 
 ## Notes
 

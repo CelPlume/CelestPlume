@@ -1,0 +1,90 @@
+---
+title: Drawer 抽屉
+description: 右侧滑入的侧栏面板，用于折叠导航与次级内容。
+sidebar:
+  order: 16
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { renderDrawer, button } from '../../../../../lib/ui';
+
+Drawer 从视口右侧滑入面板。基础样式带 blur 遮罩与
+导航下方面板）；传 `fullscreen: true` 切换为全屏模态变体——50% 黑遮罩、
+`shadow-2xl` 面板 + 起始侧 8px 圆角、默认宽 28rem，是明显不同的样式。
+打开时覆盖整个项目——下方文档只展示触发按钮，点击后抽屉全屏展开
+（Escape、遮罩或头部关闭按钮可关闭）。
+
+## 触发
+
+抽屉始终是固定、覆盖视口的浮层，这里只展示触发按钮；
+`data-cpd-drawer-target` 指定它打开的目标抽屉。
+
+<Preview
+  label="触发按钮"
+  html={button({
+    label: '打开抽屉',
+    variant: 'solid',
+    attrs: {
+      'data-cpd-drawer-trigger': '',
+      'data-cpd-drawer-target': 'drawer-demo',
+    },
+  }) + renderDrawer({
+    id: 'drawer-demo',
+    fullscreen: true,
+    title: '导航',
+    content: [
+      `<a class="cpd-link cpd-link-inline" href="#">首页</a>`,
+      `<a class="cpd-link cpd-link-inline" href="#">项目</a>`,
+      `<a class="cpd-link cpd-link-inline" href="#">关于</a>`,
+    ].join('<br />'),
+  })}
+/>
+
+```ts
+// 触发按钮复用 Button 组件（attrs 注入抽屉钩子）
+button({
+  label: '打开抽屉',
+  variant: 'solid',
+  attrs: {
+    'data-cpd-drawer-trigger': '',
+    'data-cpd-drawer-target': 'drawer-demo',
+  },
+});
+
+const drawer = renderDrawer({
+  id: 'drawer-demo',
+  fullscreen: true, // 全屏模态变体（区别于基础样式）
+  title: '导航',
+  content: [
+    '<a class="cpd-link cpd-link-inline" href="#">首页</a>',
+    '<a class="cpd-link cpd-link-inline" href="#">项目</a>',
+    '<a class="cpd-link cpd-link-inline" href="#">关于</a>',
+  ].join('<br />'),
+});
+```
+
+## 参数
+
+| 参数 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `title` | `string` | — | 面板标题，同时用作 `aria-label`。 |
+| `content` | `string` | `''` | 主体 HTML。 |
+| `open` | `boolean` | `false` | 初始展开状态（`data-cpd-open`）。 |
+| `side` | `'right'` | `'right'` | 滑出方向；RTL 布局自动翻转。 |
+| `width` | `string` | `var(--cpd-drawer-width, 28rem)` | 面板宽度（默认 28rem）。 |
+| `maxWidth` | `string` | `100dvw` | 面板最大宽度。 |
+| `id` | `string` | — | 面板 id；触发按钮经 `data-cpd-drawer-target` 引用。 |
+| `closeLabel` | `string` | `'Close'` | 关闭按钮 `aria-label`。 |
+| `fullscreen` | `boolean` | `false` | 全屏模态变体：50% 黑遮罩（无 blur）、高投影、28rem 宽、起始侧 8px 圆角。 |
+
+## Notes
+
+- 全屏变体规范：遮罩 `rgb(0 0 0 / 0.5)`（无 blur）、面板
+  `0 25px 50px -12px rgb(0 0 0 / 0.25)` 阴影、起始侧圆角 0.5rem、
+  默认宽 28rem、右滑 + fade（200ms）、头部 `1.25rem 1.25rem 0.25rem` +
+  `lg` 半粗标题 + 右上 ghost 关闭按钮、主体滚动区 `px-5 pb-5`。
+- 基础样式（不传 `fullscreen`）保留 blur 遮罩 + 导航下面板——
+  文档站移动端侧栏即普通 Drawer，不变。
+- 每个抽屉独立开关（`data-cpd-drawer-target`）。上方演示是独立实例，
+  与站点导航抽屉绝不相连。
+- 交互由 Kit 运行时经 `data-cpd-drawer-*` 钩子接管。

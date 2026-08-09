@@ -1,0 +1,59 @@
+---
+title: Link
+description: Text link — inline right arrow, external top-right arrow.
+sidebar:
+  order: 17
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import { link } from '../../../../lib/ui';
+
+`link()` builds a text link inside article content. Inline links get a
+right arrow (→), external links a top-right arrow (↗), with a faint
+underline that turns solid on hover.
+
+## Inline
+
+<Preview
+  label="Inline link"
+  html={`<p>${link({ label: 'Introduction', href: '/guides/example/' })} walks through the docs.</p>`}
+/>
+
+```ts
+link({ label: 'Introduction', href: '/guides/example/' });
+```
+
+## External
+
+<Preview
+  label="External link"
+  html={`<p>Open the ${link({ label: 'GitHub repo', href: 'https://github.com/CelPlume/CelestPlume', external: true })} in a new tab.</p>`}
+/>
+
+```ts
+link({
+  label: 'GitHub repo',
+  href: 'https://github.com/CelPlume/CelestPlume',
+  external: true,
+});
+```
+
+## Props
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `href` | `string` | — | Target URL (required). |
+| `label` | `string` | — | Link text (required). |
+| `external` | `boolean` | `false` | Opens in a new tab and renders the ↗ arrow. |
+| `icon` | `string` | `''` | Raw SVG string before the label. |
+
+## Notes
+
+- Arrows and underline come from the article styles (`.cpd-article a`);
+  the builder only emits the markup.
+- **Rule — no underline outside article text**: links inside any component
+  (Button, Card, Dropdown item, Breadcrumb, Pagination, Callout, Tabs,
+  Accordion, Step, heading anchor, Starlight aside…) are reset — no
+  underline, no arrow. Only plain article links carry them. Adding a new
+  component with links? Its `<a>` must join the `.cpd-article` reset list
+  in `celestial-docs.css`.

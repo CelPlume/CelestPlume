@@ -1,0 +1,56 @@
+---
+title: Link 链接
+description: 正文链接——内链右箭头、外链右上箭头。
+sidebar:
+  order: 17
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import { link } from '../../../../../lib/ui';
+
+`link()` 在正文内容中构建文本链接。内链带右
+箭头（→）、外链带右上箭头（↗），细下划线淡显、hover 变实加深。
+
+## 内链
+
+<Preview
+  label="内链"
+  html={`<p>${link({ label: '介绍', href: '/zh/guides/example/' })}带你了解文档结构。</p>`}
+/>
+
+```ts
+link({ label: '介绍', href: '/zh/guides/example/' });
+```
+
+## 外链
+
+<Preview
+  label="外链"
+  html={`<p>在新标签页打开 ${link({ label: 'GitHub 仓库', href: 'https://github.com/CelPlume/CelestPlume', external: true })}。</p>`}
+/>
+
+```ts
+link({
+  label: 'GitHub 仓库',
+  href: 'https://github.com/CelPlume/CelestPlume',
+  external: true,
+});
+```
+
+## 参数
+
+| 参数 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `href` | `string` | — | 目标地址（必填）。 |
+| `label` | `string` | — | 链接文本（必填）。 |
+| `external` | `boolean` | `false` | 在新标签页打开并渲染 ↗ 箭头。 |
+| `icon` | `string` | `''` | 置于文本前的原始 SVG 字符串。 |
+
+## 注意
+
+- 箭头与下划线来自正文样式（`.cpd-article a`）；构建器只输出标记。
+- **规范——正文之外禁止下划线**：任何组件内部的链接（Button、Card、
+  Dropdown 菜单项、面包屑、分页、Callout、Tabs、Accordion、Step、标题
+  锚点、Starlight aside……）一律重置——无下划线、无箭头。只有纯正文链接
+  保留。新增带链接的组件时，其 `<a>` 必须加入 `celestial-docs.css` 的
+  `.cpd-article` 重置列表。
