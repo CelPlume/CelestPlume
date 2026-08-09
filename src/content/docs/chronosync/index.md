@@ -18,13 +18,13 @@ Shandong Normal University students.
 ## Documentation
 
 The full project documentation — overview and features, usage guide,
-architecture, development, deployment, performance audit, and changelog — is
-currently available in Chinese:
+architecture, development, deployment, and changelog — is currently available
+in Chinese:
 
 - [Full documentation (Chinese)](/zh/chronosync/)
 
 Related links:
 
 - [SDNU ChronoSync](https://sxtj.hxcn.space) — live app
-- [GitHub](https://github.com/HevSpecu/SDNUChronoSync)
+- [GitHub](https://github.com/CelPlume/SDNUChronoSync)
 - [About this site](/about/)
