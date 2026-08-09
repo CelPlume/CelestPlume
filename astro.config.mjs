@@ -55,7 +55,7 @@ export default defineConfig({
               items: [
                 {
                   label: 'About ChronoSync',
-                  translations: { 'zh-CN': '关于时序同笺' },
+                  translations: { 'zh-CN': '时序同笺' },
                   link: '/chronosync/',
                 },
                 {
