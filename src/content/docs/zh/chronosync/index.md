@@ -13,7 +13,7 @@ sidebar:
 
 **线上地址：[https://sxtj.hxcn.space](https://sxtj.hxcn.space)**
 
-**使用教程：[时序同笺保姆级用户教程](https://hs.cnies.org/archives/chronosync-nanny-user-tutorial)**
+**使用教程：[时序同笺保姆级用户教程](https://celplume.hxcn.space/zh/chronosync/nanny-user-tutorial/)**
 
 欢迎访问在线版本，体验完整的课表与日程管理功能。
 
@@ -762,8 +762,8 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 ## 📞 联系我们
 
 - 🌐 **项目主页**：[https://github.com/CelPlume/SDNUChronoSync](https://github.com/CelPlume/SDNUChronoSync)
-- 📖 **使用教程**：[https://hs.cnies.org/archives/chronosync-user-guide](https://hs.cnies.org/archives/chronosync-user-guide)
-- ℹ️ **关于本项目**：[https://hs.cnies.org/archives/chronosync](https://hs.cnies.org/archives/chronosync)
+- 📖 **使用教程**：[https://celplume.hxcn.space/zh/chronosync/chronosync-user-guide/](https://celplume.hxcn.space/zh/chronosync/chronosync-user-guide/)
+- ℹ️ **关于本项目**：[https://celplume.hxcn.space/zh/chronosync/](https://celplume.hxcn.space/zh/chronosync/)
 - 💬 **问题反馈**：通过项目 [Issues](https://github.com/CelPlume/SDNUChronoSync/issues) 提出
 - 📧 **邮箱联系**：[hxcn@cnies.org](mailto:hxcn@cnies.org)
 
