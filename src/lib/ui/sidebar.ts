@@ -13,6 +13,7 @@
 import { el } from './html';
 import type { Attrs } from './html';
 import { Icon } from './icons';
+import { renderDrawer } from './drawer';
 import type { NavNode, SidebarConfig } from './types';
 
 export const SIDEBAR_ID = 'cpd-sidebar';
@@ -120,7 +121,7 @@ export function renderNavNode(node: NavNode, depth = 0, pathname = '/'): string 
   return renderNode(node, depth, { pathname, defaultOpenLevel: 0, dir: 'ltr' });
 }
 
-/** 渲染完整侧边栏（桌面 aside + 移动端抽屉壳） */
+/** 渲染完整侧边栏（桌面 aside + 移动端抽屉；抽屉内容 = 站点导航树 drawerNav） */
 export function renderSidebar(config: SidebarConfig): string {
   const ctx: RenderContext = {
     pathname: config.pathname,
@@ -142,7 +143,7 @@ export function renderSidebar(config: SidebarConfig): string {
           class: 'cpd-btn cpd-btn-ghost cpd-sidebar-collapse',
           type: 'button',
           'data-cpd-collapse': '',
-          'aria-label': 'Collapse Sidebar',
+          'aria-label': config.labels?.collapse ?? 'Collapse Sidebar',
         },
         Icon.panelLeft({ class: 'cpd-sidebar-collapse-icon' }),
       ),
@@ -157,19 +158,16 @@ export function renderSidebar(config: SidebarConfig): string {
     inner,
   );
 
-  // 移动端抽屉（内容在初始化时由 runtime 克隆，避免重复渲染树）
-  const drawer = el(
-    'div',
-    { class: 'cpd-sidebar-drawer', 'data-cpd-drawer': '', 'data-cpd-open': 'false' },
-    [
-      el('div', { class: 'cpd-sidebar-drawer-overlay', 'data-cpd-drawer-overlay': '' }, ''),
-      el(
-        'aside',
-        { class: 'cpd-sidebar-drawer-panel', 'aria-label': 'Sidebar' },
-        el('div', { class: 'cpd-sidebar-drawer-content', 'data-cpd-drawer-content': '' }, ''),
-      ),
-    ],
-  );
+  // 移动端抽屉：复用 Drawer 组件（右侧滑入；内容 = 全站导航树，
+  // 四组导航默认展开、项目子树默认折叠；由 runtime 将面板移出侧栏容器到 body）
+  const drawer = renderDrawer({
+    id: 'cpd-nav-drawer',
+    title: config.title ?? '',
+    closeLabel: config.labels?.close,
+    content: config.drawerNav
+      ? el('nav', { class: 'cpd-nav-drawer-tree', 'aria-label': config.labels?.tree ?? 'Site navigation' }, config.drawerNav.map((n) => renderNode(n, 0, ctx)).join(''))
+      : '',
+  });
 
   return `<div class="cpd-sidebar-root" data-cpd-sidebar-root dir="${ctx.dir}">${aside}${drawer}</div>`;
 }

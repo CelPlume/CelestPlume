@@ -82,25 +82,21 @@ function initSidebar(root: ParentNode): void {
 
   const desktop = sidebarRoot.querySelector<HTMLElement>('#cpd-sidebar');
   const drawer = sidebarRoot.querySelector<HTMLElement>('[data-cpd-drawer]');
-  const drawerContent = drawer?.querySelector<HTMLElement>('[data-cpd-drawer-content]');
 
-  // 抽屉内容：克隆桌面端侧边栏（避免重复渲染导航树）
-  if (desktop && drawerContent) {
-    const clone = desktop.querySelector('.cpd-sidebar-inner')?.cloneNode(true) as HTMLElement | null;
-    if (clone) drawerContent.appendChild(clone);
+  // 抽屉移出侧栏容器到 body：fixed 面板不能活在滚动/隐藏容器里
+  // （容器 display:none 连坐导致面板尺寸归零；容器的层叠上下文会把
+  // 抽屉压到正文/TOC 之下——实测侧栏 shell 内 z-index:60 输给 TOC）。
+  if (drawer) {
+    document.body.appendChild(drawer);
   }
-
-  const setDrawer = (open: boolean) => {
-    drawer?.setAttribute('data-cpd-open', open ? 'true' : 'false');
-  };
 
   root.addEventListener('click', (event) => {
     const target = isElement(event.target) ? event.target : null;
     if (!target) return;
 
-    // 折叠分组
+    // 折叠分组（桌面栏 + 抽屉内的导航树共用）
     const toggle = closest<HTMLElement>(target, '[data-cpd-folder-toggle]');
-    if (toggle && sidebarRoot.contains(toggle)) {
+    if (toggle && (sidebarRoot.contains(toggle) || drawer?.contains(toggle))) {
       const folder = closest<HTMLElement>(toggle, '[data-cpd-folder]');
       if (folder) {
         const open = folder.getAttribute('data-cpd-open') !== 'true';
@@ -128,23 +124,6 @@ function initSidebar(root: ParentNode): void {
       layout?.setAttribute('data-cpd-collapsed', 'false');
       return;
     }
-
-    // 移动端抽屉：打开（页头触发）、关闭（overlay / 链接点击）
-    if (target.closest('[data-cpd-drawer-trigger]')) {
-      setDrawer(true);
-      return;
-    }
-    if (target.closest('[data-cpd-drawer-overlay]')) {
-      setDrawer(false);
-      return;
-    }
-    if (drawer?.contains(target) && closest<HTMLElement>(target, 'a[href]')) {
-      setDrawer(false);
-    }
-  });
-
-  root.addEventListener('keydown', (event: Event) => {
-    if ((event as KeyboardEvent).key === 'Escape') setDrawer(false);
   });
 }
 
@@ -413,6 +392,26 @@ function initAccordions(root: ParentNode): void {
   window.addEventListener('hashchange', openFromHash);
 }
 
+function initCodeTabs(root: ParentNode): void {
+  root.addEventListener('click', (event) => {
+    const target = isElement(event.target) ? event.target : null;
+    const trigger = target ? closest<HTMLElement>(target, '[data-cpd-code-tab]') : null;
+    if (!trigger) return;
+    const figure = closest<HTMLElement>(trigger, '[data-cpd-code]');
+    if (!figure) return;
+    const value = trigger.getAttribute('data-value');
+    if (!value) return;
+    figure.querySelectorAll<HTMLElement>('[data-cpd-code-tab]').forEach((t) => {
+      const active = t.getAttribute('data-value') === value;
+      t.setAttribute('data-active', active ? 'true' : 'false');
+      t.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    figure.querySelectorAll<HTMLElement>('[data-cpd-code-panel]').forEach((panel) => {
+      panel.setAttribute('data-active', panel.getAttribute('data-value') === value ? 'true' : 'false');
+    });
+  });
+}
+
 function initCopy(root: ParentNode): void {
   root.addEventListener('click', (event) => {
     const target = isElement(event.target) ? event.target : null;
@@ -421,7 +420,10 @@ function initCopy(root: ParentNode): void {
     const copy = closest<HTMLElement>(target, '[data-cpd-copy]');
     if (copy) {
       const code = closest<HTMLElement>(copy, '[data-cpd-code]');
-      const pre = code?.querySelector<HTMLElement>('[data-cpd-code-pre]');
+      // 单代码块复制整体；多 tab 复制当前激活面板
+      const pre =
+        code?.querySelector<HTMLElement>('[data-cpd-code-pre]') ??
+        code?.querySelector<HTMLElement>('[data-cpd-code-panel][data-active="true"]');
       if (pre) {
         void copyText(pre.textContent ?? '').then((ok) => {
           if (ok) flashCopyButton(copy);
@@ -508,6 +510,251 @@ function initAstroCodeCopy(root: ParentNode): void {
 }
 
 /* ============================================================
+   Tree 折叠（文档正文/预览里的文件夹行；
+   侧边栏与抽屉内的折叠由 initSidebar 负责，这里只处理外部树）
+   ============================================================ */
+
+function initTreeFolders(root: ParentNode): void {
+  root.addEventListener('click', (event) => {
+    const target = isElement(event.target) ? event.target : null;
+    if (!target) return;
+    const toggle = closest<HTMLElement>(target, '[data-cpd-folder-toggle]');
+    if (!toggle) return;
+    // 侧边栏与抽屉内的折叠分组由 initSidebar 托管，避免重复触发
+    if (toggle.closest('[data-cpd-sidebar-root], [data-cpd-drawer]')) return;
+    const folder = closest<HTMLElement>(toggle, '[data-cpd-folder]');
+    if (!folder) return;
+    const open = folder.getAttribute('data-cpd-open') !== 'true';
+    folder.setAttribute('data-cpd-open', open ? 'true' : 'false');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+}
+
+/* ============================================================
+   Dropdown（点击触发、hover 可选、外点/Escape 关闭、项点击关闭）
+   ============================================================ */
+
+export function initDropdowns(root: ParentNode = document): void {
+  const CLOSE_DELAY_MS = 150;
+
+  // Portal 语义：fixed 菜单定位到触发按钮下方（sideOffset 8）
+  const positionMenu = (dd: HTMLElement): void => {
+    const trigger = dd.querySelector<HTMLElement>('[data-cpd-dropdown-trigger]');
+    const menu = dd.querySelector<HTMLElement>('[data-cpd-dropdown-menu]');
+    if (!trigger || !menu) return;
+    const rect = trigger.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+    menu.style.top = `${rect.bottom + 8}px`;
+    menu.style.left = `${rect.left}px`;
+  };
+  const positionOpenMenus = () => {
+    root.querySelectorAll<HTMLElement>('[data-cpd-dropdown][data-open="true"]').forEach(positionMenu);
+  };
+
+  const setOpen = (dd: HTMLElement, open: boolean): void => {
+    dd.setAttribute('data-open', open ? 'true' : 'false');
+    dd.querySelector<HTMLElement>('[data-cpd-dropdown-trigger]')?.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) positionMenu(dd);
+  };
+
+  // 初始即展开的菜单（文档预览 open:true）按触发按钮定位
+  positionOpenMenus();
+  // 滚动/缩放时保持与触发按钮对齐（与导航 dropdown 一致的浮层语义）
+  window.addEventListener('scroll', positionOpenMenus, true);
+  window.addEventListener('resize', positionOpenMenus);
+
+  // hover 模式（站点导航项目菜单）：进入打开、移出 150ms 延迟关闭
+  root.querySelectorAll<HTMLElement>('[data-cpd-dropdown][data-cpd-hover]').forEach((dd) => {
+    let closeTimer = 0;
+    dd.addEventListener('mouseenter', () => {
+      window.clearTimeout(closeTimer);
+      setOpen(dd, true);
+    });
+    dd.addEventListener('mouseleave', () => {
+      closeTimer = window.setTimeout(() => setOpen(dd, false), CLOSE_DELAY_MS);
+    });
+  });
+
+  // 键盘导航：触发打开、菜单内方向键循环、Escape/Tab 关闭
+  const focusableItems = (menu: HTMLElement): HTMLElement[] =>
+    Array.from(menu.querySelectorAll<HTMLElement>('a[href], [tabindex]'));
+
+  root.addEventListener('keydown', (event: Event) => {
+    const e = event as KeyboardEvent;
+    const target = isElement(e.target) ? e.target : null;
+    if (!target) return;
+
+    const trigger = closest<HTMLElement>(target, '[data-cpd-dropdown-trigger]');
+    if (trigger) {
+      const dd = closest<HTMLElement>(trigger, '[data-cpd-dropdown]');
+      if (!dd) return;
+      const menu = dd.querySelector<HTMLElement>('[data-cpd-dropdown-menu]');
+      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setOpen(dd, true);
+        focusableItems(menu ?? dd)[0]?.focus();
+      } else if (e.key === 'Escape') {
+        setOpen(dd, false);
+      }
+      return;
+    }
+
+    const menu = closest<HTMLElement>(target, '[data-cpd-dropdown-menu]');
+    if (!menu) return;
+    const dd = closest<HTMLElement>(menu, '[data-cpd-dropdown]');
+    if (!dd) return;
+    const items = focusableItems(menu);
+    const idx = items.indexOf(target as HTMLElement);
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      items[(idx + 1) % items.length]?.focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      items[(idx - 1 + items.length) % items.length]?.focus();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      items[0]?.focus();
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      items[items.length - 1]?.focus();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      setOpen(dd, false);
+      dd.querySelector<HTMLElement>('[data-cpd-dropdown-trigger]')?.focus();
+    } else if (e.key === 'Tab') {
+      setOpen(dd, false);
+    }
+  });
+
+  root.addEventListener('click', (event) => {
+    const target = isElement(event.target) ? event.target : null;
+    if (!target) return;
+
+    const trigger = closest<HTMLElement>(target, '[data-cpd-dropdown-trigger]');
+    if (trigger) {
+      const dd = closest<HTMLElement>(trigger, '[data-cpd-dropdown]');
+      if (!dd) return;
+      setOpen(dd, dd.getAttribute('data-open') !== 'true');
+      return;
+    }
+
+    const item = closest<HTMLElement>(target, '[data-cpd-dropdown-item]');
+    if (item) {
+      if (item.hasAttribute('data-disabled')) return;
+      const dd = closest<HTMLElement>(item, '[data-cpd-dropdown]');
+      if (dd) setOpen(dd, false);
+      return;
+    }
+
+    // 点击菜单外任意处关闭
+    if (!target.closest('[data-cpd-dropdown]')) {
+      root.querySelectorAll<HTMLElement>('[data-cpd-dropdown][data-open="true"]').forEach((dd) => setOpen(dd, false));
+    }
+  });
+
+  root.addEventListener('keydown', (event: Event) => {
+    if ((event as KeyboardEvent).key !== 'Escape') return;
+    root.querySelectorAll<HTMLElement>('[data-cpd-dropdown][data-open="true"]').forEach((dd) => setOpen(dd, false));
+  });
+}
+
+/* ============================================================
+   Modal（弹窗：触发打开、遮罩/Escape/关闭按钮关闭）
+   ============================================================ */
+
+function initModals(root: ParentNode): void {
+  const closeModal = (m: HTMLElement): void => {
+    m.setAttribute('data-open', 'false');
+    m.querySelector<HTMLElement>('[data-cpd-modal-trigger]')?.setAttribute('aria-expanded', 'false');
+  };
+
+  root.addEventListener('click', (event) => {
+    const target = isElement(event.target) ? event.target : null;
+    if (!target) return;
+
+    const trigger = closest<HTMLElement>(target, '[data-cpd-modal-trigger]');
+    if (trigger) {
+      const targetId = trigger.getAttribute('data-cpd-modal-target');
+      const modal = targetId
+        ? root.querySelector<HTMLElement>(`[data-cpd-modal][id="${CSS.escape(targetId)}"]`)
+        : null;
+      if (modal) {
+        modal.setAttribute('data-open', 'true');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+      return;
+    }
+
+    const holder = target.closest<HTMLElement>('[data-cpd-modal]');
+    if (!holder) return;
+    // 关闭按钮 / 点击遮罩（面板外）关闭
+    if (target.closest('[data-cpd-modal-close]')) {
+      closeModal(holder);
+      return;
+    }
+    if (target.closest('[data-cpd-modal-overlay]') && !target.closest('.cpd-modal-panel')) {
+      closeModal(holder);
+    }
+  });
+
+  root.addEventListener('keydown', (event: Event) => {
+    if ((event as KeyboardEvent).key !== 'Escape') return;
+    root.querySelectorAll<HTMLElement>('[data-cpd-modal][data-open="true"]').forEach(closeModal);
+  });
+}
+
+/* ============================================================
+   通用 Drawer（每个抽屉独立开关；与导航抽屉分离，文档演示互不干扰）
+   ============================================================ */
+
+function initDrawers(root: ParentNode): void {
+  const allDrawers = (): NodeListOf<HTMLElement> =>
+    root.querySelectorAll<HTMLElement>('[data-cpd-drawer]');
+
+  const openDrawer = (box: HTMLElement, open: boolean) => {
+    box.setAttribute('data-cpd-open', open ? 'true' : 'false');
+  };
+
+  root.addEventListener('click', (event) => {
+    const target = isElement(event.target) ? event.target : null;
+    if (!target) return;
+
+    // 打开：trigger 用 data-cpd-drawer-target 显式指定目标抽屉 id
+    const trigger = closest<HTMLElement>(target, '[data-cpd-drawer-trigger]');
+    if (trigger) {
+      const targetId = trigger.getAttribute('data-cpd-drawer-target');
+      const box = targetId
+        ? root.querySelector<HTMLElement>(`[data-cpd-drawer][id="${CSS.escape(targetId)}"]`)
+        : null;
+      if (box) {
+        openDrawer(box, box.getAttribute('data-cpd-open') !== 'true');
+        trigger.setAttribute('aria-expanded', box.getAttribute('data-cpd-open') === 'true' ? 'true' : 'false');
+      }
+      return;
+    }
+
+    // 关闭：遮罩 / 关闭按钮 / 抽屉内链接 → 关闭点击所在的抽屉
+    const holder = target.closest<HTMLElement>('[data-cpd-drawer]');
+    if (holder) {
+      if (
+        target.closest('[data-cpd-drawer-overlay]') ||
+        target.closest('[data-cpd-drawer-close]') ||
+        target.closest('a[href]')
+      ) {
+        openDrawer(holder, false);
+      }
+    }
+  });
+
+  root.addEventListener('keydown', (event: Event) => {
+    if ((event as KeyboardEvent).key !== 'Escape') return;
+    allDrawers().forEach((d) => {
+      if (d.getAttribute('data-cpd-open') === 'true') openDrawer(d, false);
+    });
+  });
+}
+
+/* ============================================================
    入口
    ============================================================ */
 
@@ -524,8 +771,13 @@ export function initCelestialUI(options: CelestialUiOptions = {}): () => void {
   const root = options.root ?? document;
 
   initSidebar(root);
+  initDrawers(root);
+  initTreeFolders(root);
+  initDropdowns(root);
+  initModals(root);
   initToc(root);
   initTabs(root);
+  initCodeTabs(root);
   initAccordions(root);
   initCopy(root);
   initAstroCodeCopy(root);

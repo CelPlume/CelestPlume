@@ -1,0 +1,920 @@
+/* ============================================================
+   CelestPlume — Site Nav（首页 / 文档页共用顶部导航）
+   ------------------------------------------------------------
+   单一事实来源：.cp-nav 系列样式（品牌 / 四项导航 / 项目 dropdown /
+   搜索 / 主题·语言切换）供 src/components/SiteNav.astro 使用，两端同构。
+   配色跟随主题：深色模式为深蓝夜三色（品牌）；浅色模式为白底 + 中性灰
+   （主页经 :root[data-home-theme='light']、文档页经
+   html[data-cpd-theme='light'] 各自触发）。交互组件（dropdown / 搜索
+   弹窗）：中性表面 + 细边框 + 灰色 hover 遮罩，无金色强调。
+   加载：主页经 Home.astro frontmatter 引入；文档页经 Starlight
+   customCss 引入。旧的 .cp-nav 样式已从 celestial.css 迁出。
+   ============================================================ */
+
+/* —— 深色兜底调色板（主页深色 & 文档页深色共用；浅色由下方主题块覆盖） —— */
+:where(.cp-nav) {
+  --cp-night-deep: #0a0f1c;
+  --cp-night: #0f1626;
+  --cp-night-soft: #1a2438;
+  --cp-night-light: #2a3753;
+  --cp-pearl: #f8f5ef;
+  --cp-pearl-soft: #efeae0;
+  --cp-gold: #d4af6c;
+  --cp-gold-soft: #e8cd98;
+  --cp-gold-pale: #f3e4c2;
+  --cp-silver: #c9d1d9;
+  --cp-silver-soft: #e4e8ec;
+  --cp-moonlight: #b8c5d6;
+  --cp-surface: rgba(255, 255, 255, 0.04);
+  --cp-surface-hover: rgba(255, 255, 255, 0.07);
+  --cp-surface-strong: rgba(255, 255, 255, 0.06);
+  --cp-border: rgba(255, 255, 255, 0.12);
+  --cp-border-strong: rgba(255, 255, 255, 0.2);
+  --cp-border-hover: rgba(255, 255, 255, 0.3);
+}
+
+/* —— 文档页浅色（data-cpd-theme='light'）：白底导航 + 中性灰边框 —— */
+html[data-cpd-theme='light'] :where(.cp-nav) {
+  --cp-night-deep: #ffffff;
+  --cp-night: #faf8f3;
+  --cp-night-soft: #f6f2ea;
+  --cp-night-light: #ffffff;
+  --cp-pearl: #1a1a2e;
+  --cp-pearl-soft: #3a3a50;
+  --cp-gold: #a8813a;
+  --cp-gold-soft: #c69d53;
+  --cp-gold-pale: #8a6a2a;
+  --cp-silver: #6b7280;
+  --cp-silver-soft: #5f6a7a;
+  --cp-moonlight: #5a6578;
+  --cp-surface: rgba(26, 26, 46, 0.03);
+  --cp-surface-hover: rgba(26, 26, 46, 0.05);
+  --cp-border: rgba(26, 26, 46, 0.12);
+  --cp-border-strong: rgba(26, 26, 46, 0.2);
+  --cp-border-hover: rgba(26, 26, 46, 0.3);
+  --cp-nav-menu-bg: #ffffff;
+  --cp-nav-menu-border: rgba(26, 26, 46, 0.1);
+  color-scheme: light;
+}
+
+/* —— 主页浅色（data-home-theme='light'）：覆盖 celestial.css 中的金色 hover —— */
+:root[data-home-theme='light'] .cp-nav {
+  --cp-nav-border: rgba(26, 26, 46, 0.12);
+  --cp-nav-menu-bg: #ffffff;
+  --cp-nav-menu-border: rgba(26, 26, 46, 0.1);
+  --cp-nav-link-hover-bg: rgba(26, 26, 46, 0.05);
+  --cp-nav-btn-hover-bg: rgba(26, 26, 46, 0.05);
+  --cp-nav-menu-item-hover-bg: rgba(26, 26, 46, 0.05);
+}
+
+/* —— 主题变量 —— */
+.cp-nav {
+  --cp-nav-height: var(--sl-nav-height, 4.5rem);
+  --cp-nav-bg: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--cp-night-deep) 85%, transparent),
+    color-mix(in srgb, var(--cp-night-deep) 55%, transparent)
+  );
+  --cp-nav-border: var(--cp-border);
+  --cp-nav-link-fg: var(--cp-silver-soft);
+  --cp-nav-link-hover-fg: var(--cp-pearl);
+  --cp-nav-link-hover-bg: var(--cp-surface-hover);
+  --cp-nav-btn-fg: var(--cp-pearl);
+  --cp-nav-btn-hover-fg: var(--cp-pearl);
+  --cp-nav-btn-hover-bg: var(--cp-surface-hover);
+  /* 菜单浮层：中性表面 + 细边框，hover 仅灰色遮罩 */
+  --cp-nav-menu-bg: var(--cp-night-light);
+  --cp-nav-menu-border: var(--cp-border);
+  --cp-nav-menu-item-fg: var(--cp-pearl);
+  --cp-nav-menu-item-hover-bg: var(--cp-surface-hover);
+  --cp-nav-brand-fg-a: var(--cp-pearl);
+  --cp-nav-brand-fg-b: var(--cp-gold-soft);
+  --cp-nav-serif: var(--cpd-font-serif, var(--font-display));
+}
+
+/* —— 导航骨架 —— */
+.cp-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: var(--cp-nav-height);
+  background: var(--cp-nav-bg);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+  border-bottom: 1px solid var(--cp-nav-border);
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+.cp-nav-inner {
+  height: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.cp-nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+  justify-self: start;
+}
+.cp-nav-logo {
+  height: 42px;
+  width: auto;
+  display: block;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.cp-nav-brand-name {
+  font-family: var(--cp-nav-serif);
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  background: linear-gradient(135deg, var(--cp-nav-brand-fg-a), var(--cp-nav-brand-fg-b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+:root[data-home-theme='light'] .cp-nav-brand-name {
+  /* 主页浅色模式：固定深蓝→金渐变（避免浅底上发灰） */
+  background: linear-gradient(135deg, #1a1a2e, #a8813a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.cp-nav-links {
+  justify-self: center;
+  display: flex;
+}
+.cp-nav-links ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: none;
+  gap: 0.25rem;
+  align-items: center;
+}
+.cp-nav-links > ul > li > a {
+  display: inline-block;
+  padding: 0.55rem 0.95rem;
+  border-radius: 10px;
+  color: var(--cp-nav-link-fg);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.cp-nav-links > ul > li > a:hover {
+  color: var(--cp-nav-link-hover-fg);
+  background: var(--cp-nav-link-hover-bg);
+}
+@media (min-width: 900px) {
+  .cp-nav-links ul {
+    display: inline-flex;
+  }
+}
+
+/* —— 项目 dropdown（复用 Kit Dropdown 组件，双主题硬编码对齐） —— */
+.cp-nav-drop-btn.cpd-dropdown-trigger {
+  gap: 0.5rem;
+  padding: 0.55rem 0.95rem;
+  border: none;
+  border-radius: 10px;
+  background: none;
+  color: var(--cp-nav-link-fg);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.cp-nav-drop-btn.cpd-dropdown-trigger:hover {
+  color: var(--cp-nav-link-hover-fg);
+  background: var(--cp-nav-link-hover-bg);
+}
+.cp-nav-drop-btn .cp-nav-drop-chevron {
+  width: 0.9rem;
+  height: 0.9rem;
+  opacity: 0.7;
+  transition: transform 0.2s ease;
+}
+.cpd-dropdown[data-open='true'] .cp-nav-drop-chevron {
+  transform: rotate(180deg);
+}
+/* 导航内的菜单项是 <a>：压过 .cp-nav-links a 的 0.9rem 继承，回归 13px */
+.cp-nav-links .cpd-dropdown-item {
+  display: flex;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+/* —— 右侧操作区（主题 / 语言 / 文档页插槽 / 主页搜索） —— */
+.cp-nav-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-self: end;
+}
+.cp-nav-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--cp-nav-btn-fg);
+  background: none;
+  font-family: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.cp-nav-action:hover {
+  color: var(--cp-nav-btn-hover-fg);
+  background: var(--cp-nav-btn-hover-bg);
+}
+.cp-nav-action .cp-nav-action-txt {
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+}
+.cp-nav-action svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+}
+
+/* 主题按钮: 三态 —— 深色→月亮, 浅色→太阳, 跟随系统→显示器（按模式显示，与文档页一致） */
+#cp-theme-toggle .cp-icon-sun,
+#cp-theme-toggle .cp-icon-moon,
+#cp-theme-toggle .cp-icon-system {
+  display: none;
+}
+:root[data-home-theme-mode='dark'] #cp-theme-toggle .cp-icon-moon {
+  display: block;
+}
+:root[data-home-theme-mode='light'] #cp-theme-toggle .cp-icon-sun {
+  display: block;
+}
+:root[data-home-theme-mode='system'] #cp-theme-toggle .cp-icon-system {
+  display: block;
+}
+
+/* —— 键盘焦点（中性 outline ring） —— */
+.cp-nav a:focus-visible,
+.cp-nav button:focus-visible {
+  outline: 2px solid var(--cp-nav-link-hover-fg);
+  outline-offset: 1px;
+}
+
+/* ============================================================
+   主页搜索（SiteSearch.astro，Plumest 窄版触发按钮 + Pagefind modal）
+   文档页搜索仍用 Starlight 自带 <site-search>（sl- 类），此处仅主页。
+   ============================================================ */
+.cp-search {
+  display: contents;
+}
+.cp-search-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 11.5rem;
+  height: 2.25rem;
+  padding: 0 0.65rem;
+  border: 1px solid var(--cp-nav-border);
+  border-radius: 8px;
+  background: var(--cp-surface);
+  color: var(--cp-nav-link-fg);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+.cp-search-btn:hover {
+  border-color: var(--cp-nav-border);
+  color: var(--cp-nav-btn-hover-fg);
+  background: var(--cp-nav-btn-hover-bg);
+}
+.cp-search-btn svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+.cp-search-txt {
+  flex: 1;
+  text-align: start;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cp-search-kbd {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+  padding: 0.1rem 0.35rem;
+  border: 1px solid var(--cp-nav-border);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--cp-nav-menu-bg) 60%, transparent);
+  color: var(--cp-nav-link-fg);
+  font-family: inherit;
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  opacity: 0.75;
+}
+
+/* 搜索弹层（遮罩 + blur + 中性卡片，跟随主题） */
+.cp-search-dialog {
+  position: relative;
+  margin: 4.5rem auto auto;
+  padding: 0;
+  width: 90%;
+  max-width: 40rem;
+  border: none;
+  border-radius: 20px;
+  background: #ffffff;
+  color: var(--cp-pearl);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.08),
+    0 2px 4px -2px rgb(0 0 0 / 0.08);
+}
+:root[data-home-theme='dark'] .cp-search-dialog {
+  background: hsl(0 0% 9.8%);
+}
+.cp-search-dialog[open] {
+  display: block;
+  /* 出现样式与 Modal 组件同步：fade + zoom-in-95（150ms ease） */
+  animation: cp-search-modal-in 150ms ease;
+}
+.cp-search-dialog::backdrop {
+  background: rgba(3, 6, 12, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: cp-search-backdrop-in 150ms ease;
+}
+@keyframes cp-search-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes cp-search-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.cp-search-close {
+  position: absolute;
+  top: 1rem;
+  inset-inline-end: 1rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: hsl(0 0% 45.1%);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+:root[data-home-theme='dark'] .cp-search-close {
+  color: hsl(0 0% 70% / 0.8);
+}
+.cp-search-close:hover {
+  color: hsl(0 0% 9%);
+  background: hsl(0 0% 96.1%);
+}
+:root[data-home-theme='dark'] .cp-search-close:hover {
+  color: hsl(0 0% 92%);
+  background: rgb(255 255 255 / 0.06);
+}
+.cp-search-close svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.cp-search-frame {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+#cp-search-ui {
+  --pagefind-ui-primary: var(--cp-pearl);
+  --pagefind-ui-text: var(--cp-pearl);
+  --pagefind-ui-font: var(--font-sans);
+  --pagefind-ui-background: var(--cp-nav-menu-bg);
+  --pagefind-ui-border: var(--cp-nav-menu-border);
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-tag: var(--cp-surface-hover);
+  --pagefind-ui-radius: 8px;
+  --pagefind-ui-scale: 0.92;
+}
+
+@media (max-width: 899px) {
+  .cp-search-btn {
+    width: 2.25rem;
+    padding: 0;
+    justify-content: center;
+  }
+  .cp-search-txt,
+  .cp-search-kbd {
+    display: none;
+  }
+}
+
+/* ============================================================
+   折叠导航按钮 + 主页抽屉（SiteNav 内置；docs 触发侧边栏抽屉）
+   ------------------------------------------------------------
+   按钮：主页在导航折叠断点（<900px）显示；docs 与侧边栏折叠断点
+   一致（竖屏 <768px）显示，横屏隐藏。
+   ============================================================ */
+.cp-nav-drawer-btn {
+  display: none;
+}
+@media (max-width: 899px) {
+  .cp-nav-drawer-btn {
+    display: inline-flex;
+  }
+}
+@media (min-width: 48rem) {
+  [data-cp-nav-variant='docs'] .cp-nav-drawer-btn {
+    display: none;
+  }
+}
+
+/* 主页抽屉（与文档页 Drawer 同一套样式：中性表面 + 细边框 + blur 遮罩；
+   面板从导航下方开始，不遮导航） */
+.cp-nav-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+.cp-nav-drawer-overlay {
+  position: absolute;
+  top: var(--cp-nav-height, 4.5rem);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+.cp-nav-drawer-panel {
+  position: absolute;
+  top: var(--cp-nav-height, 4.5rem);
+  bottom: 0;
+  inset-inline-end: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(85%, 380px);
+  background: hsl(0 0% 9.8%);
+  border-inline-start: 1px solid hsl(0 0% 40% / 0.2);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.45);
+  transform: translateX(100%);
+  transition: transform 220ms ease;
+  overflow: hidden;
+}
+:root[data-home-theme='light'] .cp-nav-drawer-panel {
+  background: hsl(0 0% 94.7%);
+  border-inline-start-color: hsl(0 0% 80% / 0.5);
+}
+.cp-nav-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 0.75rem 0.75rem 1.25rem;
+  border-bottom: 1px solid hsl(0 0% 40% / 0.2);
+  flex-shrink: 0;
+}
+:root[data-home-theme='light'] .cp-nav-drawer-header {
+  border-bottom-color: hsl(0 0% 80% / 0.5);
+}
+.cp-nav-drawer-title {
+  margin: 0;
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: hsl(0 0% 92%);
+}
+:root[data-home-theme='light'] .cp-nav-drawer-title {
+  color: hsl(0 0% 3.9%);
+}
+.cp-nav-drawer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: hsl(0 0% 92%);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.cp-nav-drawer-close:hover {
+  color: hsl(0 0% 92%);
+  background: hsl(0 0% 40.9% / 0.3);
+}
+:root[data-home-theme='light'] .cp-nav-drawer-close {
+  color: hsl(0 0% 3.9%);
+}
+:root[data-home-theme='light'] .cp-nav-drawer-close:hover {
+  color: hsl(0 0% 3.9%);
+  background: hsl(0 0% 82% / 0.5);
+}
+.cp-nav-drawer-close svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+.cp-nav-drawer-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1rem;
+}
+.cp-nav-drawer[data-cp-open='true'] .cp-nav-drawer-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+.cp-nav-drawer[data-cp-open='true'] .cp-nav-drawer-panel {
+  transform: none;
+  pointer-events: auto;
+}
+.cp-nav-drawer-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.cp-nav-drawer-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 10px;
+  color: var(--cp-nav-menu-item-fg);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: background 0.15s ease;
+}
+.cp-nav-drawer-nav a:hover {
+  background: var(--cp-nav-menu-item-hover-bg);
+}
+.cp-nav-drawer-nav a svg {
+  width: 1rem;
+  height: 1rem;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+.cp-nav-drawer-heading {
+  margin: 0.75rem 0.8rem 0.25rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--cp-nav-menu-item-fg);
+  opacity: 0.85;
+}
+.cp-nav-drawer-foot {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--cp-nav-menu-border);
+}
+.cp-nav-drawer-lang {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 10px;
+  color: var(--cp-nav-menu-item-fg);
+  text-decoration: none;
+  font-size: 0.875rem;
+  transition: background 0.15s ease;
+}
+.cp-nav-drawer-lang:hover {
+  background: var(--cp-nav-menu-item-hover-bg);
+}
+.cp-nav-drawer-lang svg {
+  width: 1rem;
+  height: 1rem;
+  opacity: 0.8;
+}
+
+/* —— 移动端导航压缩：隐藏品牌文字与操作区文字，防止溢出 —— */
+@media (max-width: 899px) {
+  .cp-nav-brand-name {
+    display: none;
+  }
+  .cp-nav-actions .cp-nav-action-txt {
+    display: none;
+  }
+}
+
+
+/* ============================================================
+   Dropdown（Kit 组件：与文档页共用；双主题色值硬编码，浅色默认）
+   ============================================================ */
+.cpd-dropdown {
+  --cpd-dd-bg: #ffffff;
+  --cpd-dd-border: hsl(0 0% 80% / 0.5);
+  --cpd-dd-fg: hsl(0 0% 9%);
+  --cpd-dd-muted: hsl(0 0% 45.1%);
+  --cpd-dd-hover: hsl(0 0% 96.1%);
+  --cpd-dd-soft: hsl(0 0% 93.1%);
+  --cpd-dd-trigger-bg: hsl(0 0% 94.7%);
+  position: relative;
+  display: inline-block;
+}
+:root[data-cpd-theme='dark'] .cpd-dropdown,
+:root[data-home-theme='dark'] .cpd-dropdown {
+  --cpd-dd-bg: hsl(0 0% 9.8%);
+  --cpd-dd-border: hsl(0 0% 40% / 0.2);
+  --cpd-dd-fg: hsl(0 0% 92%);
+  --cpd-dd-muted: hsl(0 0% 70% / 0.8);
+  --cpd-dd-hover: rgb(255 255 255 / 0.06);
+  --cpd-dd-soft: hsl(0 0% 12.9%);
+  --cpd-dd-trigger-bg: hsl(0 0% 9.8%);
+}
+.cpd-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid var(--cpd-dd-border);
+  border-radius: 0.5rem;
+  background: var(--cpd-dd-trigger-bg);
+  color: var(--cpd-dd-fg);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+.cpd-dropdown-trigger:hover {
+  background: var(--cpd-dd-hover);
+}
+.cpd-dropdown-trigger svg {
+  width: 1rem;
+  height: 1rem;
+}
+.cpd-dropdown-menu {
+  /* fixed：逃出任何容器（overflow/层叠），打开时由 runtime 定位到触发按钮下方；
+     宽度 = max-content 自适应最长文本，300px 封顶（可经 width 选项手动指定） */
+  position: fixed;
+  z-index: 60;
+  width: max-content;
+  max-width: 300px;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-radius: 1rem; /* rounded-2xl = 16px */
+  background: var(--cpd-dd-bg);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.08),
+    0 2px 4px -2px rgb(0 0 0 / 0.08);
+  border: 1px solid var(--cpd-dd-border);
+  opacity: 0;
+  transform: translateY(-8px) scale(0.95);
+  pointer-events: none;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+.cpd-dropdown[data-open='true'] .cpd-dropdown-menu {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.cpd-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem; /* rounded-lg = 8px */
+  font-size: 0.8125rem; /* text-paragraph-sm = 13px */
+  line-height: 1;
+  color: var(--cpd-dd-fg);
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  transition: background-color 200ms ease-out;
+}
+.cpd-dropdown-item:hover {
+  background: var(--cpd-dd-hover);
+}
+.cpd-dropdown-item[data-disabled] {
+  color: var(--cpd-dd-muted);
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.cpd-dropdown-item-icon {
+  display: inline-flex;
+  width: 1.25rem; /* size-5 = 20px */
+  height: 1.25rem;
+  flex-shrink: 0;
+  color: var(--cpd-dd-muted);
+}
+.cpd-dropdown-item-icon svg {
+  width: 100%;
+  height: 100%;
+}
+.cpd-dropdown-item-label {
+  flex: 1;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cpd-dropdown-shortcut {
+  font-family: var(--cpd-font-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
+  color: var(--cpd-dd-muted);
+  background: var(--cpd-dd-soft);
+  border: 1px solid var(--cpd-dd-border);
+  border-radius: 4px;
+  padding: 0.0625rem 0.3125rem;
+}
+.cpd-dropdown-label {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.6875rem; /* text-subheading-xs = 11px */
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cpd-dd-muted);
+}
+.cpd-dropdown-separator {
+  height: 1px;
+  margin: 0.25rem 0;
+  background: var(--cpd-dd-border);
+}
+.cpd-dropdown-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+
+/* ============================================================
+   Modal（弹窗：遮罩 blur + 圆角 20 卡片 + header/body/footer；
+   双主题色值硬编码，浅色默认）
+   ============================================================ */
+.cpd-modal {
+  --cpd-modal-bg: #ffffff;
+  --cpd-modal-border: hsl(0 0% 80% / 0.5);
+  --cpd-modal-fg: hsl(0 0% 9%);
+  --cpd-modal-muted: hsl(0 0% 45.1%);
+  --cpd-modal-icon-bg: #ffffff;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+:root[data-cpd-theme='dark'] .cpd-modal,
+:root[data-home-theme='dark'] .cpd-modal {
+  --cpd-modal-bg: hsl(0 0% 9.8%);
+  --cpd-modal-border: hsl(0 0% 40% / 0.2);
+  --cpd-modal-fg: hsl(0 0% 92%);
+  --cpd-modal-muted: hsl(0 0% 70% / 0.8);
+  --cpd-modal-icon-bg: hsl(0 0% 11.6%);
+}
+.cpd-modal-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 1rem;
+  background: rgba(3, 6, 12, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+.cpd-modal[data-open='true'] .cpd-modal-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+.cpd-modal-panel {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 20px;
+  background: var(--cpd-modal-bg);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.08),
+    0 2px 4px -2px rgb(0 0 0 / 0.08);
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+.cpd-modal[data-open='true'] .cpd-modal-panel {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.cpd-modal-close {
+  position: absolute;
+  top: 1rem;
+  inset-inline-end: 1rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 0.375rem;
+  background: none;
+  color: var(--cpd-modal-muted);
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.cpd-modal-close:hover {
+  background: color-mix(in srgb, var(--cpd-modal-fg) 8%, transparent);
+  color: var(--cpd-modal-fg);
+}
+.cpd-modal-close svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.cpd-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 1rem 3.5rem 1rem 1.25rem;
+  border-bottom: 1px solid var(--cpd-modal-border);
+}
+.cpd-modal-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: var(--cpd-modal-icon-bg);
+  border: 1px solid var(--cpd-modal-border);
+  color: var(--cpd-modal-muted);
+}
+.cpd-modal-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.cpd-modal-heading {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.cpd-modal .cpd-modal-title {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--cpd-modal-fg);
+}
+.cpd-modal-desc {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--cpd-modal-muted);
+}
+.cpd-modal-body {
+  padding: 1.25rem;
+  color: var(--cpd-modal-fg);
+}
+.cpd-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-top: 1px solid var(--cpd-modal-border);
+  padding: 1rem 1.25rem;
+}

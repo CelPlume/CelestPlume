@@ -60,6 +60,17 @@ export interface SidebarConfig {
   defaultOpenLevel?: number;
   /** 语言方向 */
   dir?: 'ltr' | 'rtl';
+  /** 移动端抽屉导航树（全站导航：四组导航 + 二级菜单 + 文章树）；缺省则抽屉为空 */
+  drawerNav?: NavNode[];
+  /** 可访问性文案（默认英文） */
+  labels?: {
+    /** 抽屉关闭按钮 aria-label */
+    close?: string;
+    /** 抽屉导航树 aria-label */
+    tree?: string;
+    /** 桌面侧栏折叠按钮 aria-label */
+    collapse?: string;
+  };
 }
 
 /** 目录条目（与 Plumest toc 模型对齐） */

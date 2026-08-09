@@ -19,7 +19,7 @@ import {
   badge,
   kbd,
   themeToggle,
-  linkButton,
+  button,
   pagination,
   heading,
   Icon,
@@ -82,8 +82,8 @@ const copy = {
     : '文件名头 + 一键复制。',
   sectionFiles: 'File Tree',
   sectionFilesDesc: EN
-    ? 'Collapsible folders, zero-JS via native <code>&lt;details&gt;</code>.'
-    : '可折叠文件夹，原生 <code>&lt;details&gt;</code> 零 JS。',
+    ? 'File tree with collapsible folders and indent lines.'
+    : '文件树：可折叠目录 + 缩进线。',
   sectionTokens: 'Design Tokens',
   sectionTokensDesc: EN
     ? 'A sample of the <code>--cpd-*</code> palette. Full tables live in the Styles guide.'
@@ -206,11 +206,12 @@ const navLinks: NavNode[] = [
   },
 ];
 
-const sidebarFooter = `${themeToggle()}${linkButton({
+const sidebarFooter = `${themeToggle()}${button({
   href: 'https://github.com/CelPlume/CelestPlume',
   label: '',
   external: true,
   icon: Icon.github(),
+  variant: 'ghost',
 })}`;
 
 /* ------------------------------------------------------------
@@ -365,6 +366,7 @@ const sidebar = renderSidebar({
   links: [...navLinks],
   tree: [...navTree],
   footer: sidebarFooter,
+  drawerNav: [...navTree],
   pathname,
 });
 const tocHtml = renderToc(tocItems, { title: copy.tocTitle, steps: false });
@@ -372,7 +374,7 @@ const mobileHeader = `
   <header class="cpd-mobile-header">
     <span class="cpd-mobile-header-brand">${EN ? 'CelPlume' : '天空之翼'}</span>
     ${themeToggle()}
-    <button class="cpd-btn cpd-btn-ghost" type="button" data-cpd-drawer-trigger aria-label="${copy.drawerTrigger}">${Icon.panelLeft()}</button>
+    <button class="cpd-btn cpd-btn-ghost" type="button" data-cpd-drawer-trigger data-cpd-drawer-target="cpd-nav-drawer" aria-label="${copy.drawerTrigger}">${Icon.panelLeft()}</button>
   </header>`;
 const expandButton = `
   <button class="cpd-btn cpd-btn-ghost cpd-sidebar-expand" type="button" data-cpd-expand aria-label="Expand Sidebar">${Icon.panelLeft()}</button>`;

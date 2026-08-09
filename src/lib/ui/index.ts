@@ -35,6 +35,8 @@ export {
   getItemOffset as getSidebarItemOffset,
   SIDEBAR_ID,
 } from './sidebar';
+export { renderDrawer } from './drawer';
+export type { DrawerOptions } from './drawer';
 export {
   renderToc,
   renderTocItem,
@@ -62,7 +64,14 @@ export {
   badge,
   kbd,
   themeToggle,
-  linkButton,
+  link,
+  button,
+  dropdown,
+  dropdownItem,
+  dropdownGroup,
+  dropdownLabel,
+  dropdownSeparator,
+  modal,
 } from './components';
 export type {
   CalloutOptions,
@@ -73,12 +82,19 @@ export type {
   BreadcrumbItem,
   PaginationItem,
   PaginationLabels,
-  FolderOptions,
+  TreeFolderOptions,
+  TreeOptions,
   CodeBlockOptions,
   HeadingOptions,
   HeadingLevel,
   BadgeVariant,
-  LinkButtonOptions,
+  LinkOptions,
+  ButtonOptions,
+  ButtonVariant,
+  ButtonSize,
+  DropdownOptions,
+  DropdownItemOptions,
+  ModalOptions,
 } from './components';
 export { initCelestialUI } from './runtime';
 export type { CelestialUiOptions } from './runtime';

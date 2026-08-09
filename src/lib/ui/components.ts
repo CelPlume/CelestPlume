@@ -375,65 +375,371 @@ export function pagination(
 }
 
 /* ============================================================
-   Files（原生 <details> 折叠）
+   Tree（文件夹/文件行 + chevron 旋转 + 可选缩进线；
+   文件夹图标随开关状态切换）
    ============================================================ */
 
 export function file(name: string, icon = Icon.file()): string {
-  return el('div', { class: 'cpd-file' }, [icon, `<span>${name}</span>`]);
+  return el('div', { class: 'cpd-tree-file', role: 'treeitem' }, [icon, `<span>${name}</span>`]);
 }
 
-export interface FolderOptions {
+export interface TreeFolderOptions {
   name: string;
   defaultOpen?: boolean;
+  /** 关闭态文件夹图标（原始 SVG） */
   icon?: string;
+  /** 打开态文件夹图标（原始 SVG） */
   openIcon?: string;
 }
 
-export function folder(children: string, options: FolderOptions): string {
-  const icon = options.defaultOpen ? (options.openIcon ?? Icon.folderOpen()) : (options.icon ?? Icon.folder());
-  return el('details', { class: 'cpd-folder', 'data-cpd-folder': '', open: options.defaultOpen ? true : undefined }, [
-    el('summary', { class: 'cpd-folder-trigger' }, [icon, `<span>${options.name}</span>`]),
-    el('div', { class: 'cpd-folder-content' }, children),
-  ]);
+export function folder(children: string, options: TreeFolderOptions): string {
+  const open = options.defaultOpen ?? false;
+  const icon = options.icon ?? Icon.folder();
+  const openIcon = options.openIcon ?? Icon.folderOpen();
+
+  const trigger = el(
+    'button',
+    {
+      class: 'cpd-tree-folder-trigger',
+      type: 'button',
+      'data-cpd-folder-toggle': '',
+      'aria-expanded': open ? 'true' : 'false',
+    },
+    [
+      Icon.chevronRight({ class: 'cpd-tree-chevron' }),
+      el('span', { class: 'cpd-tree-folder-icon' }, [
+        el('span', { 'data-icon': 'closed', 'aria-hidden': 'true' }, icon),
+        el('span', { 'data-icon': 'open', 'aria-hidden': 'true' }, openIcon),
+      ]),
+      `<span>${options.name}</span>`,
+    ],
+  );
+
+  return el(
+    'div',
+    { class: 'cpd-tree-folder', 'data-cpd-folder': '', 'data-cpd-open': open ? 'true' : 'false' },
+    [
+      trigger,
+      el(
+        'div',
+        { class: 'cpd-tree-folder-content', 'data-cpd-folder-content': '' },
+        el('div', { class: 'cpd-tree-folder-content-inner' }, children),
+      ),
+    ],
+  );
 }
 
-export function files(children: string): string {
-  return el('div', { class: 'cpd-files' }, children);
+export interface TreeOptions {
+  /** 显示子级缩进线（「无缩进线」模式；默认 true） */
+  lines?: boolean;
+}
+
+export function files(children: string, options: TreeOptions = {}): string {
+  const lines = options.lines ?? true;
+  return el(
+    'div',
+    { class: 'cpd-tree', role: 'tree', 'data-cpd-lines': lines ? 'true' : 'false' },
+    children,
+  );
 }
 
 /* ============================================================
-   CodeBlock
+   Dropdown（自适应宽面板、16px 圆角、8px 内边距、灰遮罩 hover、
+   fade+zoom+slide 开合动画）
    ============================================================ */
+
+export interface DropdownItemOptions {
+  label: string;
+  /** 前置图标（原始 SVG，20px） */
+  icon?: string;
+  /** 右侧快捷键提示（kbd） */
+  shortcut?: string;
+  disabled?: boolean;
+  /** 提供 href 时渲染为 <a>（点击后关闭菜单） */
+  href?: string;
+}
+
+export function dropdownItem(options: DropdownItemOptions): string {
+  const attrs: Attrs = {
+    class: 'cpd-dropdown-item',
+    role: 'menuitem',
+    'data-cpd-dropdown-item': '',
+  };
+  if (options.disabled) attrs['data-disabled'] = '';
+  const content = [
+    options.icon ? el('span', { class: 'cpd-dropdown-item-icon' }, options.icon) : '',
+    el('span', { class: 'cpd-dropdown-item-label' }, options.label),
+    options.shortcut ? el('kbd', { class: 'cpd-dropdown-shortcut' }, options.shortcut) : '',
+  ].join('');
+  if (options.href) {
+    return el('a', { ...attrs, href: options.href }, content);
+  }
+  return el('div', attrs, content);
+}
+
+/** 分组标题（11px 大写弱色） */
+export function dropdownLabel(label: string): string {
+  return el('p', { class: 'cpd-dropdown-label' }, label);
+}
+
+/** 分隔线 */
+export function dropdownSeparator(): string {
+  return el('div', { class: 'cpd-dropdown-separator', role: 'separator' }, '');
+}
+
+/** 分组：可选标题 + 若干菜单项 */
+export function dropdownGroup(label: string | undefined, items: string): string {
+  return el('div', { class: 'cpd-dropdown-group', role: 'group' }, [
+    label ? dropdownLabel(label) : '',
+    items,
+  ]);
+}
+
+export interface DropdownOptions {
+  /** 触发按钮内容（任意 HTML） */
+  trigger: string;
+  /** 菜单内容（dropdownItem / dropdownGroup / dropdownSeparator） */
+  content: string;
+  /** 初始是否展开（文档预览用；默认 false） */
+  open?: boolean;
+  /** 菜单宽度（默认自适应，封顶 300px） */
+  width?: string;
+  /** hover 打开 / 移出延迟关闭（站点导航项目菜单用） */
+  hover?: boolean;
+  /** 触发按钮附加类（自定义样式，如导航链接样式） */
+  triggerClass?: string;
+}
+
+export function dropdown(options: DropdownOptions): string {
+  const open = options.open ?? false;
+  return el(
+    'div',
+    {
+      class: 'cpd-dropdown',
+      'data-cpd-dropdown': '',
+      'data-open': open ? 'true' : 'false',
+      ...(options.hover ? { 'data-cpd-hover': '' } : {}),
+    },
+    [
+      el(
+        'button',
+        {
+          class: `cpd-dropdown-trigger${options.triggerClass ? ` ${options.triggerClass}` : ''}`,
+          type: 'button',
+          'data-cpd-dropdown-trigger': '',
+          'aria-haspopup': 'menu',
+          'aria-expanded': open ? 'true' : 'false',
+        },
+        options.trigger,
+      ),
+      el(
+        'div',
+        {
+          class: 'cpd-dropdown-menu',
+          role: 'menu',
+          'data-cpd-dropdown-menu': '',
+          'data-open': open ? 'true' : 'false',
+          ...(options.width ? { style: `width:${options.width}` } : {}),
+        },
+        options.content,
+      ),
+    ],
+  );
+}
+
+/* ============================================================
+   Modal（弹窗：遮罩 blur + 圆角 20 卡片 + header/body/footer；
+   触发按钮用 data-cpd-modal-trigger + data-cpd-modal-target 指向 id）
+   ============================================================ */
+
+export interface ModalOptions {
+  id: string;
+  title: string;
+  description?: string;
+  /** 头部圆形图标（原始 SVG，40px 圆环） */
+  icon?: string;
+  /** 主体 HTML */
+  content: string;
+  /** 底部操作区 HTML（如 button() 输出） */
+  footer?: string;
+  /** 初始是否打开（默认 false） */
+  open?: boolean;
+  /** 关闭按钮 aria-label（默认 Close） */
+  closeLabel?: string;
+  /** 面板最大宽度（默认 400px） */
+  width?: string;
+}
+
+export function modal(options: ModalOptions): string {
+  const open = options.open ?? false;
+  const closeLabel = options.closeLabel ?? 'Close';
+
+  const headerIcon = options.icon
+    ? el('div', { class: 'cpd-modal-icon' }, options.icon)
+    : '';
+  const heading =
+    options.title || options.description
+      ? el('div', { class: 'cpd-modal-heading' }, [
+          options.title ? el('h3', { class: 'cpd-modal-title' }, options.title) : '',
+          options.description ? el('p', { class: 'cpd-modal-desc' }, options.description) : '',
+        ])
+      : '';
+  const header = headerIcon || heading ? el('div', { class: 'cpd-modal-header' }, [headerIcon, heading]) : '';
+
+  return el(
+    'div',
+    {
+      class: 'cpd-modal',
+      'data-cpd-modal': '',
+      'data-open': open ? 'true' : 'false',
+      ...(options.id ? { id: options.id } : {}),
+    },
+    [
+      el('div', { class: 'cpd-modal-overlay', 'data-cpd-modal-overlay': '' }, [
+        el(
+          'div',
+          {
+            class: 'cpd-modal-panel',
+            role: 'dialog',
+            'aria-modal': 'true',
+            'aria-label': options.title,
+            ...(options.width ? { style: `max-width:${options.width}` } : {}),
+          },
+          [
+            el(
+              'button',
+              {
+                class: 'cpd-modal-close',
+                type: 'button',
+                'data-cpd-modal-close': '',
+                'aria-label': closeLabel,
+              },
+              Icon.x({}),
+            ),
+            header,
+            el('div', { class: 'cpd-modal-body' }, options.content),
+            options.footer ? el('div', { class: 'cpd-modal-footer' }, options.footer) : '',
+          ],
+        ),
+      ]),
+    ],
+  );
+}
+
+/* ============================================================
+   CodeBlock（Snippet 风格：header 条 + tabs + 复制按钮）
+   ============================================================ */
+
+export interface CodeBlockTab {
+  label: string;
+  code: string;
+}
 
 export interface CodeBlockOptions {
   code: string;
   filename?: string;
   lang?: string;
+  /** 多代码 tab（Snippet）：提供后 header 渲染 tab，复制按钮复制当前 tab */
+  tabs?: CodeBlockTab[];
 }
+
+const LANG_LABELS: Record<string, string> = {
+  ts: 'TS',
+  typescript: 'TS',
+  js: 'JS',
+  javascript: 'JS',
+  jsx: 'JSX',
+  tsx: 'TSX',
+  mjs: 'MJS',
+  bash: 'Bash',
+  sh: 'Shell',
+  shell: 'Shell',
+  json: 'JSON',
+  html: 'HTML',
+  css: 'CSS',
+  md: 'MD',
+  markdown: 'MD',
+  py: 'Python',
+  python: 'Python',
+  astro: 'Astro',
+  yaml: 'YAML',
+  yml: 'YAML',
+};
 
 export function codeBlock(options: CodeBlockOptions): string {
   const langClass = options.lang ? ` language-${options.lang}` : '';
-  const header = options.filename
-    ? el('figcaption', { class: 'cpd-code-header' }, [
-        el('span', { class: 'cpd-code-filename' }, [
-          Icon.file({ class: 'cpd-code-filename-icon' }),
-          options.filename,
-        ]),
-        el(
-          'button',
-          {
-            class: 'cpd-btn cpd-btn-ghost cpd-code-copy',
-            type: 'button',
-            'data-cpd-copy': '',
-            'aria-label': 'Copy code',
-          },
-          Icon.copy({ class: 'cpd-code-copy-icon' }),
-        ),
+
+  const copyBtn = el(
+    'button',
+    {
+      class: 'cpd-btn cpd-btn-ghost cpd-code-copy',
+      type: 'button',
+      'data-cpd-copy': '',
+      'aria-label': 'Copy code',
+    },
+    Icon.copy({ class: 'cpd-code-copy-icon' }),
+  );
+
+  // 多 tab（Snippet）：tab 触发条 + 各 tab 一个面板（运行时切换）
+  const tabs = options.tabs && options.tabs.length > 0 ? options.tabs : null;
+  if (tabs) {
+    const triggers = tabs
+      .map(
+        (tab, i) =>
+          el(
+            'button',
+            {
+              class: 'cpd-code-tab',
+              role: 'tab',
+              type: 'button',
+              'data-cpd-code-tab': '',
+              'data-value': String(i),
+              'data-active': i === 0 ? 'true' : 'false',
+              'aria-selected': i === 0 ? 'true' : 'false',
+            },
+            tab.label,
+          ),
+      )
+      .join('');
+    const panels = tabs
+      .map(
+        (tab, i) =>
+          el(
+            'pre',
+            {
+              class: 'cpd-code-pre cpd-code-panel',
+              'data-cpd-code-panel': '',
+              'data-value': String(i),
+              'data-active': i === 0 ? 'true' : 'false',
+            },
+            el('code', { class: `cpd-code-code${langClass}` }, tab.code),
+          ),
+      )
+      .join('');
+
+    return el('figure', { class: 'cpd-code cpd-code-tabbed', 'data-cpd-code': '' }, [
+      el('figcaption', { class: 'cpd-code-header' }, [
+        el('div', { class: 'cpd-code-tabs', role: 'tablist' }, triggers),
+        copyBtn,
+      ]),
+      panels,
+    ]);
+  }
+
+  // 单代码块：header 显示文件名或语言标签
+  const label = options.filename
+    ? el('span', { class: 'cpd-code-filename' }, [
+        Icon.file({ class: 'cpd-code-filename-icon' }),
+        options.filename,
       ])
-    : '';
+    : el(
+        'span',
+        { class: 'cpd-code-lang' },
+        options.lang ? (LANG_LABELS[options.lang] ?? options.lang.toUpperCase()) : 'Code',
+      );
 
   return el('figure', { class: 'cpd-code', 'data-cpd-code': '' }, [
-    header,
+    el('figcaption', { class: 'cpd-code-header' }, [label, copyBtn]),
     el('pre', { class: 'cpd-code-pre', 'data-cpd-code-pre': '' }, [
       el('code', { class: `cpd-code-code${langClass}` }, options.code),
     ]),
@@ -518,24 +824,62 @@ export function themeToggle(label = 'Toggle theme'): string {
 }
 
 /* ============================================================
-   Link button（页脚 / 页头按钮）
+   Link（内链右箭头、外链右上箭头；箭头样式由 .cpd-article a 提供）
    ============================================================ */
 
-export interface LinkButtonOptions {
+export interface LinkOptions {
   href: string;
   label: string;
   external?: boolean;
   icon?: string;
 }
 
-export function linkButton(options: LinkButtonOptions): string {
-  const attrs: Attrs = {
-    class: 'cpd-btn cpd-btn-ghost cpd-link-button',
-    href: options.href,
-  };
+export function link(options: LinkOptions): string {
+  const attrs: Attrs = { class: 'cpd-link', href: options.href };
   if (options.external) {
     attrs.target = '_blank';
     attrs.rel = 'noreferrer';
   }
   return el('a', attrs, [options.icon ?? '', `<span>${options.label}</span>`]);
+}
+
+/* ============================================================
+   Button（solid/subtle/surface/outline/ghost/plain + sm/md/lg；
+   有 href 渲染 <a>，否则渲染原生 <button type="button">）
+   ============================================================ */
+
+export type ButtonVariant = 'solid' | 'subtle' | 'surface' | 'outline' | 'ghost' | 'plain';
+export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonColor = 'primary' | 'info' | 'success' | 'warning' | 'error' | 'idea';
+
+export interface ButtonOptions {
+  label: string;
+  /** 提供 href 时渲染为 <a>（asChild 语义） */
+  href?: string;
+  external?: boolean;
+  /** 置于文本前的原始 SVG 字符串 */
+  icon?: string;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  /** 色板：语义色由 --cpd-* 令牌提供 */
+  color?: ButtonColor;
+  /** 附加 HTML 属性（如 data-cpd-drawer-trigger） */
+  attrs?: Record<string, string>;
+}
+
+export function button(options: ButtonOptions): string {
+  const variant = options.variant ?? 'solid';
+  const size = options.size ?? 'md';
+  const color = options.color ?? 'primary';
+  const cls = `cpd-button cpd-button-${variant} cpd-button-${size} cpd-button-color-${color}`;
+  const content = [options.icon ?? '', `<span>${options.label}</span>`];
+  if (options.href) {
+    const attrs: Attrs = { class: cls, href: options.href, ...options.attrs };
+    if (options.external) {
+      attrs.target = '_blank';
+      attrs.rel = 'noreferrer';
+    }
+    return el('a', attrs, content);
+  }
+  return el('button', { class: cls, type: 'button', ...options.attrs }, content);
 }
