@@ -1197,6 +1197,10 @@ body {
     grid-template-columns: 1fr;
   }
 }
+/* 单列堆叠变体：每行一张卡片占满整行（用于文档内链接导航等场景） */
+.cpd-cards.cpd-cards-stack {
+  grid-template-columns: 1fr;
+}
 .cpd-card {
   display: block;
   padding: 1rem;
