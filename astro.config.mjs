@@ -190,6 +190,7 @@ export default defineConfig({
         // 指向压扁后的 /sitemap.xml
         { tag: 'link', attrs: { rel: 'sitemap', href: '/sitemap.xml' } },
         { tag: 'link', attrs: { rel: 'alternate', type: 'application/rss+xml', href: '/rss.xml', title: 'RSS' } },
+        { tag: 'link', attrs: { rel: 'describedby', href: '/llms.txt' } },
         {
           // 预加载正文字体（Manrope 400）：首绘前就绪，避免 swap 引起 CLS（文档页 CLS 主因）
           tag: 'link',
