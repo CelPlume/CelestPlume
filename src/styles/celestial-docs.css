@@ -58,7 +58,8 @@ body {
   --cpd-background: hsl(0 0% 96%);
   --cpd-foreground: hsl(0 0% 3.9%);
   --cpd-muted: hsl(0 0% 96.1%);
-  --cpd-muted-foreground: hsl(0 0% 45.1%);
+  /* 浅色主题 muted 需 ≥4.5:1：45.1% 对 #f5f5f5 仅 4.35:1，压到 43% → ~4.7:1 */
+  --cpd-muted-foreground: hsl(0 0% 43%);
   --cpd-popover: hsl(0 0% 98%);
   --cpd-popover-foreground: hsl(0 0% 15.1%);
   --cpd-card: hsl(0 0% 94.7%);
