@@ -16,6 +16,14 @@
 - [Astro](https://astro.build/) + [@astrojs/starlight](https://starlight.astro.build/)
 - 双语文档站点：英文（默认 `root`）与简体中文（`zh`）
 
+## 项目上线链接
+
+- 站点主页：<https://celplume.hxcn.space>
+- 站点地图：<https://celplume.hxcn.space/sitemap.xml>
+- RSS 订阅：<https://celplume.hxcn.space/rss.xml>
+- LLM 总览：<https://celplume.hxcn.space/llms.txt>
+- LLM 全文：<https://celplume.hxcn.space/llms-full.txt>
+
 ## 常用命令
 
 ```bash
@@ -80,6 +88,21 @@ bun run lint       # ESLint 代码检查
 若仅修改文档内容（`.md` / `.mdx` 文档文件）或静态资源，只需执行 `bun run build` 验证构建通过即可。
 
 **禁止**在 typecheck / lint / build 报错时交付代码。
+
+### 本地无头浏览器测试：排除 Umami 统计
+
+站点接入 Umami 统计（`analytics.hxcn.dev`）。使用无头浏览器 / Playwright / Lighthouse 等
+访问本站做本地测试时，**务必排除自己的访问**，避免污染统计数据。方法：在 DevTools 控制台执行
+
+```js
+localStorage.setItem('umami.disabled', 1);
+```
+
+此设置按站点生效（每个要排除的站点各执行一次）。恢复统计：执行
+
+```js
+localStorage.removeItem('umami.disabled');
+```
 
 ## 命名与 i18n 规范
 
