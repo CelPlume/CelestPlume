@@ -17,6 +17,8 @@ import { join } from 'node:path';
  * 必须放在 integrations 数组最后：Starlight 会把 @astrojs/sitemap 注入在 starlight
  * 之后，而 Astro 按数组顺序触发 astro:build:done，故本钩子在其之后执行。
  * 站点 URL 数未超过 @astrojs/sitemap entryLimit（45000）时只会产出单个 sitemap-0.xml。
+ *
+ * 额外处理：美化输出，每个标签单独一行，避免整份 sitemap 挤成一行难以阅读/排障。
  */
 function flatSitemap() {
   return {
@@ -28,11 +30,13 @@ function flatSitemap() {
         const chunk = join(out, 'sitemap-0.xml');
         const index = join(out, 'sitemap-index.xml');
         try {
-          const xml = await readFile(chunk, 'utf8');
+          let xml = await readFile(chunk, 'utf8');
+          // 美化：标签间换行（仅加空白，不改变 XML 语义）
+          xml = xml.replace(/></g, '>\n<');
           await writeFile(join(out, 'sitemap.xml'), xml);
           await rm(chunk, { force: true });
           await rm(index, { force: true });
-          logger.info('`sitemap.xml` generated (flat, multilingual hreflang kept)');
+          logger.info('`sitemap.xml` generated (flat, pretty, hreflang kept)');
         } catch (err) {
           logger.error(`flat-sitemap: ${/** @type {Error} */ (err).message}`);
         }
