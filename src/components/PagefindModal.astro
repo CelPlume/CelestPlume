@@ -1,0 +1,610 @@
+---
+/**
+ * PagefindModal — 主页 / 文档页共用的站内搜索弹窗（Plumest 风格）。
+ *
+ * 毛玻璃遮罩 + 顶部居中卡片（头部搜索框 / 结果列表 / 底部键盘提示），
+ * 直接查询 /pagefind/ 索引，不依赖 @pagefind/default-ui。
+ * 已针对本项目定制：跟随 .cp-nav 主题令牌、深浅色自适应。
+ *
+ * 样式全部内聚于本组件（cp-pf-* 前缀 + is:global），与导航/其他弹窗隔离，
+ * 不影响正常 Modal 的样式。触发按钮与 Ctrl+K 由 SiteSearch 托管，
+ * 通过自定义元素方法 open() / close() / isOpen() 驱动。
+ */
+import { Icon } from 'astro-icon/components';
+import type { Locale } from '../styles/celestial-tokens.ts';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const zh = locale === 'zh';
+const searchLabel = zh ? '站内搜索' : 'Search this site';
+---
+
+<pagefind-modal class="cp-pf" aria-label={searchLabel} data-locale={locale}>
+  <dialog class="cp-pf-dialog" aria-label={searchLabel}>
+    <div class="cp-pf-card">
+      <header class="cp-pf-header">
+        <span class="cp-pf-icon" aria-hidden="true"><Icon name="lucide:search" size={20} /></span>
+        <input
+          class="cp-pf-input"
+          type="search"
+          placeholder={zh ? '搜索文档…' : 'Search docs…'}
+          autocomplete="off"
+          spellcheck="false"
+          aria-label={searchLabel}
+        />
+        <button class="cp-pf-close" type="button" aria-label={zh ? '关闭搜索' : 'Close search'}>
+          <Icon name="lucide:x" size={18} />
+        </button>
+      </header>
+
+      <div class="cp-pf-body" role="listbox" aria-label={searchLabel}></div>
+
+      <footer class="cp-pf-footer">
+        <span class="cp-pf-footer-hint">
+          <kbd>↑</kbd><kbd>↓</kbd><span class="cp-pf-hint-word">{zh ? '选择' : 'select'}</span>
+          <span class="cp-pf-sep">·</span>
+          <kbd>Enter</kbd><span class="cp-pf-hint-word">{zh ? '跳转' : 'open'}</span>
+          <span class="cp-pf-sep">·</span>
+          <kbd>Esc</kbd><span class="cp-pf-hint-word">{zh ? '关闭' : 'close'}</span>
+        </span>
+        <span class="cp-pf-brand">{zh ? '由 Pagefind 提供索引' : 'Powered by Pagefind'}</span>
+      </footer>
+    </div>
+  </dialog>
+</pagefind-modal>
+
+<style is:global>
+  /* ============================================================
+     Pagefind 搜索弹窗（Plumest）
+     仅作用于 cp-pf-* 命名空间，不影响导航/Modal 等其他弹窗样式。
+     ============================================================ */
+  /* 弹窗位于 .cp-nav 内部，直接继承其按主题作用域的 --cp-* 令牌
+     （深色兜底 / 文档页与主页浅色各自覆盖），与导航主题保持一致。 */
+  :where(pagefind-modal) {
+    --pf-bg: var(--cp-nav-menu-bg, var(--cp-night-light));
+    --pf-fg: var(--cp-pearl);
+    --pf-muted: var(--cp-silver-soft);
+    --pf-faint: var(--cp-moonlight);
+    --pf-danger: #e05252;
+    --pf-border: var(--cp-border);
+    --pf-border-light: var(--cp-border);
+    --pf-hover: var(--cp-surface-hover);
+    --pf-accent: var(--cp-gold-soft);
+    --pf-accent-soft: color-mix(in srgb, var(--cp-gold-soft) 16%, transparent);
+    --pf-shadow: 0 24px 60px rgba(8, 18, 40, 0.28);
+    --pf-overlay: rgba(3, 6, 12, 0.55);
+    --pf-font: 'Manrope', 'LxgwNeoXiHei', ui-sans-serif, system-ui, 'Segoe UI', Roboto,
+      'Helvetica Neue', Arial, sans-serif;
+    --pf-mono: 'Maple Mono', 'Fira Code', 'LxgwNeoXiHei', ui-monospace, SFMono-Regular, Menlo,
+      Monaco, Consolas, monospace;
+  }
+
+  /* 遮罩 + 卡片 */
+  .cp-pf-dialog {
+    padding: 0;
+    border: none;
+    background: transparent;
+    width: auto;
+    max-width: min(680px, calc(100vw - 32px));
+    margin: 8vh auto auto;
+    color: var(--pf-fg);
+  }
+  .cp-pf-dialog::backdrop {
+    background: var(--pf-overlay);
+    backdrop-filter: blur(10px) saturate(140%);
+    -webkit-backdrop-filter: blur(10px) saturate(140%);
+  }
+  .cp-pf-dialog[open] {
+    animation: cp-pf-in 150ms ease;
+  }
+  @keyframes cp-pf-in {
+    from {
+      opacity: 0;
+      transform: translateY(-12px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .cp-pf-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 1px solid var(--pf-border);
+    background: var(--pf-bg);
+    box-shadow: var(--pf-shadow);
+  }
+
+  /* 头部 */
+  .cp-pf-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--pf-border-light);
+  }
+  .cp-pf-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--pf-faint);
+    flex-shrink: 0;
+  }
+  .cp-pf-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--pf-fg);
+    font-family: var(--pf-font);
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  .cp-pf-input::placeholder {
+    color: var(--pf-faint);
+  }
+  .cp-pf-input::-webkit-search-cancel-button {
+    display: none;
+  }
+  .cp-pf-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--pf-faint);
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .cp-pf-close:hover {
+    background: var(--pf-hover);
+    color: var(--pf-fg);
+  }
+
+  /* 主体 */
+  .cp-pf-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 8px;
+  }
+  .cp-pf-hint {
+    padding: 36px 24px;
+    text-align: center;
+    color: var(--pf-muted);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .cp-pf-hint-title {
+    margin: 0 0 10px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--pf-fg);
+    line-height: 1.5;
+  }
+  .cp-pf-hint-sub {
+    margin: 0;
+    color: var(--pf-faint);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .cp-pf-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 32px 20px;
+    color: var(--pf-muted);
+    font-size: 14px;
+    text-align: center;
+  }
+  .cp-pf-status--error {
+    color: var(--pf-danger);
+  }
+  .cp-pf-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--pf-border);
+    border-top-color: var(--pf-accent);
+    border-radius: 50%;
+    animation: cp-pf-spin 0.7s linear infinite;
+  }
+  @keyframes cp-pf-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* 结果列表 */
+  .cp-pf-results {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .cp-pf-result {
+    border-radius: 8px;
+    transition: background 0.15s ease;
+  }
+  .cp-pf-result.is-active {
+    background: var(--pf-hover);
+  }
+  .cp-pf-result__link {
+    display: block;
+    padding: 10px 12px;
+    color: inherit;
+    text-decoration: none;
+  }
+  .cp-pf-result__title {
+    font-family: var(--pf-font);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--pf-fg);
+    line-height: 1.4;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cp-pf-result__excerpt {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--pf-muted);
+    margin-bottom: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .cp-pf-result__excerpt mark {
+    background: var(--pf-accent-soft);
+    color: var(--pf-fg);
+    padding: 0 2px;
+    border-radius: 3px;
+  }
+  .cp-pf-result__url {
+    font-family: var(--pf-mono);
+    font-size: 11px;
+    color: var(--pf-faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* 底部 */
+  .cp-pf-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 14px;
+    border-top: 1px solid var(--pf-border-light);
+    background: var(--pf-bg);
+    font-size: 11px;
+    color: var(--pf-faint);
+  }
+  .cp-pf-footer-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .cp-pf-footer-hint kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border: 1px solid var(--pf-border);
+    border-radius: 4px;
+    background: var(--pf-bg);
+    font-family: var(--pf-mono);
+    font-size: 10px;
+    line-height: 1;
+    color: var(--pf-muted);
+  }
+  .cp-pf-hint-word {
+    margin-right: 2px;
+  }
+  .cp-pf-sep {
+    margin: 0 4px;
+    opacity: 0.6;
+  }
+  .cp-pf-brand {
+    color: var(--pf-faint);
+    opacity: 0.7;
+  }
+
+  @media (max-width: 600px) {
+    .cp-pf-dialog {
+      margin: 4vh auto auto;
+      max-width: calc(100vw - 16px);
+    }
+    .cp-pf-brand {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  interface PagefindResultData {
+    id: string;
+    url: string;
+    excerpt: string;
+    meta: { title?: string; image?: string };
+  }
+  interface PagefindSearchResult {
+    results: Array<{ id: string; data: () => Promise<PagefindResultData> }>;
+  }
+  interface PagefindModule {
+    init: () => Promise<void>;
+    search: (q: string) => Promise<PagefindSearchResult>;
+    preload: (q: string) => void;
+    options: (o: Record<string, unknown>) => Promise<void>;
+  }
+
+  const COPY = {
+    zh: {
+      hintTitle: '输入关键词以搜索全站文档。',
+      hintSub: '支持中文、英文与代码片段。',
+      loading: '正在搜索…',
+      noResults: (q: string) => `未找到与 “${q}” 相关的结果。`,
+      errorLoad: '搜索索引不可用，请先构建站点后再使用搜索。',
+      errorSearch: '搜索失败，请稍后重试。',
+    },
+    en: {
+      hintTitle: 'Enter keywords to search the whole docs.',
+      hintSub: 'Supports Chinese, English, and code snippets.',
+      loading: 'Searching…',
+      noResults: (q: string) => `No results for "${q}".`,
+      errorLoad: 'Search index unavailable. Build the site first, then search.',
+      errorSearch: 'Search failed, please try again later.',
+    },
+  } as const;
+
+  const escapeHtml = (s: string): string =>
+    s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+  class CpPagefindModal extends HTMLElement {
+    private dialog: HTMLDialogElement;
+    private input: HTMLInputElement;
+    private body: HTMLElement;
+    private t: (typeof COPY)['zh'];
+    private results: PagefindResultData[] = [];
+    private activeIndex = -1;
+    private pagefind: PagefindModule | null = null;
+    private initFailed = false;
+    private loadPromise: Promise<PagefindModule | null> | null = null;
+    private debounceTimer: number | null = null;
+    private lastRequestId = 0;
+
+    constructor() {
+      super();
+      this.dialog = this.querySelector<HTMLDialogElement>('dialog')!;
+      this.input = this.querySelector<HTMLInputElement>('.cp-pf-input')!;
+      this.body = this.querySelector<HTMLElement>('.cp-pf-body')!;
+      this.t = (this.dataset.locale === 'zh' ? COPY.zh : COPY.en) as (typeof COPY)['zh'];
+
+      this.querySelector<HTMLButtonElement>('.cp-pf-close')?.addEventListener('click', () =>
+        this.close(),
+      );
+      this.dialog.addEventListener('close', () => this.onDialogClose());
+      // 外点关闭（点 backdrop）
+      this.dialog.addEventListener('click', (e) => {
+        if (e.target === this.dialog) this.close();
+      });
+      this.input.addEventListener('input', (e) =>
+        this.onInput((e.target as HTMLInputElement).value),
+      );
+      this.input.addEventListener('keydown', (e) => this.onKeyDown(e));
+      // 结果点击 / 悬停（事件委托，body 由 JS 渲染）
+      this.body.addEventListener('click', (e) => {
+        const link = (e.target as HTMLElement).closest<HTMLElement>('.cp-pf-result__link');
+        if (link) this.navigate(Number(link.dataset.index));
+      });
+      this.body.addEventListener(
+        'mouseenter',
+        (e) => {
+          const link = (e.target as HTMLElement).closest<HTMLElement>('.cp-pf-result__link');
+          if (link) this.setActive(Number(link.dataset.index));
+        },
+        true,
+      );
+    }
+
+    // ---- 公共 API（SiteSearch 调用） ----
+    open(): void {
+      if (this.dialog.open) return;
+      this.dialog.showModal();
+      document.body.toggleAttribute('data-cp-search-modal-open', true);
+      this.renderHint();
+      this.input.focus();
+      void this.loadPagefind();
+    }
+    close(): void {
+      if (!this.dialog.open) return;
+      this.dialog.close();
+    }
+    isOpen(): boolean {
+      return this.dialog.open;
+    }
+
+    private onDialogClose(): void {
+      document.body.toggleAttribute('data-cp-search-modal-open', false);
+      this.input.value = '';
+      this.results = [];
+      this.activeIndex = -1;
+      if (this.debounceTimer != null) window.clearTimeout(this.debounceTimer);
+      this.renderHint();
+    }
+
+    // ---- Pagefind 加载 ----
+    private async loadPagefind(): Promise<PagefindModule | null> {
+      if (this.pagefind) return this.pagefind;
+      if (this.initFailed) return null;
+      if (this.loadPromise) return this.loadPromise;
+      this.loadPromise = (async () => {
+        try {
+          const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+          const probe = await fetch(`${base}/pagefind/pagefind.js`, {
+            method: 'HEAD',
+            cache: 'no-store',
+          });
+          const ct = (probe.headers.get('content-type') || '').toLowerCase();
+          const isJs =
+            probe.ok &&
+            !ct.includes('text/html') &&
+            (ct.includes('javascript') ||
+              ct.includes('ecmascript') ||
+              ct.includes('octet-stream') ||
+              ct === '');
+          if (!isJs) {
+            this.initFailed = true;
+            this.loadPromise = null;
+            return null;
+          }
+          // 动态 import 运行时路径，避免构建器静态解析。
+          const url = `${base}/pagefind/pagefind.js`;
+          const mod = (await import(/* @vite-ignore */ url)) as PagefindModule;
+          try {
+            await mod.options({ noWorker: true });
+          } catch {
+            /* 旧版本不支持 options，忽略 */
+          }
+          await mod.init();
+          this.pagefind = mod;
+          return mod;
+        } catch {
+          this.initFailed = true;
+          this.loadPromise = null;
+          return null;
+        }
+      })();
+      return this.loadPromise;
+    }
+
+    // ---- 搜索 ----
+    private onInput(value: string): void {
+      if (this.debounceTimer != null) window.clearTimeout(this.debounceTimer);
+      const term = value.trim();
+      if (!term) {
+        this.results = [];
+        this.activeIndex = -1;
+        this.renderHint();
+        return;
+      }
+      void this.loadPagefind().then((mod) => mod?.preload?.(term));
+      this.debounceTimer = window.setTimeout(() => {
+        void this.runSearch(term);
+      }, 180);
+    }
+
+    private async runSearch(term: string): Promise<void> {
+      const mod = await this.loadPagefind();
+      if (!mod) {
+        this.renderError(this.t.errorLoad);
+        return;
+      }
+      this.renderLoading();
+      const requestId = ++this.lastRequestId;
+      try {
+        const search = await mod.search(term);
+        if (requestId !== this.lastRequestId || !search) return;
+        const top = search.results.slice(0, 10);
+        const data = await Promise.all(top.map((r) => r.data()));
+        if (requestId !== this.lastRequestId) return;
+        this.results = data;
+        this.activeIndex = data.length > 0 ? 0 : -1;
+        if (data.length === 0) this.renderNoResults(term);
+        else this.renderResults();
+      } catch (err) {
+        if (requestId !== this.lastRequestId) return;
+        console.error('[Pagefind] 搜索失败', err);
+        this.renderError(this.t.errorSearch);
+      }
+    }
+
+    private onKeyDown(e: KeyboardEvent): void {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (this.results.length === 0) return;
+        this.setActive((this.activeIndex + 1) % this.results.length);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (this.results.length === 0) return;
+        this.setActive(this.activeIndex <= 0 ? this.results.length - 1 : this.activeIndex - 1);
+      } else if (e.key === 'Enter') {
+        if (this.activeIndex >= 0 && this.activeIndex < this.results.length) {
+          e.preventDefault();
+          this.navigate(this.activeIndex);
+        }
+      }
+    }
+
+    private setActive(index: number): void {
+      this.activeIndex = index;
+      this.renderResults();
+      this.body
+        .querySelector<HTMLElement>('.cp-pf-result.is-active')
+        ?.scrollIntoView({ block: 'nearest' });
+    }
+
+    private navigate(index: number): void {
+      const result = this.results[index];
+      if (!result?.url) return;
+      this.close();
+      window.location.href = result.url;
+    }
+
+    // ---- 渲染 ----
+    private renderHint(): void {
+      this.body.innerHTML = `
+        <div class="cp-pf-hint">
+          <p class="cp-pf-hint-title">${this.t.hintTitle}</p>
+          <p class="cp-pf-hint-sub">${this.t.hintSub}</p>
+        </div>`;
+    }
+    private renderLoading(): void {
+      this.body.innerHTML = `
+        <div class="cp-pf-status">
+          <span class="cp-pf-spinner" aria-hidden="true"></span><span>${this.t.loading}</span>
+        </div>`;
+    }
+    private renderError(message: string): void {
+      this.body.innerHTML = `<div class="cp-pf-status cp-pf-status--error">${escapeHtml(message)}</div>`;
+    }
+    private renderNoResults(q: string): void {
+      this.body.innerHTML = `<div class="cp-pf-status">${escapeHtml(this.t.noResults(q))}</div>`;
+    }
+    private renderResults(): void {
+      const items = this.results
+        .map(
+          (r, i) => `
+        <li class="cp-pf-result${i === this.activeIndex ? ' is-active' : ''}">
+          <a href="${escapeHtml(r.url)}" class="cp-pf-result__link" data-index="${i}">
+            <div class="cp-pf-result__title">${escapeHtml(r.meta?.title || r.url)}</div>
+            ${r.excerpt ? `<div class="cp-pf-result__excerpt">${r.excerpt}</div>` : ''}
+            <div class="cp-pf-result__url">${escapeHtml(r.url)}</div>
+          </a>
+        </li>`,
+        )
+        .join('');
+      this.body.innerHTML = `<ul class="cp-pf-results">${items}</ul>`;
+    }
+  }
+  customElements.define('pagefind-modal', CpPagefindModal);
+</script>

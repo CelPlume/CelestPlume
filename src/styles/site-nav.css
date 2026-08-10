@@ -279,8 +279,8 @@ html[data-cpd-theme='light'] :where(.cp-nav) {
 }
 
 /* ============================================================
-   主页搜索（SiteSearch.astro，Plumest 窄版触发按钮 + Pagefind modal）
-   文档页搜索仍用 Starlight 自带 <site-search>（sl- 类），此处仅主页。
+   站内搜索（SiteSearch.astro，Plumest 窄版触发按钮）
+   主页与文档页共用；弹窗本体在 PagefindModal.astro（cp-pf-* 命名空间）。
    ============================================================ */
 .cp-search {
   display: contents;
@@ -334,99 +334,7 @@ html[data-cpd-theme='light'] :where(.cp-nav) {
   opacity: 0.75;
 }
 
-/* 搜索弹层（遮罩 + blur + 中性卡片，跟随主题） */
-.cp-search-dialog {
-  position: relative;
-  margin: 4.5rem auto auto;
-  padding: 0;
-  width: 90%;
-  max-width: 40rem;
-  border: none;
-  border-radius: 20px;
-  background: #ffffff;
-  color: var(--cp-pearl);
-  box-shadow:
-    0 4px 6px -1px rgb(0 0 0 / 0.08),
-    0 2px 4px -2px rgb(0 0 0 / 0.08);
-}
-:root[data-home-theme='dark'] .cp-search-dialog {
-  background: hsl(0 0% 9.8%);
-}
-.cp-search-dialog[open] {
-  display: block;
-  /* 出现样式与 Modal 组件同步：fade + zoom-in-95（150ms ease） */
-  animation: cp-search-modal-in 150ms ease;
-}
-.cp-search-dialog::backdrop {
-  background: rgba(3, 6, 12, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  animation: cp-search-backdrop-in 150ms ease;
-}
-@keyframes cp-search-modal-in {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-@keyframes cp-search-backdrop-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-.cp-search-close {
-  position: absolute;
-  top: 1rem;
-  inset-inline-end: 1rem;
-  z-index: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border: none;
-  border-radius: 0.375rem;
-  background: transparent;
-  color: hsl(0 0% 45.1%);
-  cursor: pointer;
-  transition: color 0.15s ease, background 0.15s ease;
-}
-:root[data-home-theme='dark'] .cp-search-close {
-  color: hsl(0 0% 70% / 0.8);
-}
-.cp-search-close:hover {
-  color: hsl(0 0% 9%);
-  background: hsl(0 0% 96.1%);
-}
-:root[data-home-theme='dark'] .cp-search-close:hover {
-  color: hsl(0 0% 92%);
-  background: rgb(255 255 255 / 0.06);
-}
-.cp-search-close svg {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-.cp-search-frame {
-  padding: 1.25rem 1.5rem 1.5rem;
-}
-#cp-search-ui {
-  --pagefind-ui-primary: var(--cp-pearl);
-  --pagefind-ui-text: var(--cp-pearl);
-  --pagefind-ui-font: var(--font-sans);
-  --pagefind-ui-background: var(--cp-nav-menu-bg);
-  --pagefind-ui-border: var(--cp-nav-menu-border);
-  --pagefind-ui-border-width: 1px;
-  --pagefind-ui-tag: var(--cp-surface-hover);
-  --pagefind-ui-radius: 8px;
-  --pagefind-ui-scale: 0.92;
-}
+/* 搜索弹窗样式见 PagefindModal.astro（cp-pf-* 命名空间，独立内聚）。 */
 
 @media (max-width: 899px) {
   .cp-search-btn {

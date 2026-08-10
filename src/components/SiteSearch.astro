@@ -1,12 +1,14 @@
 ---
 /**
- * SiteSearch — 主页版站内搜索（Plumest 窄版触发按钮 + <dialog> modal）
- * 挂载 Pagefind UI（与文档页同一 /pagefind/ 索引），交互：
- * 点击 / Ctrl+K 打开、Esc / 外点关闭、输入即时检索。
- * 样式（.cp-search-*）见 src/styles/site-nav.css；文档页仍用 Starlight 自带搜索。
+ * SiteSearch — 主页 / 文档页共用的站内搜索触发按钮（Plumest 窄版）。
+ *
+ * 仅提供触发按钮与 Ctrl/Cmd+K 快捷键，弹窗本体由 <PagefindModal> 组件承载
+ * （样式内聚在 PagefindModal.astro，cp-pf-* 命名空间，不影响其他弹窗）。
+ * 按钮样式（.cp-search-*）见 src/styles/site-nav.css。
  */
 import { Icon } from 'astro-icon/components';
 import type { Locale } from '../styles/celestial-tokens.ts';
+import PagefindModal from './PagefindModal.astro';
 
 interface Props {
   locale: Locale;
@@ -14,44 +16,10 @@ interface Props {
 
 const { locale } = Astro.props;
 const zh = locale === 'zh';
-
 const searchLabel = zh ? '搜索文档' : 'Search docs';
-const devWarning = zh
-  ? '开发模式下搜索不可用，请构建后预览：bun run build && bun run preview。'
-  : 'Search is unavailable in dev mode. Build and preview to enable it.';
-
-// Pagefind UI 文案（key 即 PagefindUI `translations` 字段）
-const pagefindTranslations = zh
-  ? {
-      placeholder: '搜索文档',
-      clear_search: '清空',
-      load_more: '加载更多结果',
-      search_label: '站内搜索',
-      zero_results: '未找到 [SEARCH_TERM] 的结果',
-      many_results: '[SEARCH_TERM] 有 [COUNT] 条结果',
-      one_result: '[SEARCH_TERM] 有 [COUNT] 条结果',
-      alt_search: '未找到 [SEARCH_TERM] 的结果。改为显示 [DIFFERENT_TERM] 的结果',
-      search_suggestion: '未找到 [SEARCH_TERM] 的结果。可尝试以下搜索：',
-      searching: '正在搜索 [SEARCH_TERM]…',
-    }
-  : {
-      placeholder: 'Search docs',
-      clear_search: 'Clear',
-      load_more: 'Load more results',
-      search_label: 'Search this site',
-      zero_results: 'No results for [SEARCH_TERM]',
-      many_results: '[COUNT] results for [SEARCH_TERM]',
-      one_result: '[COUNT] result for [SEARCH_TERM]',
-      alt_search: 'No results for [SEARCH_TERM]. Showing results for [DIFFERENT_TERM] instead',
-      search_suggestion: 'No results for [SEARCH_TERM]. Try one of the following:',
-      searching: 'Searching for [SEARCH_TERM]…',
-    };
 ---
 
-<site-search
-  class="cp-search"
-  data-translations={JSON.stringify(pagefindTranslations)}
->
+<site-search class="cp-search">
   <button
     type="button"
     class="cp-search-btn"
@@ -66,40 +34,22 @@ const pagefindTranslations = zh
     </kbd>
   </button>
 
-  <dialog class="cp-search-dialog" aria-label={searchLabel}>
-    <button
-      type="button"
-      class="cp-search-close"
-      data-cp-search-close
-      aria-label={zh ? '关闭搜索' : 'Close search'}
-    >
-      <Icon name="lucide:x" size={18} aria-hidden="true" />
-    </button>
-    <div class="cp-search-frame">
-      {import.meta.env.DEV ? (
-        <p class="cp-search-dev" dir="ltr">{devWarning}</p>
-      ) : (
-        <div id="cp-search-ui" />
-      )}
-    </div>
-  </dialog>
+  <PagefindModal locale={locale} />
 </site-search>
 
-<style>
-  .cp-search-dev {
-    margin: 1rem 0;
-    color: var(--cp-silver-soft);
-    font-size: 0.875rem;
-  }
-</style>
-
 <script>
+  interface PagefindModalEl extends HTMLElement {
+    open: () => void;
+    close: () => void;
+    isOpen: () => boolean;
+  }
+
   class CpSiteSearch extends HTMLElement {
     constructor() {
       super();
       const openBtn = this.querySelector<HTMLButtonElement>('[data-cp-search-open]');
-      const dialog = this.querySelector<HTMLDialogElement>('dialog');
-      if (!openBtn || !dialog) return;
+      const modal = this.querySelector<PagefindModalEl>('pagefind-modal');
+      if (!openBtn || !modal) return;
 
       // 平台快捷键（Mac → ⌘K）
       const mod = this.querySelector<HTMLElement>('[data-cp-search-mod]');
@@ -108,53 +58,18 @@ const pagefindTranslations = zh
         openBtn.setAttribute('aria-keyshortcuts', 'Meta+K');
       }
 
-      const openModal = () => {
-        if (dialog.open) return;
-        dialog.showModal();
-        document.body.toggleAttribute('data-cp-search-modal-open', true);
-        const input = this.querySelector<HTMLInputElement>('#cp-search-ui input');
-        input?.focus();
-      };
-      const closeModal = () => dialog.close();
-
-      openBtn.addEventListener('click', openModal);
-      this.querySelector<HTMLButtonElement>('[data-cp-search-close]')?.addEventListener('click', closeModal);
-      dialog.addEventListener('close', () => {
-        document.body.toggleAttribute('data-cp-search-modal-open', false);
-      });
-      // 外点关闭（点 backdrop）
-      dialog.addEventListener('click', (event) => {
-        if (event.target === dialog) closeModal();
-      });
+      openBtn.addEventListener('click', () => modal.open());
       // Ctrl / Cmd + K
       window.addEventListener('keydown', (e) => {
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
           e.preventDefault();
-          if (dialog.open) {
-            closeModal();
+          if (modal.isOpen()) {
+            modal.close();
           } else {
-            openModal();
+            modal.open();
           }
         }
       });
-
-      // Pagefind UI 懒加载（生产构建；dev 无索引）
-      if (!import.meta.env.DEV) {
-        const onIdle = window.requestIdleCallback || ((cb: () => void) => setTimeout(cb, 1));
-        onIdle(async () => {
-          const translations = JSON.parse(this.dataset.translations || '{}');
-          // @ts-expect-error — @pagefind/default-ui 未带类型
-          const { PagefindUI } = await import('@pagefind/default-ui');
-          new PagefindUI({
-            element: '#cp-search-ui',
-            baseUrl: import.meta.env.BASE_URL,
-            bundlePath: import.meta.env.BASE_URL.replace(/\/$/, '') + '/pagefind/',
-            showImages: false,
-            showSubResults: true,
-            translations,
-          });
-        });
-      }
     }
   }
   customElements.define('site-search', CpSiteSearch);
