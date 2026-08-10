@@ -46,8 +46,12 @@ export type NavNode = NavLink | NavFolder | NavSeparator;
 
 /** 完整侧边栏配置 */
 export interface SidebarConfig {
-  /** 顶部标题（如品牌名） */
+  /** 顶部标题（如品牌名或当前分类名） */
   title?: string;
+  /** 移动端抽屉标题（缺省回退到 title） */
+  drawerTitle?: string;
+  /** 是否渲染桌面侧边栏头部折叠按钮（默认 true） */
+  showCollapse?: boolean;
   /** 顶部分组（渲染在页面树之前） */
   links?: NavNode[];
   /** 页面树 */

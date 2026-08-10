@@ -306,7 +306,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.125rem;
-  padding: 0 1rem 1rem;
+  /* 顶部留出 0.75rem，让首个导航项落在 mask 顶部 12px 渐变之外，不被遮挡 */
+  padding: 0.75rem 1rem 1rem;
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
@@ -376,7 +377,10 @@ body {
   background: color-mix(in srgb, var(--cpd-primary) 10%, transparent);
   color: var(--cpd-primary);
 }
-.cpd-sidebar-item[data-cpd-active='true']::before {
+/* 引导线（激活项竖条）：仅存在于层次线的子项（深度 >= 1）显示，位于层次线列
+   0.625rem，与层次线同列（fumadocs：没有层次线就没有引导线）。深度 0 的直接
+   链接无层次线，故不显示引导线，也避免了指示条盖住首字符（0.625rem < 20px）。 */
+.cpd-sidebar-item[data-cpd-active='true']:not([data-cpd-depth='0'])::before {
   content: '';
   position: absolute;
   inset-block: 0.625rem;
@@ -401,7 +405,17 @@ body {
 .cpd-sidebar-folder[data-cpd-open='false'] .cpd-sidebar-folder-content {
   display: none;
 }
-/* 一级分组的左侧引导线 */
+/* 层次线（子分类下的竖向引导线，0.625rem 列）。
+   桌面侧栏：顶层分组提升为标题后，子分类为深度 0 分组；其内容下的层级线。
+   抽屉：全站导航更深，仍按深度 1 分组画线。 */
+.cpd-sidebar .cpd-sidebar-folder[data-cpd-depth='0'] > .cpd-sidebar-folder-content::before {
+  content: '';
+  position: absolute;
+  inset-block: 0.25rem;
+  inset-inline-start: 0.625rem;
+  width: 1px;
+  background: var(--cpd-border);
+}
 .cpd-sidebar-folder[data-cpd-depth='1'] > .cpd-sidebar-folder-content::before {
   content: '';
   position: absolute;

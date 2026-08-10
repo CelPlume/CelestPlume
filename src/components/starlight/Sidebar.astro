@@ -1,10 +1,10 @@
 ---
 // Sidebar 覆盖：把 Starlight 解析好的侧边栏树渲染为 Plumest 风格侧边栏（kit renderSidebar）。
-// - 桌面侧栏：只保留包含当前页面的顶层分组（分组过滤）
+// - 桌面侧栏：只保留包含当前页面的顶层分组（分组过滤），并把该顶层分组提升为头部标题
+//   （其子项直接作为树顶层），不渲染折叠按钮（标题即最高层级）；抽屉标题保留品牌名
 // - 移动端抽屉（nav drawer）：全站导航树 —— 横屏四项导航（首页/项目/贡献/关于）默认展开，
 //   项目下拉的每篇文章树默认折叠，点击展开，点标题跳转对应文章
 import { renderSidebar } from '../../lib/ui/sidebar';
-import { Icon } from '../../lib/ui/icons';
 import type { NavNode } from '../../lib/ui/types';
 
 const { sidebar, siteTitle, hasSidebar } = Astro.locals.starlightRoute;
@@ -96,13 +96,23 @@ function buildDrawerNav(): NavNode[] {
   return nav;
 }
 
+// 顶层分组提升为头部标题：当前页所属分组（filtered[0]）直接作为标题，
+// 其子项作为侧边栏树顶层，不再渲染可折叠的顶层文件夹；标题即最高层级，故不显示折叠按钮。
+const topGroup = filtered[0]?.type === 'group' ? filtered[0] : undefined;
+const headerTitle = topGroup?.label ?? (isZh ? '天空之翼' : siteTitle);
+const treeEntries = topGroup ? topGroup.entries : filtered;
+
 const html = hasSidebar
   ? renderSidebar({
-      title: isZh ? '天空之翼' : siteTitle,
-      tree: toNav(filtered),
+      title: headerTitle,
+      drawerTitle: isZh ? '天空之翼' : siteTitle,
+      tree: toNav(treeEntries),
       drawerNav: buildDrawerNav(),
       pathname,
-      defaultOpenLevel: 0,
+      // 顶层分组移除后，其子分组成为深度 0 节点；-1 使其不被 defaultOpenLevel 强制展开，
+      // 展开与否完全由各分组的 collapsed 决定（toNav 已映射为 defaultOpen），与原深度 1 语义一致
+      defaultOpenLevel: topGroup ? -1 : 0,
+      showCollapse: !topGroup,
       labels: isZh
         ? { close: '关闭', tree: '站点导航', collapse: '折叠侧边栏' }
         : undefined,
@@ -111,13 +121,3 @@ const html = hasSidebar
 ---
 
 <Fragment set:html={html} />
-{hasSidebar && (
-  <button
-    class="cpd-btn cpd-btn-ghost cpd-sidebar-expand"
-    type="button"
-    data-cpd-expand
-    aria-label={isZh ? '展开侧边栏' : 'Expand Sidebar'}
-  >
-    <Fragment set:html={Icon.panelLeft({})} />
-  </button>
-)}

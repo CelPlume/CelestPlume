@@ -56,6 +56,8 @@ function renderNode(node: NavNode, depth: number, ctx: RenderContext): string {
         class: 'cpd-sidebar-item',
         href: node.href,
         'data-cpd-active': active ? 'true' : 'false',
+        // 深度用于引导线显隐（仅存在层次线的子项显示引导线）
+        'data-cpd-depth': String(depth),
         ...(node.external ? { target: '_blank', rel: 'noreferrer' } : {}),
         style: { paddingInlineStart: getItemOffset(depth) },
       };
@@ -137,16 +139,18 @@ export function renderSidebar(config: SidebarConfig): string {
   const inner = el('div', { class: 'cpd-sidebar-inner' }, [
     el('div', { class: 'cpd-sidebar-header' }, [
       el('div', { class: 'cpd-sidebar-title' }, config.title ?? ''),
-      el(
-        'button',
-        {
-          class: 'cpd-btn cpd-btn-ghost cpd-sidebar-collapse',
-          type: 'button',
-          'data-cpd-collapse': '',
-          'aria-label': config.labels?.collapse ?? 'Collapse Sidebar',
-        },
-        Icon.panelLeft({ class: 'cpd-sidebar-collapse-icon' }),
-      ),
+      config.showCollapse === false
+        ? ''
+        : el(
+            'button',
+            {
+              class: 'cpd-btn cpd-btn-ghost cpd-sidebar-collapse',
+              type: 'button',
+              'data-cpd-collapse': '',
+              'aria-label': config.labels?.collapse ?? 'Collapse Sidebar',
+            },
+            Icon.panelLeft({ class: 'cpd-sidebar-collapse-icon' }),
+          ),
     ]),
     el('nav', { class: 'cpd-sidebar-nav' }, [linksHtml, treeHtml]),
     config.footer ? el('div', { class: 'cpd-sidebar-footer' }, config.footer) : '',
@@ -162,7 +166,7 @@ export function renderSidebar(config: SidebarConfig): string {
   // 四组导航默认展开、项目子树默认折叠；由 runtime 将面板移出侧栏容器到 body）
   const drawer = renderDrawer({
     id: 'cpd-nav-drawer',
-    title: config.title ?? '',
+    title: config.drawerTitle ?? config.title ?? '',
     closeLabel: config.labels?.close,
     content: config.drawerNav
       ? el('nav', { class: 'cpd-nav-drawer-tree', 'aria-label': config.labels?.tree ?? 'Site navigation' }, config.drawerNav.map((n) => renderNode(n, 0, ctx)).join(''))
