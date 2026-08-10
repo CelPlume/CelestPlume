@@ -251,21 +251,21 @@ export const PROJECTS: Project[] = [
     en: {
       title: 'Squoosh',
       description:
-        'A self-hosted Squoosh instance — compress and optimize images directly in the browser with a rich set of codecs and live preview, no upload required, fully private.',
+        'Browser-based image compressor with a rich codec set (AVIF, WebP, mozJPEG, PNG, QOI) and side-by-side live preview. No upload, fully private. Supports 8 languages including Simplified Chinese, Traditional Chinese, Japanese, and Korean, with automatic browser detection.',
       tags: ['Image', 'Compression', 'Web'],
       buttons: [
         { label: 'Open App', link: 'https://squoosh.hxcn.dev', style: 'primary' },
-        { label: 'GitHub', link: 'https://github.com/GoogleChromeLabs/squoosh', style: 'secondary' },
+        { label: 'GitHub', link: 'https://github.com/CelPlume/squoosh', style: 'secondary' },
       ],
     },
     zh: {
       title: 'Squoosh',
       description:
-        '自托管的 Squoosh 图像压缩服务——直接在浏览器中压缩和优化图片，提供丰富的编码器与实时预览，无需上传，完全本地处理，隐私无忧。',
+        '浏览器端图像压缩工具，内置丰富编码器（AVIF、WebP、mozJPEG、PNG、QOI）与并排实时预览。无需上传，完全本地处理。支持 8 种语言（含简体中文、繁体中文），浏览器自动检测。',
       tags: ['图像', '压缩', 'Web'],
       buttons: [
         { label: '打开应用', link: 'https://squoosh.hxcn.dev', style: 'primary' },
-        { label: 'GitHub', link: 'https://github.com/GoogleChromeLabs/squoosh', style: 'secondary' },
+        { label: 'GitHub', link: 'https://github.com/CelPlume/squoosh', style: 'secondary' },
       ],
     },
   },
