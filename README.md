@@ -29,6 +29,8 @@ src/
     Home.astro           # 主页布局（导航、语言/主题切换、加载动画、页脚）
   components/
     HomePage.astro       # 主页内容（Hero 粒子文字、Projects、Philosophy、CTA）
+    SiteSearch.astro     # 站内搜索触发按钮（主页 / 文档页共用）
+    PagefindModal.astro  # Pagefind 搜索弹窗（Plumest 风格独立组件，毛玻璃遮罩 + 结果/键盘提示）
   content/docs/          # 英文文档（Starlight）
   content/docs/zh/       # 中文文档（Starlight）
   styles/
