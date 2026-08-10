@@ -407,7 +407,7 @@ main#main {
 }
 
 /* ============================================================
-   6. 按钮（纯 CSS 渐变，高光/扫光由 hover 过渡承担）
+   6. 按钮（纯 CSS 渐变填充；hover 镜面高光由 JS 驱动，见 src/lib/specular.ts）
    ============================================================ */
 .cp-btn {
   position: relative;
@@ -424,35 +424,11 @@ main#main {
   border: none;
   isolation: isolate;
   overflow: hidden;
-  transition:
-    transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
-    border-color 0.3s ease,
-    color 0.3s ease;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
   -webkit-tap-highlight-color: transparent;
 }
-/* 镜面高光扫光（Specular Button 参考的 CSS 近似：hover 时高光条从左扫过按钮） */
-.cp-btn::before {
-  content: '';
-  position: absolute;
-  top: -120%;
-  left: -40%;
-  width: 60%;
-  height: 340%;
-  background: linear-gradient(115deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.55) 50%,
-    transparent 70%);
-  transform: rotate(12deg);
-  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
-  z-index: 2;
-  pointer-events: none;
-  mix-blend-mode: overlay;
-  filter: blur(1px);
-}
-.cp-btn:hover::before {
-  transform: translateX(280%) rotate(12deg);
-}
+/* 镜面高光 hover 已改为 JS 驱动的镜面边缘高光（src/lib/specular.ts，
+   reactbits specular-button 移植，共享单张 WebGL canvas），不再用 CSS 扫光近似。 */
 .cp-btn > * {
   position: relative;
   z-index: 1;
@@ -476,6 +452,9 @@ main#main {
 }
 
 .cp-btn-primary {
+  /* 镜面高光配色（specular.ts 读取）：金色实底上衬珍珠白高光 + 深金描边 */
+  --cp-spec-line: #ffffff;
+  --cp-spec-base: rgba(168, 129, 58, 0.55);
   color: var(--cp-night-deep);
   background: linear-gradient(135deg,
     rgba(212, 175, 108, 0.98) 0%,
@@ -487,16 +466,10 @@ main#main {
     0 12px 34px -10px rgba(212, 175, 108, 0.62),
     0 0 54px -14px rgba(232, 205, 152, 0.48);
 }
-/* hover 效果作用于边框（白色描边环），不改变渐变填充、不上浮 */
-.cp-btn-primary:hover {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -2px 0 rgba(0, 0, 0, 0.12),
-    inset 0 0 0 1.5px rgba(255, 255, 255, 0.55),
-    0 12px 34px -10px rgba(212, 175, 108, 0.62),
-    0 0 54px -14px rgba(232, 205, 152, 0.48);
-}
 :root[data-home-theme='light'] .cp-btn-primary {
+  /* 浅色主题：金色实底上衬白高光 + 深金描边 */
+  --cp-spec-line: #ffffff;
+  --cp-spec-base: rgba(168, 129, 58, 0.5);
   color: #fff;
   background: linear-gradient(135deg, #a8813a 0%, #c69d53 50%, #5a6578 100%);
   box-shadow:
@@ -504,25 +477,20 @@ main#main {
     inset 0 -2px 0 rgba(0, 0, 0, 0.15),
     0 12px 34px -12px rgba(168, 129, 58, 0.55);
 }
-:root[data-home-theme='light'] .cp-btn-primary:hover {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset 0 -2px 0 rgba(0, 0, 0, 0.15),
-    inset 0 0 0 1.5px rgba(255, 255, 255, 0.55),
-    0 12px 34px -12px rgba(168, 129, 58, 0.55);
-}
 
 .cp-btn-ghost {
+  /* 镜面高光配色：玻璃底上衬金色高光 + 金描边 */
+  --cp-spec-line: var(--cp-gold);
+  --cp-spec-base: rgba(212, 175, 108, 0.2);
   color: var(--cp-pearl);
   background: var(--cp-surface);
   border: 1px solid var(--cp-border-strong);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
-/* hover 效果作用于边框（提亮边框色），不改变填充/背景、不上浮 */
-.cp-btn-ghost:hover {
-  color: var(--cp-gold-pale);
-  border-color: var(--cp-border-hover);
+:root[data-home-theme='light'] .cp-btn-ghost {
+  --cp-spec-line: #a8813a;
+  --cp-spec-base: rgba(168, 129, 58, 0.22);
 }
 
 .cp-btn:focus-visible {
@@ -544,29 +512,31 @@ main#main {
   transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .cp-mini-btn-primary {
+  /* 镜面高光配色：金色实底上衬白高光 + 深金描边 */
+  --cp-spec-line: #ffffff;
+  --cp-spec-base: rgba(168, 129, 58, 0.55);
   color: var(--cp-night-deep);
   background: linear-gradient(135deg, var(--cp-gold), var(--cp-gold-soft));
   box-shadow: 0 8px 20px -8px rgba(212, 175, 108, 0.55);
 }
-/* hover 效果作用于边框（白色描边环），无上浮、无阴影增强 */
-.cp-mini-btn-primary:hover {
-  box-shadow:
-    inset 0 0 0 1.5px rgba(255, 255, 255, 0.5),
-    0 8px 20px -8px rgba(212, 175, 108, 0.55);
-}
 :root[data-home-theme='light'] .cp-mini-btn-primary {
+  /* 浅色主题：白高光 + 深金描边 */
+  --cp-spec-line: #ffffff;
+  --cp-spec-base: rgba(168, 129, 58, 0.5);
   color: #fff;
   background: linear-gradient(135deg, #a8813a, #c69d53);
 }
 .cp-mini-btn-secondary {
+  /* 镜面高光配色：透明底上衬金色高光 + 金描边 */
+  --cp-spec-line: var(--cp-gold);
+  --cp-spec-base: rgba(212, 175, 108, 0.2);
   color: var(--cp-pearl);
   background: transparent;
   border: 1px solid var(--cp-border-strong);
 }
-/* hover 效果作用于边框，不改变填充/背景、不上浮 */
-.cp-mini-btn-secondary:hover {
-  border-color: var(--cp-border-hover);
-  color: var(--cp-gold-pale);
+:root[data-home-theme='light'] .cp-mini-btn-secondary {
+  --cp-spec-line: #a8813a;
+  --cp-spec-base: rgba(168, 129, 58, 0.22);
 }
 .cp-btn > *,
 .cp-mini-btn > * {

@@ -173,6 +173,7 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
      ============================================================ -->
 <script>
   import { PARTICLE_TEXT } from '../styles/celestial-tokens.ts';
+  import { initSpecular } from '../lib/specular.ts';
 
   /* ----------------------------------------------------------------
      1. 粒子文字（reactbits.dev/text-animations/particle-text 移植）
@@ -555,5 +556,15 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
       document.addEventListener('astro:before-swap', cleanup);
     }
   }
+
+  /* ----------------------------------------------------------------
+     2. 镜面边缘高光（reactbits specular-button 移植，src/lib/specular.ts）
+        共享单张全页 WebGL canvas，随光标扫过 .cp-btn / .cp-mini-btn 边缘。
+        initSpecular 在无 WebGL2 / prefers-reduced-motion 时返回 null 并安全降级。
+     ---------------------------------------------------------------- */
+  const destroySpecular = initSpecular();
+  document.addEventListener('astro:before-swap', () => {
+    destroySpecular?.();
+  });
 
 </script>
