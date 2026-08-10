@@ -3,11 +3,44 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import mdx from '@astrojs/mdx';
 import icon from 'astro-icon';
+import { readFile, writeFile, rm } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 
 /**
  * 把 Docs Kit 运行时注入所有页面。
  * Starlight 覆盖组件中的 <script> import 会被剥离，故用 Astro 核心 injectScript。
  */
+/**
+ * 把 @astrojs/sitemap 的嵌套输出（sitemap-index.xml + sitemap-N.xml）
+ * 压扁为单个 sitemap.xml，保留多语言 hreflang 备用链接。
+ * 必须放在 integrations 数组最后：Starlight 会把 @astrojs/sitemap 注入在 starlight
+ * 之后，而 Astro 按数组顺序触发 astro:build:done，故本钩子在其之后执行。
+ * 站点 URL 数未超过 @astrojs/sitemap entryLimit（45000）时只会产出单个 sitemap-0.xml。
+ */
+function flatSitemap() {
+  return {
+    name: 'flat-sitemap',
+    hooks: {
+      /** @param {import('astro').HookParameters<'astro:build:done'>} params */
+      'astro:build:done': async ({ dir, logger }) => {
+        const out = fileURLToPath(dir);
+        const chunk = join(out, 'sitemap-0.xml');
+        const index = join(out, 'sitemap-index.xml');
+        try {
+          const xml = await readFile(chunk, 'utf8');
+          await writeFile(join(out, 'sitemap.xml'), xml);
+          await rm(chunk, { force: true });
+          await rm(index, { force: true });
+          logger.info('`sitemap.xml` generated (flat, multilingual hreflang kept)');
+        } catch (err) {
+          logger.error(`flat-sitemap: ${/** @type {Error} */ (err).message}`);
+        }
+      },
+    },
+  };
+}
+
 function celestialUiRuntime() {
   return {
     name: 'celestial-ui-runtime',
@@ -22,6 +55,9 @@ function celestialUiRuntime() {
 
 // https://astro.build/config
 export default defineConfig({
+  // 生产站点 URL：Starlight 据此生成 sitemap、canonical、og:url 等绝对链接
+  site: 'https://celplume.hxcn.space',
+  // cleanURL：Astro 默认输出无 .html 的目录型路由（/page/），配合 trailingSlash 保持内部链接稳定
   trailingSlash: 'always',
   integrations: [
     celestialUiRuntime(),
@@ -146,6 +182,9 @@ export default defineConfig({
           tag: 'link',
           attrs: { rel: 'preconnect', href: 'https://cdn.jsdelivr.net', crossorigin: '' },
         },
+        // 覆盖 Starlight 默认的 /sitemap-index.xml 链接（hasTag 按 rel=sitemap 去重替换），
+        // 指向压扁后的 /sitemap.xml
+        { tag: 'link', attrs: { rel: 'sitemap', href: '/sitemap.xml' } },
         {
           // 预加载正文字体（Manrope 400）：首绘前就绪，避免 swap 引起 CLS（文档页 CLS 主因）
           tag: 'link',
@@ -155,6 +194,43 @@ export default defineConfig({
             type: 'font/woff2',
             crossorigin: '',
             href: 'https://cdn.jsdelivr.net/npm/@fontsource/manrope@5.3.0/files/manrope-latin-400-normal.woff2',
+          },
+        },
+        // SEO：OG/Twitter 分享图（1200×630）与站点关键词。
+        // 文档页 canonical / og:url / og:site_name / hreflang / sitemap 链接由 Starlight
+        // 在配置 site 后自动生成（见 utils/head.ts）。
+        {
+          tag: 'meta',
+          attrs: {
+            property: 'og:image',
+            content: 'https://celplume.hxcn.space/images/og-cover.jpg',
+          },
+        },
+        {
+          tag: 'meta',
+          attrs: { property: 'og:image:width', content: '1200' },
+        },
+        {
+          tag: 'meta',
+          attrs: { property: 'og:image:height', content: '630' },
+        },
+        {
+          tag: 'meta',
+          attrs: {
+            name: 'twitter:image',
+            content: 'https://celplume.hxcn.space/images/og-cover.jpg',
+          },
+        },
+        {
+          tag: 'meta',
+          attrs: { name: 'twitter:site', content: '@CelPlume' },
+        },
+        {
+          tag: 'meta',
+          attrs: {
+            name: 'keywords',
+            content:
+              'CelPlume, Celest Plume, documentation portal, open source, Astro, Starlight, Plumest, ChronoSync, BookmarkHarbor',
           },
         },
       ],
@@ -190,5 +266,7 @@ export default defineConfig({
         ],
       },
     }),
+    // 置于数组末尾：在 Starlight 注入的 @astrojs/sitemap 之后运行，压扁为 sitemap.xml
+    flatSitemap(),
   ],
 });
