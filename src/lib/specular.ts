@@ -240,6 +240,23 @@ export function initSpecular(): (() => void) | null {
   let pointerAngle: number | null = null;
   let proximityT = 0;
 
+  // 渲染循环按需启停：指针靠近按钮（或淡出进行中）才跑 rAF，空闲时完全停掉，
+  // 避免整页常驻 60fps 空转占用主线程（Lighthouse main-thread-work 主要来源）。
+  let raf = 0;
+  let running = false;
+  const start = () => {
+    if (running) return;
+    running = true;
+    last = performance.now();
+    raf = requestAnimationFrame(loop);
+  };
+  const stop = () => {
+    if (!running) return;
+    running = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  };
+
   const onPointerMove = (e: PointerEvent) => {
     pointer.x = e.clientX;
     pointer.y = e.clientY;
@@ -271,6 +288,8 @@ export function initSpecular(): (() => void) | null {
       }
       const t = Math.max(0, 1 - bestDist / Math.max(PROXIMITY, 1));
       proximityT = t * t * (3 - 2 * t);
+      // 指针进入接近范围 → 启动渲染循环（空闲自停）
+      if (bestDist < PROXIMITY) start();
     } else {
       proximityT = 0;
     }
@@ -309,9 +328,9 @@ export function initSpecular(): (() => void) | null {
   let angle = 2.4;
   let bright = 0;
   let last = performance.now();
-  let raf = 0;
 
   const loop = (now: number) => {
+    if (!running) return;
     raf = requestAnimationFrame(loop);
     const dt = Math.min((now - last) / 1000, 0.05);
     last = now;
@@ -355,11 +374,13 @@ export function initSpecular(): (() => void) | null {
       gl.bindVertexArray(vao);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
+
+    // 空闲自停：无活动按钮且高光已衰减到 0 → 停掉 rAF，页面闲置时零主线程开销
+    if (!active && bright < 0.003) stop();
   };
-  raf = requestAnimationFrame(loop);
 
   return () => {
-    cancelAnimationFrame(raf);
+    stop();
     if (refreshRaf) cancelAnimationFrame(refreshRaf);
     ro.disconnect();
     themeObs.disconnect();

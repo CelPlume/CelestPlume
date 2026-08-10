@@ -562,8 +562,29 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
         共享单张全页 WebGL canvas，随光标扫过 .cp-btn / .cp-mini-btn 边缘。
         initSpecular 在无 WebGL2 / prefers-reduced-motion 时返回 null 并安全降级。
      ---------------------------------------------------------------- */
-  const destroySpecular = initSpecular();
+  // 镜面高光初始化延迟到空闲时执行：WebGL 上下文创建 + 着色器编译较重，
+  // 不在首屏关键路径上抢占主线程（配合 specular.ts 的空闲自停 rAF）。
+  let destroySpecular: (() => void) | null = null;
+  let specularIdle: number | null = null;
+  const scheduleIdle = (cb: () => void) => {
+    if (typeof window.requestIdleCallback === 'function') {
+      return window.requestIdleCallback(cb, { timeout: 2000 });
+    }
+    return window.setTimeout(cb, 500);
+  };
+  specularIdle = scheduleIdle(() => {
+    specularIdle = null;
+    destroySpecular = initSpecular();
+  });
   document.addEventListener('astro:before-swap', () => {
+    if (specularIdle !== null) {
+      if (typeof window.cancelIdleCallback === 'function') {
+        window.cancelIdleCallback(specularIdle);
+      } else {
+        window.clearTimeout(specularIdle);
+      }
+      specularIdle = null;
+    }
     destroySpecular?.();
   });
 
