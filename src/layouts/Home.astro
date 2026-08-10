@@ -43,6 +43,7 @@ const currentPath = Astro.url.pathname;
     <title>{title}</title>
 
     <link rel="canonical" href={new URL(currentPath, siteUrl).toString()} />
+    <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
