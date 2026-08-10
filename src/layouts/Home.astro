@@ -22,7 +22,7 @@ export interface Props {
 const { title, description, locale } = Astro.props;
 const t = getUI(locale);
 
-const siteUrl = Astro.site ?? new URL('https://celplume.example.com');
+const siteUrl = Astro.site ?? new URL('https://celplume.hxcn.space');
 const currentPath = Astro.url.pathname;
 ---
 
@@ -34,6 +34,12 @@ const currentPath = Astro.url.pathname;
     <meta name="color-scheme" content="dark light" />
     <meta name="theme-color" content="#0a0f1c" data-home-theme-color />
     <meta name="description" content={description} />
+    <meta
+      name="keywords"
+      content={locale === 'zh'
+        ? 'Celest Plume, 天空之翼, 文档站点, 开源, Astro, Starlight, Plumest, 时序同笺, 书签浏览器'
+        : 'CelPlume, Celest Plume, documentation portal, open source, Astro, Starlight, Plumest, ChronoSync, BookmarkHarbor'}
+    />
     <title>{title}</title>
 
     <link rel="canonical" href={new URL(currentPath, siteUrl).toString()} />
@@ -42,7 +48,11 @@ const currentPath = Astro.url.pathname;
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL('/images/CelPlume_512.jpg', siteUrl).toString()} />
+    <meta property="og:image" content={new URL('/images/og-cover.jpg', siteUrl).toString()} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content={new URL(currentPath, siteUrl).toString()} />
+    <meta property="og:site_name" content={t.brand.name} />
     <meta property="og:locale" content={t.meta.ogLocale} />
     <meta property="og:locale:alternate" content={locale === 'zh' ? 'en_US' : 'zh_CN'} />
 
@@ -50,11 +60,12 @@ const currentPath = Astro.url.pathname;
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={new URL('/images/CelPlume_512.jpg', siteUrl).toString()} />
+    <meta name="twitter:image" content={new URL('/images/og-cover.jpg', siteUrl).toString()} />
+    <meta name="twitter:site" content="@CelPlume" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="/images/CelPlume_favicon_256.jpg" />
-    <link rel="apple-touch-icon" href="/images/CelPlume_512.jpg" />
+    <link rel="apple-touch-icon" href="/images/CelPlume_256.jpg" />
 
     <!-- Fonts：经 frontmatter 引入 src/styles/fonts/fonts-home.css（按需打包） -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
@@ -141,7 +152,7 @@ const currentPath = Astro.url.pathname;
     <footer class="cp-footer" role="contentinfo">
       <div class="cp-footer-inner">
         <div class="cp-footer-brand">
-          <img src="/images/CelPlume_512.jpg" alt="" class="cp-footer-logo" width="64" height="64" />
+          <img src="/images/CelPlume_256.jpg" alt="" class="cp-footer-logo" width="64" height="64" />
           <div>
             <p class="cp-footer-title cp-font-display cp-gold-gradient-text">{t.brand.name}</p>
             <p class="cp-footer-sub">{t.footer.brandSubtitle}</p>
