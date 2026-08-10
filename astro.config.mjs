@@ -192,6 +192,15 @@ export default defineConfig({
         { tag: 'link', attrs: { rel: 'alternate', type: 'application/rss+xml', href: '/rss.xml', title: 'RSS' } },
         { tag: 'link', attrs: { rel: 'describedby', href: '/llms.txt' } },
         {
+          // 站点统计（Umami）：defer 异步加载，不阻塞首屏
+          tag: 'script',
+          attrs: {
+            defer: true,
+            src: 'https://analytics.hxcn.dev/script.js',
+            'data-website-id': '6139e9bf-ca71-41f6-839f-2241932962af',
+          },
+        },
+        {
           // 预加载正文字体（Manrope 400）：首绘前就绪，避免 swap 引起 CLS（文档页 CLS 主因）
           tag: 'link',
           attrs: {

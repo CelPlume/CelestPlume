@@ -46,6 +46,13 @@ const currentPath = Astro.url.pathname;
     <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS" />
     <link rel="describedby" href="/llms.txt" />
 
+    <!-- 站点统计（Umami）：defer 异步加载，不阻塞首屏 -->
+    <script
+      defer
+      src="https://analytics.hxcn.dev/script.js"
+      data-website-id="6139e9bf-ca71-41f6-839f-2241932962af"
+    ></script>
+
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
