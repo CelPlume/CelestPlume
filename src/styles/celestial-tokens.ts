@@ -209,15 +209,15 @@ export const PROJECTS: Project[] = [
     en: {
       title: 'Reactive Resume',
       description:
-        'Reactive Resume is a free and open-source résumé builder that simplifies creating, updating, and sharing résumés. The platform collects zero user data and serves no ads, so your privacy is protected to the highest degree. The interface is extremely user-friendly.',
-      tags: ['Résumé', 'Tool', 'Open Source'],
+        'A free, open-source résumé builder with 12+ templates and unlimited resumes. Export to PDF in one click, share via public URL, or password-protect your profile. Your data stays on your device — no ads, no tracking, no limits.',
+      tags: ['Résumé', 'Open Source', 'Free'],
       buttons: [{ label: 'Get Started', link: 'https://resume.hxcn.space', style: 'primary' }],
     },
     zh: {
       title: '及时简历',
       description:
-        'Reactive Resume 是一个免费且开源的简历制作工具，它简化了简历的创建、更新和共享流程。该平台完全不收集用户信息，也不进行任何形式的广告推送，因此用户的隐私得到了最高程度的保护。界面极其用户友好。',
-      tags: ['简历', '工具', '开源'],
+        '免费开源简历工具，提供 12 款以上精美模板，简历数量不限。一键导出 PDF，支持公开链接分享和密码保护。数据留在你自己手里，无广告、无追踪、无数量限制。',
+      tags: ['简历', '开源', '免费'],
       buttons: [{ label: '开始使用', link: 'https://resume.hxcn.space', style: 'primary' }],
     },
   },
