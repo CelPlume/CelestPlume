@@ -132,20 +132,20 @@ export const PROJECTS: Project[] = [
     id: 'sky-mirror',
     icon: 'lucide:sparkles',
     en: {
-      title: 'Sky Mirror',
+      title: 'CelPlume',
       description:
         'A futuristic, tech-forward documentation portal that mirrors tomorrow and connects the world of innovation. Built on the Plumest design system for an elegant reading experience and powerful features.',
-      tags: ['React', 'Frontend', 'Docusaurus'],
+      tags: ['Documentation', 'Design System', 'Reading'],
       buttons: [
         { label: 'Visit Home', link: '/', style: 'primary' },
         { label: 'Read Docs', link: '/docs/intro', style: 'secondary' },
       ],
     },
     zh: {
-      title: '天空之镜',
+      title: '天空之翼',
       description:
         '极具未来感和科技感的文档站点，映照科技未来，连接创新世界。采用 Plumest 设计系统，提供优雅的阅读体验和强大的功能。',
-      tags: ['React', '前端', 'Docusaurus'],
+      tags: ['文档', '设计系统', '阅读'],
       buttons: [
         { label: '访问首页', link: '/', style: 'primary' },
         { label: '查看文档', link: '/docs/intro', style: 'secondary' },
@@ -160,7 +160,7 @@ export const PROJECTS: Project[] = [
       title: 'SDNU ChronoSync',
       description:
         'SDNUChronoSync (时序同笺) is a timetable and schedule management tool designed exclusively for Shandong Normal University students. One-click import from the academic affairs system, plus ICS export for subscribing on multi-platform calendars. Features personal profiles, team views, and an admin panel, helping students sync and plan their campus life efficiently. Front-end and back-end are separated for easy secondary development and extension.',
-      tags: ['Timetable', 'Calendar', 'TypeScript'],
+      tags: ['Course Schedule', 'ICS Export', 'Team'],
       buttons: [
         { label: 'Get Started', link: 'https://sxtj.hxcn.space', style: 'primary' },
         { label: 'GitHub', link: 'https://github.com/CelPlume/SDNUChronoSync', style: 'secondary' },
@@ -170,7 +170,7 @@ export const PROJECTS: Project[] = [
       title: '时序同笺',
       description:
         'SDNUChronoSync (时序同笺) 是一个专为山东师范大学（SDNU）学生设计的课表与日程管理工具。支持从教务系统一键导入课表，并能生成ICS文件以便在多平台日历应用中订阅。项目具备个人资料管理、团队视图以及管理员后台等功能，旨在帮助用户高效地同步与规划学习生活。前端与后端分离的设计，为二次开发和功能扩展提供了便利。',
-      tags: ['课程表', '日历', 'TypeScript'],
+      tags: ['课表', 'ICS导出', '团队协作'],
       buttons: [
         { label: '开始使用', link: 'https://sxtj.hxcn.space', style: 'primary' },
         { label: 'GitHub', link: 'https://github.com/CelPlume/SDNUChronoSync', style: 'secondary' },
@@ -228,7 +228,7 @@ export const PROJECTS: Project[] = [
       title: 'BookmarkHarbor',
       description:
         'BookmarkHarbor is a local-first, open-source bookmark browser with folders/tags, a modern UI, and multilingual support. Manage bookmarks like a file manager — local storage keeps them safe.',
-      tags: ['Bookmarks', 'Local-first', 'Open Source'],
+      tags: ['Bookmarks', 'File Manager', 'Privacy'],
       buttons: [
         { label: 'Open App', link: 'https://bookmark.hxcn.space', style: 'primary' },
         { label: 'GitHub', link: 'https://github.com/CelPlume/BookmarkHarbor', style: 'secondary' },
@@ -238,7 +238,7 @@ export const PROJECTS: Project[] = [
       title: 'BookmarkHarbor',
       description:
         '书签浏览器：像文件管理器一样管理书签，本地存储更安全，开源、现代美观、支持多语言。通过文件夹与标签组织你的收藏，数据保存在本地，安全可控。',
-      tags: ['书签', '本地优先', '开源'],
+      tags: ['书签', '文件管理器', '隐私'],
       buttons: [
         { label: '打开应用', link: 'https://bookmark.hxcn.space', style: 'primary' },
         { label: 'GitHub', link: 'https://github.com/CelPlume/BookmarkHarbor', style: 'secondary' },
