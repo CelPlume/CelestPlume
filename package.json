@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "@astrojs/mdx": "4",
+    "@astrojs/rss": "^4.0.19",
     "@astrojs/starlight": "0.36",
     "@iconify-json/lucide": "^1.2.122",
     "astro": "^5.13.0",
