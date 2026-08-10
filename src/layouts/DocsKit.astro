@@ -19,6 +19,9 @@ const { title, lang = 'en', interactive = true } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Celest Plume Docs Kit — interactive component playground." />
+    {/* demo 页为组件试玩场，避免进入索引 */}
+    <meta name="robots" content="noindex, nofollow" />
     <title>{title}</title>
     <link rel="icon" type="image/jpeg" href="/images/CelPlume_favicon_256.jpg" />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
