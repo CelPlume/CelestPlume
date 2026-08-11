@@ -143,7 +143,7 @@ sidebar:
 - `今天`：快速定位到今天。
 - 日期按钮：用弹出式日期选择器直接跳转。
 
-<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210919064_1773482792002_62.webp" alt="视图切换栏，显示四种视图选项和导航控件" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210919064_1773482792002_62.webp" alt="视图切换栏，显示四种视图选项和导航控件" style="zoom: 50%; display: block; margin-left: auto; margin-right: auto;" />
 
 ### 3. 导入课表
 
@@ -156,9 +156,9 @@ sidebar:
 3. 选择“导入课表”。
 4. 再选择具体导入方式。
 
-<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211004749_1773482793129_38.webp" alt="课表操作下拉菜单，显示导入选项" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211004749_1773482793129_38.webp" alt="课表操作下拉菜单，显示导入选项" style="zoom: 50%; display: block; margin-left: auto; margin-right: auto;" />
 
-<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211122500_1773482795058_20.webp" alt="导入选项，显示「从教务系统导入」和「从 ICS 文件导入」" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211122500_1773482795058_20.webp" alt="导入选项，显示「从教务系统导入」和「从 ICS 文件导入」" style="zoom: 60%; display: block; margin-left: auto; margin-right: auto;" />
 
 #### 3.1 从教务系统导入
 
@@ -178,7 +178,7 @@ sidebar:
 5. 点击“立即导入”。
 6. 导入成功后，页面会显示解析到的姓名、班级、年级、专业等信息，并把课程写入目标课表。
 
-<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211231136_1773482797607_28.webp" alt="教务系统导入表单，显示学号、密码、验证码和导入目标选项" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211231136_1773482797607_28.webp" alt="教务系统导入表单，显示学号、密码、验证码和导入目标选项" style="zoom: 45%; display: block; margin-left: auto; margin-right: auto;" />
 
 注意事项：
 

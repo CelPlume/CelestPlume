@@ -144,7 +144,7 @@ Common controls:
 - `今天` (Today) — jump straight to today.
 - Date button — open a date picker to jump to any date directly.
 
-<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210919064_1773482792002_62.webp" alt="Schedule view switcher showing the four view options and navigation controls" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210919064_1773482792002_62.webp" alt="Schedule view switcher showing the four view options and navigation controls" style="zoom: 50%; display: block; margin-left: auto; margin-right: auto;" />
 
 ### 3. Import a schedule
 
@@ -157,9 +157,9 @@ To get to the import options:
 3. Select "导入课表" (Import schedule).
 4. Choose your import method.
 
-<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211004749_1773482793129_38.webp" alt="Schedule operations dropdown showing the Import schedule option" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211004749_1773482793129_38.webp" alt="Schedule operations dropdown showing the Import schedule option" style="zoom: 50%; display: block; margin-left: auto; margin-right: auto;" />
 
-<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211122500_1773482795058_20.webp" alt="Import options showing 从教务系统导入 (Import from academic system) and 从 ICS 文件导入 (Import from ICS file)" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211122500_1773482795058_20.webp" alt="Import options showing 从教务系统导入 (Import from academic system) and 从 ICS 文件导入 (Import from ICS file)" style="zoom: 60%; display: block; margin-left: auto; margin-right: auto;" />
 
 #### 3.1 Import from the academic system
 
@@ -179,7 +179,7 @@ Steps:
 5. Click "立即导入" (Import now).
 6. After a successful import, the page displays the parsed name, class, grade, and major, and writes the courses into the target schedule.
 
-<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211231136_1773482797607_28.webp" alt="Academic system import form with student ID, password, verification code, and import target options" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211231136_1773482797607_28.webp" alt="Academic system import form with student ID, password, verification code, and import target options" style="zoom: 45%; display: block; margin-left: auto; margin-right: auto;" />
 
 Things to keep in mind:
 
