@@ -913,6 +913,136 @@ body {
   border-radius: var(--cpd-radius);
   border: 1px solid var(--cpd-border);
 }
+/* .cpd-article 是 flex 列容器，直接作为 flex item 的 <img> 会被 stretch 到整行宽，
+   使 style="zoom: N%" 失效；align-self: flex-start 让它在 JS 包裹前就按自然尺寸缩放 */
+.cpd-article > img {
+  align-self: flex-start;
+}
+/* ============================================================
+   ImageZoom
+   ------------------------------------------------------------
+   为什么包一层：.cpd-article 是 flex 列布局，直接作为 flex item 的 <img>
+   会 `align-self: stretch` 被拉伸到整行宽，style="zoom: N%" 因此失效。
+   .cpd-iz 提供非 flex 的 fit-content 容器，让 zoom 按原始尺寸真正缩放。
+   内部沿用上游 data-rmiz-* 钩子。
+   ============================================================ */
+.cpd-iz {
+  position: relative;
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0.5rem 0;
+  line-height: 0;
+}
+/* 图片自身带水平 auto 外边距（居中意图）时居中整个容器 */
+.cpd-iz--center {
+  margin-inline: auto;
+}
+.cpd-iz img {
+  line-height: normal;
+}
+.cpd-iz [data-rmiz-ghost] {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.cpd-iz [data-rmiz-btn-zoom],
+.cpd-iz [data-rmiz-btn-unzoom] {
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  margin: 0;
+  width: 40px;
+  height: 40px;
+  padding: 9px;
+  border: none;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--cpd-foreground) 70%, transparent);
+  color: var(--cpd-background);
+  outline-offset: 2px;
+  touch-action: manipulation;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: zoom-in;
+}
+.cpd-iz [data-rmiz-btn-zoom] {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: zoom-in;
+}
+.cpd-iz [data-rmiz-btn-unzoom] {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1;
+  cursor: zoom-out;
+}
+/* 默认隐藏放大按钮，仅键盘聚焦 / 激活时可见（screen-reader 模式） */
+.cpd-iz [data-rmiz-btn-zoom]:not(:focus):not(:active) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+.cpd-iz [data-rmiz-content="found"] img {
+  cursor: zoom-in;
+}
+/* 对话框：全屏 top-layer */
+.cpd-iz [data-rmiz-modal]::backdrop {
+  display: none;
+}
+.cpd-iz [data-rmiz-modal][open] {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  width: 100dvw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+.cpd-iz [data-rmiz-modal-overlay] {
+  position: absolute;
+  inset: 0;
+  transition: background-color 0.3s;
+}
+.cpd-iz [data-rmiz-modal-overlay="hidden"] {
+  background-color: transparent;
+}
+.cpd-iz [data-rmiz-modal-overlay="visible"] {
+  background-color: color-mix(in srgb, var(--cpd-background) 80%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.cpd-iz [data-rmiz-modal-content] {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.cpd-iz [data-rmiz-modal-img] {
+  position: absolute;
+  cursor: zoom-out;
+  transform-origin: top left;
+  transition: transform 0.3s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cpd-iz [data-rmiz-modal-img],
+  .cpd-iz [data-rmiz-modal-overlay] {
+    transition-duration: 0.01ms !important;
+  }
+}
 .cpd-article table {
   width: 100%;
   border-collapse: collapse;

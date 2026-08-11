@@ -98,3 +98,5 @@ export type {
 } from './components';
 export { initCelestialUI } from './runtime';
 export type { CelestialUiOptions } from './runtime';
+export { renderImageZoom } from './image-zoom';
+export type { ImageZoomOptions } from './image-zoom';

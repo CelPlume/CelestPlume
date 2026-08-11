@@ -12,6 +12,7 @@
 import { getLineOffset } from './toc';
 import { applyTheme, resolveInitialTheme, LANG_STORAGE_KEY, type CpdThemeMode } from './tokens';
 import { Icon } from './icons';
+import { initImageZoom } from './image-zoom-runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -781,6 +782,7 @@ export function initCelestialUI(options: CelestialUiOptions = {}): () => void {
   initAccordions(root);
   initCopy(root);
   initAstroCodeCopy(root);
+  initImageZoom(root);
   initTheme(root);
   initLang(root);
 
