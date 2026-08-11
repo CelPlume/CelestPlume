@@ -76,7 +76,7 @@ You'll need to register the first time you use ChronoSync.
 3. Fill in your student ID, name, class, and password as prompted, then enter your email and the verification code. Binding your email now makes password recovery easier later.
 4. Click the **"注册" (Register)** button to finish.
 
-![Registration page showing the student ID, name, class, password, email, and verification code fields](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309185737407_1773482780601_79.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309185737407_1773482780601_79.webp" alt="Registration page showing the student ID, name, class, password, email, and verification code fields" style="zoom: 33%;" />
 
 ### 2. Log in to the platform
 
@@ -84,7 +84,7 @@ You'll need to register the first time you use ChronoSync.
 2. Click "登录" (Log in) to enter the dashboard.
 3. After logging in, the most-used pages are typically "我的课表" (My Schedule), "团队视图" (Team view), "找空教室" (Empty classrooms), and "个人中心" (Profile).
 
-![Login page with student ID and password fields, and the login button](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309185950451_1773482782341_18.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309185950451_1773482782341_18.webp" alt="Login page with student ID and password fields, and the login button" style="zoom: 33%;" />
 
 ### 3. Get to know the navigation
 
@@ -95,7 +95,7 @@ Once you've logged in, here are the main entry points:
 - `找空教室` (Empty classrooms) — log into the academic system independently to look up free classrooms.
 - `个人中心` (Profile) — your profile info, email, password, and login history.
 
-![Dashboard navigation highlighting the four main entry points: My Schedule, Team view, Empty classrooms, and Profile](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309202525305_1773482782925_60.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309202525305_1773482782925_60.webp" alt="Dashboard navigation highlighting the four main entry points: My Schedule, Team view, Empty classrooms, and Profile" style="zoom: 80%;" />
 
 ---
 
@@ -108,7 +108,7 @@ When you open "我的课表" (My Schedule), the current schedule name appears at
 To create a new schedule:
 
 1. Select "新建课表" (New schedule).
-   ![Dropdown showing the New schedule option](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309203603701_1773482784195_96.webp)
+   <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309203603701_1773482784195_96.webp" alt="Dropdown showing the New schedule option" style="zoom: 33%;" />
 
 2. Fill in the following:
    - Schedule name
@@ -117,7 +117,7 @@ To create a new schedule:
    - Total weeks
    - Class period settings (supports periods 1–11)
 
-   ![Schedule creation form with fields for name, status, start date, total weeks, and class periods](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309203738038_1773482785907_95.webp)
+   <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309203738038_1773482785907_95.webp" alt="Schedule creation form with fields for name, status, start date, total weeks, and class periods" style="zoom: 33%;" />
 
 3. Click "创建课表" (Create schedule).
 
@@ -126,7 +126,7 @@ A few notes:
 - Schedules marked `已隐藏` (Hidden) or `已结束` (Ended) are not visible to team members, so they don't work well as an active team schedule.
 - To edit a schedule's name, semester info, or class times later, use the "课表设置" (Schedule settings) option under "课表操作" (Schedule operations).
 
-![Schedule settings page showing editable schedule details](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210636882_1773482788819_0.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210636882_1773482788819_0.webp" alt="Schedule settings page showing editable schedule details" style="zoom: 33%;" />
 
 ### 2. Switch between the four views
 
@@ -144,7 +144,7 @@ Common controls:
 - `今天` (Today) — jump straight to today.
 - Date button — open a date picker to jump to any date directly.
 
-![Schedule view switcher showing the four view options and navigation controls](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210919064_1773482792002_62.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210919064_1773482792002_62.webp" alt="Schedule view switcher showing the four view options and navigation controls" style="zoom: 33%;" />
 
 ### 3. Import a schedule
 
@@ -157,9 +157,9 @@ To get to the import options:
 3. Select "导入课表" (Import schedule).
 4. Choose your import method.
 
-![Schedule operations dropdown showing the Import schedule option](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211004749_1773482793129_38.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211004749_1773482793129_38.webp" alt="Schedule operations dropdown showing the Import schedule option" style="zoom: 33%;" />
 
-![Import options showing "从教务系统导入" (Import from academic system) and "从 ICS 文件导入" (Import from ICS file)](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211122500_1773482795058_20.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211122500_1773482795058_20.webp" alt="Import options showing 从教务系统导入 (Import from academic system) and 从 ICS 文件导入 (Import from ICS file)" style="zoom: 33%;" />
 
 #### 3.1 Import from the academic system
 
@@ -179,7 +179,7 @@ Steps:
 5. Click "立即导入" (Import now).
 6. After a successful import, the page displays the parsed name, class, grade, and major, and writes the courses into the target schedule.
 
-![Academic system import form with student ID, password, verification code, and import target options](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211231136_1773482797607_28.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211231136_1773482797607_28.webp" alt="Academic system import form with student ID, password, verification code, and import target options" style="zoom: 33%;" />
 
 Things to keep in mind:
 
@@ -217,7 +217,7 @@ Fill in:
 
 The event appears in the current view immediately after you save.
 
-![Add event form with fields for name, location, day, period, and week range](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312145912133_1773482800344_29.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312145912133_1773482800344_29.webp" alt="Add event form with fields for name, location, day, period, and week range" style="zoom: 33%;" />
 
 #### Editing or deleting an event
 
@@ -225,7 +225,7 @@ The event appears in the current view immediately after you save.
 2. The event detail popup opens.
 3. From there you can edit the event and save your changes, or delete it outright.
 
-![Event detail popup with edit and delete options](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312145807357_1773482802308_94.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312145807357_1773482802308_94.webp" alt="Event detail popup with edit and delete options" style="zoom: 50%;" />
 
 ### 5. Holiday adjustments
 
@@ -249,7 +249,7 @@ Use this when you need to move all courses from one day to another.
 
 For example: move all of next Thursday's courses to this Saturday.
 
-![Swap workdays dialog showing source and target date selectors](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312150238289_1773482805097_40.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312150238289_1773482805097_40.webp" alt="Swap workdays dialog showing source and target date selectors" style="zoom: 50%;" />
 
 #### Set a holiday
 
@@ -263,7 +263,7 @@ When a day is a holiday, all courses on that day are hidden automatically. Befor
 
 For example: set October 1 through October 8 as the National Day holiday.
 
-![Set holiday dialog showing start and end date pickers](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312150734932_1773482805918_40.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312150734932_1773482805918_40.webp" alt="Set holiday dialog showing start and end date pickers" style="zoom: 50%;" />
 
 ### 6. Share and export your schedule
 
@@ -278,7 +278,7 @@ You'll see three options:
 - Export to ICS
 - Share via link
 
-![Share schedule dialog showing the three export options: PNG, ICS, and link sharing](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151124715_1773482808674_57.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151124715_1773482808674_57.webp" alt="Share schedule dialog showing the three export options: PNG, ICS, and link sharing" style="zoom: 50%;" />
 
 #### 6.1 Export as a PNG image
 
@@ -316,7 +316,7 @@ Steps:
    - Current visit count
 6. To disable an existing share, click "撤销" (Revoke) in the history list.
 
-![Share management panel showing share parameters, QR code, and share link](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151345420_1773482826729_28.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151345420_1773482826729_28.webp" alt="Share management panel showing share parameters, QR code, and share link" style="zoom: 50%;" />
 
 #### 6.4 Import someone else's shared schedule
 
@@ -330,7 +330,7 @@ When someone shares a link with "可导入" (Importable) permission, you can:
 
 The share page currently supports weekly and monthly browsing views.
 
-![Shared schedule page showing the weekly view and the Import to my schedule button](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151528539_1773482829504_10.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151528539_1773482829504_10.webp" alt="Shared schedule page showing the weekly view and the Import to my schedule button" style="zoom: 33%;" />
 
 ### 7. Schedule settings
 
@@ -344,7 +344,7 @@ You can edit:
 - Total weeks
 - Class period times for periods 1–11
 
-![Schedule settings page showing editable fields for name, status, start date, total weeks, and class periods](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151731274_1773482831399_38.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151731274_1773482831399_38.webp" alt="Schedule settings page showing editable fields for name, status, start date, total weeks, and class periods" style="zoom: 40%;" />
 
 ### 8. Personalization
 
@@ -363,7 +363,7 @@ Current options:
 
 If you spend a lot of time in the Gantt or weekly list views, these settings make a big difference.
 
-![Personalization settings showing color mode, background, indicator line, and reminder style options](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151857004_1773482832992_16.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151857004_1773482832992_16.webp" alt="Personalization settings showing color mode, background, indicator line, and reminder style options" style="zoom: 33%;" />
 
 ---
 
@@ -382,7 +382,7 @@ When you open "我的团队" (My Teams), the first thing you see are the team ca
 - Team code
 - Member preview
 
-![Team card showing the team icon, name, role, description, code, and member preview](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152009474_1773482835921_57.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152009474_1773482835921_57.webp" alt="Team card showing the team icon, name, role, description, code, and member preview" style="zoom: 50%;" />
 
 ### 2. For regular team members
 
@@ -395,14 +395,14 @@ If you've joined a team to view schedules and find free time, this section is al
 3. Click "加入团队" (Join team).
 4. Enter the team code and confirm.
 
-![Join team dialog with a field for the 8-character team code](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152049492_1773482836148_35.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152049492_1773482836148_35.webp" alt="Join team dialog with a field for the 8-character team code" style="zoom: 50%;" />
 
 #### 2.2 View the team schedule
 
 1. On the team card, click "查看课表" (View schedule).
 2. The team schedule page shows an aggregated view of all members' schedules.
 
-![Team card with the View schedule button highlighted](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152230894_1773482839109_54.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152230894_1773482839109_54.webp" alt="Team card with the View schedule button highlighted" style="zoom: 67%;" />
 
 On the team schedule page you have:
 
@@ -419,9 +419,9 @@ How to read it:
 
 Overlap at a given time — who's in class and how many classes stack up — is clear the moment you click.
 
-![Team schedule weekly view with color-coded events per member](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152301099_1773482840170_13.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152301099_1773482840170_13.webp" alt="Team schedule weekly view with color-coded events per member" style="zoom: 33%;" />
 
-![Course detail popup showing the course name, time, location, and attending members](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152400868_1773482842252_13.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152400868_1773482842252_13.webp" alt="Course detail popup showing the course name, time, location, and attending members" style="zoom: 33%;" />
 
 #### 2.3 Use filters to find a time
 
@@ -438,7 +438,7 @@ Typical use cases:
 - Scheduling a meeting with a few people — filter by member first.
 - Finding when a particular class or grade is free — filter by class or grade first.
 
-![Filter sidebar showing member, class, and grade filter options](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152433998_1773482844288_25.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152433998_1773482844288_25.webp" alt="Filter sidebar showing member, class, and grade filter options" style="zoom: 40%;" />
 
 #### 2.4 Leave a team
 
@@ -455,7 +455,7 @@ Things to note:
 - Once you leave, you lose access to that team.
 - If you want to rejoin later, you'll need the team code again.
 
-![Leave team confirmation dialog](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152607511_1773482844413_62.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152607511_1773482844413_62.webp" alt="Leave team confirmation dialog" style="zoom: 50%;" />
 
 ### 3. For team admins
 
@@ -472,7 +472,7 @@ This section is for the people who keep things running day to day — club leade
 4. Click "创建团队" (Create team).
 5. Once created, the system generates an 8-character team code.
 
-![Create team form with fields for name, description, and icon](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152823954_1773482846917_25.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152823954_1773482846917_25.webp" alt="Create team form with fields for name, description, and icon" style="zoom: 50%;" />
 
 #### 3.2 Manage team details and team code
 
@@ -488,7 +488,7 @@ From here you can:
 
 The team code is what you send to people you want to invite — just share it with them directly.
 
-![Team management page showing editable team details and the team code](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152858508_1773482849755_20.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152858508_1773482849755_20.webp" alt="Team management page showing editable team details and the team code" style="zoom: 33%;" />
 
 #### 3.3 Add and remove members
 
@@ -505,13 +505,13 @@ Removing a member:
 
 For day-to-day team management, these two actions are the ones you'll use most.
 
-![Member management section showing the add member input and the member list with remove buttons](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152936313_1773482850677_19.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152936313_1773482850677_19.webp" alt="Member management section showing the add member input and the member list with remove buttons" style="zoom: 50%;" />
 
 #### 3.4 Team admin permission boundaries
 
 A team admin can do more than just view schedules. Regular members can also reach this management interface.
 
-![Team management button on the team card](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153021800_1773482852387_18.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153021800_1773482852387_18.webp" alt="Team management button on the team card" style="zoom: 67%;" />
 
 A team admin can:
 
@@ -569,7 +569,7 @@ Notes:
 
 Entry point: `找空教室` (Empty classrooms) in the sidebar.
 
-![Sidebar showing the Empty classrooms entry point](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153118138_1773482854645_8.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153118138_1773482854645_8.webp" alt="Sidebar showing the Empty classrooms entry point" style="zoom: 67%;" />
 
 ### First-time use
 
@@ -610,11 +610,11 @@ After clicking "查询空教室" (Search empty classrooms), you can:
 - View results in card view
 - Export as CSV / Excel / PDF
 
-![Empty classroom search form with all filter criteria](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153530059_1773482856806_99.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153530059_1773482856806_99.webp" alt="Empty classroom search form with all filter criteria" style="zoom: 50%;" />
 
-![Table view of empty classroom results](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153557046_1773482860026_68.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153557046_1773482860026_68.webp" alt="Table view of empty classroom results" style="zoom: 50%;" />
 
-![Card view of empty classroom results](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153614403_1773482861991_74.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153614403_1773482861991_74.webp" alt="Card view of empty classroom results" style="zoom: 50%;" />
 
 ---
 
@@ -624,7 +624,7 @@ Entry point: `个人中心` (Profile) in the sidebar.
 
 Profile settings now brings together your profile, security info, and login history in one place.
 
-![Profile settings page showing the Account settings and Security overview sections](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153739987_1773482862265_65.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153739987_1773482862265_65.webp" alt="Profile settings page showing the Account settings and Security overview sections" style="zoom: 67%;" />
 
 ### 1. Edit your profile
 
@@ -648,7 +648,7 @@ Three options are available:
 - Upload a local image
 - Use a preset avatar
 
-![Avatar settings dialog showing the URL input, upload option, and preset avatars](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153805263_1773482863408_27.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153805263_1773482863408_27.webp" alt="Avatar settings dialog showing the URL input, upload option, and preset avatars" style="zoom: 50%;" />
 
 ### 3. Bind or change your email
 

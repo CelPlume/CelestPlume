@@ -76,7 +76,7 @@ sidebar:
 3.  按页面提示填写学号、姓名、班级、密码等信息，输入邮箱和验证码，绑定邮箱后续方便找回密码。
 4.  点击“**注册**”按钮完成操作。
 
-![image-20260309185737407](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309185737407_1773482780601_79.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309185737407_1773482780601_79.webp" alt="注册页面，显示学号、姓名、班级、密码、邮箱和验证码输入框" style="zoom: 33%;" />
 
 ### 2. 登录平台
 
@@ -84,7 +84,7 @@ sidebar:
 2. 点击“登录”进入工作台。
 3. 登录后常用页面一般包括“我的课表”“团队视图”“找空教室”“个人中心”。
 
-![image-20260309185950451](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309185950451_1773482782341_18.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309185950451_1773482782341_18.webp" alt="登录页面，显示学号、密码输入框和登录按钮" style="zoom:33%;" />
 
 ### 3. 认识导航
 
@@ -95,7 +95,7 @@ sidebar:
 - `找空教室`：独立登录教务系统后查询空闲教室。
 - `个人中心`：资料、邮箱、密码、登录记录。
 
-![image-20260309202525305](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309202525305_1773482782925_60.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309202525305_1773482782925_60.webp" alt="工作台导航，高亮显示四个主要入口：我的课表、团队视图、找空教室、个人中心" style="zoom:80%;" />
 
 
 ## 第二部分：我的课表
@@ -107,7 +107,7 @@ sidebar:
 新建课表步骤：
 
 1. 选择“新建课表”。
-   ![image-20260309203603701](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309203603701_1773482784195_96.webp)
+   <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309203603701_1773482784195_96.webp" alt="下拉菜单中显示新建课表选项" style="zoom: 33%;" />
 
 2. 填写以下内容：
    - 课表名称
@@ -116,7 +116,7 @@ sidebar:
    - 总周数
    - 课程时间设置（支持 1-11 节）
 
-   ![image-20260309203738038](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309203738038_1773482785907_95.webp)
+   <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309203738038_1773482785907_95.webp" alt="课表创建表单，显示名称、状态、开学日期、总周数、节次设置等字段" style="zoom: 33%;" />
 
 3. 点击“创建课表”。
 
@@ -125,7 +125,7 @@ sidebar:
 - `已隐藏` 和 `已结束` 的课表不会被团队成员看到，不适合作为团队协作中的活跃课表。
 - 如果你想修改课表名称、学期信息或课程时间，也是在“课表操作”里的“课表设置”中完成。
 
- ![image-20260309210636882](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210636882_1773482788819_0.webp)
+ <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210636882_1773482788819_0.webp" alt="课表设置页面，显示可编辑的课表详情" style="zoom: 33%;" />
 
 ### 2. 切换四种视图
 
@@ -143,7 +143,7 @@ sidebar:
 - `今天`：快速定位到今天。
 - 日期按钮：用弹出式日期选择器直接跳转。
 
-![image-20260309210919064](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210919064_1773482792002_62.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210919064_1773482792002_62.webp" alt="视图切换栏，显示四种视图选项和导航控件" style="zoom:33%;" />
 
 ### 3. 导入课表
 
@@ -156,9 +156,9 @@ sidebar:
 3. 选择“导入课表”。
 4. 再选择具体导入方式。
 
-![image-20260309211004749](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211004749_1773482793129_38.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211004749_1773482793129_38.webp" alt="课表操作下拉菜单，显示导入选项" style="zoom:33%;" />
 
-![image-20260309211122500](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211122500_1773482795058_20.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211122500_1773482795058_20.webp" alt="导入选项，显示"从教务系统导入"和"从 ICS 文件导入"" style="zoom:33%;" />
 
 #### 3.1 从教务系统导入
 
@@ -178,7 +178,7 @@ sidebar:
 5. 点击“立即导入”。
 6. 导入成功后，页面会显示解析到的姓名、班级、年级、专业等信息，并把课程写入目标课表。
 
-![image-20260309211231136](https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211231136_1773482797607_28.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211231136_1773482797607_28.webp" alt="教务系统导入表单，显示学号、密码、验证码和导入目标选项" style="zoom: 33%;" />
 
 注意事项：
 
@@ -216,7 +216,7 @@ sidebar:
 
 保存后会立即显示在当前视图中。
 
-![image-20260312145912133](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312145912133_1773482800344_29.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312145912133_1773482800344_29.webp" alt="添加日程表单，显示名称、地点、星期、节次和周次范围等字段" style="zoom:33%;" />
 
 #### 编辑或删除日程
 
@@ -224,7 +224,7 @@ sidebar:
 2. 先打开详情弹窗。
 3. 再进入编辑，修改信息后保存；或者直接删除该事件。
 
-![image-20260312145807357](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312145807357_1773482802308_94.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312145807357_1773482802308_94.webp" alt="日程详情弹窗，显示编辑和删除按钮" style="zoom:50%;" />
 
 ### 5. 放假调休
 
@@ -248,7 +248,7 @@ sidebar:
 
 例如：把下周四课程整体调到本周六。
 
-![image-20260312150238289](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312150238289_1773482805097_40.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312150238289_1773482805097_40.webp" alt="对调工作日对话框，显示原日期和目标日期选择器" style="zoom: 50%;" />
 
 #### 设置假期
 
@@ -262,7 +262,7 @@ sidebar:
 
 例如：设置10月1日到10月8日为国庆节假期。
 
-![image-20260312150734932](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312150734932_1773482805918_40.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312150734932_1773482805918_40.webp" alt="设置假期对话框，显示开始日期和结束日期选择器" style="zoom:50%;" />
 
 ### 6. 分享与导出课表
 
@@ -277,7 +277,7 @@ sidebar:
 - 导出到 ICS
 - 链接分享
 
-![image-20260312151124715](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151124715_1773482808674_57.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151124715_1773482808674_57.webp" alt="分享课表对话框，显示三个导出选项：PNG、ICS 和链接分享" style="zoom: 50%;" />
 
 #### 6.1 导出 PNG 图片
 
@@ -315,7 +315,7 @@ sidebar:
    - 当前访问次数
 6. 需要停用某条分享时，在历史记录中点击“撤销”即可。
 
-![image-20260312151345420](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151345420_1773482826729_28.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151345420_1773482826729_28.webp" alt="分享管理面板，显示分享参数、二维码和分享链接" style="zoom:50%;" />
 
 #### 6.4 导入别人分享给你的课表
 
@@ -329,7 +329,7 @@ sidebar:
 
 分享页当前支持周视图和月视图浏览。
 
-![image-20260312151528539](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151528539_1773482829504_10.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151528539_1773482829504_10.webp" alt="分享页面，显示周视图和"导入到我的课表"按钮" style="zoom:33%;" />
 
 ### 7. 课表设置
 
@@ -343,7 +343,7 @@ sidebar:
 - 总周数
 - 1-11 节课程时间
 
-![image-20260312151731274](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151731274_1773482831399_38.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151731274_1773482831399_38.webp" alt="课表设置页面，显示名称、状态、开学日期、总周数、节次时间等可编辑字段" style="zoom:40%;" />
 
 ### 8. 个性化
 
@@ -362,7 +362,7 @@ sidebar:
 
 如果你经常用甘特或周列表看课，个性化设置会很有帮助。
 
-![image-20260312151857004](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151857004_1773482832992_16.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151857004_1773482832992_16.webp" alt="个性化设置，显示配色模式、背景色、指示线、提醒样式等选项" style="zoom:33%;" />
 
 ---
 
@@ -381,7 +381,7 @@ sidebar:
 - 团队代码
 - 成员预览
 
-![image-20260312152009474](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152009474_1773482835921_57.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152009474_1773482835921_57.webp" alt="团队卡片，显示团队图标、名称、身份、介绍、代码和成员预览" style="zoom:50%;" />
 
 ### 2. 普通团队成员怎么用
 
@@ -394,14 +394,14 @@ sidebar:
 3. 点击“加入团队”。
 4. 输入团队代码并确认。
 
-![image-20260312152049492](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152049492_1773482836148_35.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152049492_1773482836148_35.webp" alt="加入团队对话框，显示 8 位团队代码输入框" style="zoom: 50%;" />
 
 #### 2.2 查看团队课表
 
 1. 在团队卡片上点击“查看课表”。
 2. 进入团队课表页后，可以查看团队成员的聚合课程安排。
 
-![image-20260312152230894](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152230894_1773482839109_54.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152230894_1773482839109_54.webp" alt="团队卡片，高亮显示"查看课表"按钮" style="zoom:67%;" />
 
 团队课表页里可以：
 
@@ -418,9 +418,9 @@ sidebar:
 
 同一个时间段里谁有课、叠了几门课，点开就能看清。
 
-![image-20260312152301099](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152301099_1773482840170_13.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152301099_1773482840170_13.webp" alt="团队课表周视图，按成员颜色区分的课程块" style="zoom:33%;" />
 
-![image-20260312152400868](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152400868_1773482842252_13.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152400868_1773482842252_13.webp" alt="课程详情弹窗，显示课程名称、时间、地点和上课成员" style="zoom: 33%;" />
 
 #### 2.3 使用筛选找时间
 
@@ -437,7 +437,7 @@ sidebar:
 - 想约几个人开会时，先按成员筛选。
 - 想看某个班或某个年级什么时候有空时，先按班级或年级筛选。
 
-![image-20260312152433998](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152433998_1773482844288_25.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152433998_1773482844288_25.webp" alt="筛选侧栏，显示按成员、班级、年级筛选的选项" style="zoom: 40%;" />
 
 #### 2.4 退出团队
 
@@ -454,7 +454,7 @@ sidebar:
 - 退出后会失去该团队的访问权限。
 - 如果以后还要回来，需要重新用团队代码加入。
 
-![image-20260312152607511](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152607511_1773482844413_62.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152607511_1773482844413_62.webp" alt="退出团队确认对话框" style="zoom: 50%;" />
 
 ### 3. 团队管理员怎么用
 
@@ -471,7 +471,7 @@ sidebar:
 4. 点击“创建团队”。
 5. 创建成功后，系统会生成 8 位团队代码。
 
-![image-20260312152823954](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152823954_1773482846917_25.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152823954_1773482846917_25.webp" alt="创建团队表单，显示名称、介绍、图标等字段" style="zoom: 50%;" />
 
 #### 3.2 管理团队资料和团队代码
 
@@ -487,7 +487,7 @@ sidebar:
 
 团队代码一般用在拉人入组时，直接发给成员即可。
 
-![image-20260312152858508](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152858508_1773482849755_20.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152858508_1773482849755_20.webp" alt="团队管理页面，显示可编辑的团队详情和团队代码" style="zoom: 33%;" />
 
 #### 3.3 添加与移除成员
 
@@ -504,13 +504,13 @@ sidebar:
 
 如果只是普通团队管理，通常这两项最常用。
 
-![image-20260312152936313](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152936313_1773482850677_19.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152936313_1773482850677_19.webp" alt="成员管理区域，显示添加成员输入框和带移除按钮的成员列表" style="zoom:50%;" />
 
 #### 3.4 团队管理员权限边界
 
 团队管理员不只是能看课表，也能处理日常管理。普通成员点击这个按钮设置管理员。
 
-![image-20260312153021800](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153021800_1773482852387_18.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153021800_1773482852387_18.webp" alt="团队卡片上的团队管理按钮" style="zoom:67%;" />
 
 团队管理员可以：
 
@@ -568,7 +568,7 @@ sidebar:
 
 入口：侧边栏 `找空教室`
 
-![image-20260312153118138](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153118138_1773482854645_8.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153118138_1773482854645_8.webp" alt="侧边栏，显示找空教室入口" style="zoom:67%;" />
 
 ### 第一次使用
 
@@ -609,11 +609,11 @@ sidebar:
 - 用卡片视图查看
 - 导出为 CSV / Excel / PDF
 
-![image-20260312153530059](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153530059_1773482856806_99.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153530059_1773482856806_99.webp" alt="空教室查询表单，显示全部筛选条件" style="zoom:50%;" />
 
-![image-20260312153557046](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153557046_1773482860026_68.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153557046_1773482860026_68.webp" alt="空教室查询结果表格视图" style="zoom: 50%;" />
 
-![image-20260312153614403](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153614403_1773482861991_74.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153614403_1773482861991_74.webp" alt="空教室查询结果卡片视图" style="zoom: 50%;" />
 
 ---
 
@@ -623,7 +623,7 @@ sidebar:
 
 个人中心现在把资料、安全信息和登录记录放到了一处。
 
-![image-20260312153739987](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153739987_1773482862265_65.webp)
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153739987_1773482862265_65.webp" alt="个人中心页面，显示账户设置和安全概览区域" style="zoom:67%;" />
 
 ### 1. 修改个人资料
 
@@ -647,7 +647,7 @@ sidebar:
 - 上传本地图片
 - 使用预设头像
 
-![image-20260312153805263](https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153805263_1773482863408_27.webp)
+<img src="https://gastigado.cnies.org/d/halo2012151012csguide/image-20260312153805263_1773482863408_27.webp" alt="头像设置对话框，显示 URL 输入、上传选项和预设头像" style="zoom: 50%;" />
 
 ### 3. 绑定或更换邮箱
 
