@@ -158,7 +158,7 @@ sidebar:
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211004749_1773482793129_38.webp" alt="课表操作下拉菜单，显示导入选项" style="zoom:33%;" />
 
-<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211122500_1773482795058_20.webp" alt="导入选项，显示"从教务系统导入"和"从 ICS 文件导入"" style="zoom:33%;" />
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211122500_1773482795058_20.webp" alt="导入选项，显示「从教务系统导入」和「从 ICS 文件导入」" style="zoom:33%;" />
 
 #### 3.1 从教务系统导入
 
@@ -329,7 +329,7 @@ sidebar:
 
 分享页当前支持周视图和月视图浏览。
 
-<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151528539_1773482829504_10.webp" alt="分享页面，显示周视图和"导入到我的课表"按钮" style="zoom:33%;" />
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151528539_1773482829504_10.webp" alt="分享页面，显示周视图和「导入到我的课表」按钮" style="zoom:33%;" />
 
 ### 7. 课表设置
 
@@ -401,7 +401,7 @@ sidebar:
 1. 在团队卡片上点击“查看课表”。
 2. 进入团队课表页后，可以查看团队成员的聚合课程安排。
 
-<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152230894_1773482839109_54.webp" alt="团队卡片，高亮显示"查看课表"按钮" style="zoom:67%;" />
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152230894_1773482839109_54.webp" alt="团队卡片，高亮显示「查看课表」按钮" style="zoom:67%;" />
 
 团队课表页里可以：
 
