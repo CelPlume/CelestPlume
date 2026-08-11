@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import mdx from '@astrojs/mdx';
 import icon from 'astro-icon';
+import rehypeImageZoom from './src/lib/markdown/rehype-image-zoom.ts';
 import { readFile, writeFile, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
@@ -63,6 +64,10 @@ export default defineConfig({
   site: 'https://celplume.hxcn.space',
   // cleanURL：Astro 默认输出无 .html 的目录型路由（/page/），配合 trailingSlash 保持内部链接稳定
   trailingSlash: 'always',
+  markdown: {
+    // 把正文 `<img>` 重写为可点击放大的 ImageZoom 组件（含 zoom 缩放修复）
+    rehypePlugins: [rehypeImageZoom],
+  },
   integrations: [
     celestialUiRuntime(),
     starlight({
