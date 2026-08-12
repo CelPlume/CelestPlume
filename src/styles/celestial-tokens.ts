@@ -282,7 +282,7 @@ export function getOtherProjects(): Project[] {
 }
 
 /* ============================================================
-   Philosophy 三柱
+   Philosophy 五柱（accordion-gallery 移植，手风琴展开）
    ============================================================ */
 export interface Pillar {
   num: string;
@@ -322,6 +322,28 @@ export const PILLARS: Pillar[] = [
     zh: {
       title: '超然的工艺',
       text: '我们为世纪而造，不为季度。每片翎羽皆含深意，每道弧线皆载月之重量。',
+    },
+  },
+  {
+    num: 'IV',
+    en: {
+      title: 'Serene Focus',
+      text: 'Silence is a feature. We strip the unnecessary until only the essential hums — one clear signal in a field of static.',
+    },
+    zh: {
+      title: '静谧的专注',
+      text: '静默即特性。我们删去一切多余，直至唯有本质在低鸣——在噪音之海中，只留一个清晰信号。',
+    },
+  },
+  {
+    num: 'V',
+    en: {
+      title: 'Eternal Roots',
+      text: 'Every line is inherited, every gift returned. We stand on the shoulders of countless makers, and leave the ladder for the next.',
+    },
+    zh: {
+      title: '永恒的根系',
+      text: '每行皆承先人，每赠皆还于众。我们立于无数造物者肩头，也为后来者留下扶梯。',
     },
   },
 ];
@@ -392,7 +414,7 @@ const EN_FOOTER_COLUMNS: FooterColumn[] = [
     links: [
       { label: 'Documentation', href: '/guides/example/' },
       { label: '中文文档', href: '/zh/guides/example/' },
-      { label: 'Three Pillars', href: '#philosophy' },
+      { label: 'Five Pillars', href: '#philosophy' },
     ],
   },
   {
@@ -412,7 +434,7 @@ const ZH_FOOTER_COLUMNS: FooterColumn[] = [
     links: [
       { label: '中文文档', href: '/zh/guides/example/' },
       { label: 'English Docs', href: '/guides/example/' },
-      { label: '三柱之道', href: '#philosophy' },
+      { label: '五柱之道', href: '#philosophy' },
     ],
   },
   {
@@ -457,8 +479,8 @@ export const UI_EN: UiCopy = {
   },
   philosophy: {
     eyebrow: 'Scripture',
-    title: 'Three Pillars of the Plume',
-    desc: 'The trinity of values that governs every line of code, every curve of the interface, every word in the docs.',
+    title: 'Five Pillars of the Plume',
+    desc: 'The fivefold covenant that governs every line of code, every curve of the interface, every word in the docs.',
   },
   cta: {
     eyebrow: 'Invocation',
@@ -510,8 +532,8 @@ export const UI_ZH: UiCopy = {
   },
   philosophy: {
     eyebrow: '典章',
-    title: '羽之三柱',
-    desc: '统御每一行代码、每一道界面弧线、每一个文档字眼的三位一体价值。',
+    title: '羽之五柱',
+    desc: '统御每一行代码、每一道界面弧线、每一个文档字眼的五位一体价值。',
   },
   cta: {
     eyebrow: '召请',

@@ -1983,7 +1983,8 @@ a.cpd-card:hover {
 .cpd-loader {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  /* 层级 scale：与主页 .cp-loader 同值 100 */
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;

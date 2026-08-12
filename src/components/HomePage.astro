@@ -22,6 +22,11 @@ interface Props {
 const { locale } = Astro.props;
 const t = getUI(locale);
 
+// Hero 标题按逗号分句一句一换行；渲染时去掉句内中文（全角）标点
+const stripCjkPunct = (s: string): string =>
+  s.replace(/[\u3000-\u303F\uFF00-\uFFEF]/g, '').trim();
+const heroLines = t.hero.tagline.split(/(?<=[，,])\s*/).map(stripCjkPunct);
+
 const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
 ---
 
@@ -38,26 +43,34 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
   />
   <div class="cp-hero-vignette" aria-hidden="true"></div>
 
-  <div class="cp-particle-wrap" id="cp-particle-wrap">
-    <canvas id="cp-particle-canvas" role="img" aria-label={t.hero.particleText}></canvas>
-  </div>
+  <div class="cp-hero-grid">
+    <div class="cp-hero-copy">
+      <h1 class="cp-hero-display">
+        {heroLines.map((line) => (
+          <span class="cp-hero-line">{line}</span>
+        ))}
+      </h1>
 
-  <p class="cp-hero-sub">{t.hero.tagline}</p>
+      <div class="cp-hero-ctas">
+        <a href={t.hero.ctaPrimaryHref} class="cp-btn cp-btn-primary">
+          <span>{t.hero.ctaPrimary}</span>
+          <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
+        </a>
+        <a
+          href={t.hero.ctaSecondaryHref}
+          class="cp-btn cp-btn-ghost"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Icon name="lucide:github" size={18} aria-hidden="true" />
+          <span>{t.hero.ctaSecondary}</span>
+        </a>
+      </div>
+    </div>
 
-  <div class="cp-hero-ctas">
-    <a href={t.hero.ctaPrimaryHref} class="cp-btn cp-btn-primary">
-      <span>{t.hero.ctaPrimary}</span>
-      <Icon name="lucide:arrow-right" size={18} aria-hidden="true" />
-    </a>
-    <a
-      href={t.hero.ctaSecondaryHref}
-      class="cp-btn cp-btn-ghost"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <Icon name="lucide:github" size={18} aria-hidden="true" />
-      <span>{t.hero.ctaSecondary}</span>
-    </a>
+    <div class="cp-particle-wrap" id="cp-particle-wrap">
+      <canvas id="cp-particle-canvas" role="img" aria-label={t.hero.particleText}></canvas>
+    </div>
   </div>
 </section>
 
@@ -79,10 +92,10 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
         const data = p[locale];
         return (
           <article class="cp-project-card">
-            <div class="cp-project-icon" aria-hidden="true">
-                <Icon name={p.icon} class="cp-project-icon-svg" />
-              </div>
-              <h3 class="cp-project-title">{data.title}</h3>
+              <h3 class="cp-project-title">
+                <Icon name={p.icon} class="cp-project-icon" aria-hidden="true" />
+                <span>{data.title}</span>
+              </h3>
               <p class="cp-project-desc">{data.description}</p>
               <div class="cp-project-tags">
                 {data.tags.map((tag) => <span class="cp-tag">{tag}</span>)}
@@ -118,21 +131,29 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
 <section class="cp-section cp-philosophy" id="philosophy" aria-label={t.philosophy.title}>
   <div class="cp-section-inner">
     <div class="cp-section-head">
-      <span class="cp-eyebrow">{t.philosophy.eyebrow}</span>
       <h2 class="cp-section-title cp-font-display cp-gold-gradient-text">
         {t.philosophy.title}
       </h2>
       <p class="cp-section-desc">{t.philosophy.desc}</p>
     </div>
 
-    <div class="cp-philo-grid">
-      {PILLARS.map((pillar) => {
+    <div class="cp-philo-accordion" id="cp-philo-accordion" role="list" aria-label={t.philosophy.title}>
+      {PILLARS.map((pillar, i) => {
         const data = pillar[locale];
         return (
-          <div class="cp-philo-item">
-            <div class="cp-philo-num">{pillar.num}</div>
+          <div
+            class="cp-philo-panel"
+            role="listitem"
+            tabindex="0"
+            data-cp-philo-index={i}
+            data-open={i === 0 ? 'true' : 'false'}
+            aria-expanded={i === 0 ? 'true' : 'false'}
+          >
+            <span class="cp-philo-num" aria-hidden="true">{pillar.num}</span>
             <h3 class="cp-philo-title">{data.title}</h3>
-            <p class="cp-philo-text">{data.text}</p>
+            <div class="cp-philo-body">
+              <p class="cp-philo-text">{data.text}</p>
+            </div>
           </div>
         );
       })}
@@ -147,7 +168,6 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
   <div class="cp-section-inner">
     <div class="cp-cta-card">
       <div class="cp-section-head">
-        <span class="cp-eyebrow">{t.cta.eyebrow}</span>
         <h2 class="cp-section-title cp-font-display cp-gold-gradient-text cp-divine-glow" style="font-size:clamp(1.8rem, 4vw + 0.8rem, 3rem);margin-top:0">
           {t.cta.title}
         </h2>
@@ -172,7 +192,7 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
        1. Canvas 粒子文字（reactbits particle-text 移植，TS 常量驱动）
      ============================================================ -->
 <script>
-  import { PARTICLE_TEXT } from '../styles/celestial-tokens.ts';
+  import { PARTICLE_TEXT, FONTS } from '../styles/celestial-tokens.ts';
   import { initSpecular } from '../lib/specular.ts';
 
   /* ----------------------------------------------------------------
@@ -237,7 +257,8 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
 
       const pointer = { active: false, x: 0, y: 0, smoothX: 0, smoothY: 0 };
 
-      const fontFamily = "'Cormorant Garamond','Noto Serif SC',Georgia,serif";
+      // 品牌衬线栈（已加载：Libertine / LxgwNeoZhiSong），与 celestial.css --font-display 对齐
+      const fontFamily = FONTS.display;
       const fontWeight = PARTICLE_TEXT.fontWeight;
 
       const getColors = () => {
@@ -588,4 +609,37 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
     destroySpecular?.();
   });
 
+  /* ----------------------------------------------------------------
+     3. Philosophy 手风琴（accordion-gallery 移植，原生 TS+CSS）
+        默认展开第一个；hover / 点击 / focus 展开对应面板；方向键切换。
+     ---------------------------------------------------------------- */
+  const philoAccordion = document.getElementById('cp-philo-accordion');
+  if (philoAccordion) {
+    const panels = Array.from(
+      philoAccordion.querySelectorAll<HTMLElement>('[data-cp-philo-index]')
+    );
+    const setActive = (i: number) => {
+      panels.forEach((p, idx) => {
+        const open = idx === i;
+        p.setAttribute('data-open', open ? 'true' : 'false');
+        p.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    };
+    panels.forEach((p, i) => {
+      p.addEventListener('mouseenter', () => setActive(i));
+      p.addEventListener('click', () => setActive(i));
+      p.addEventListener('focus', () => setActive(i));
+      p.addEventListener('keydown', (e) => {
+        let next = -1;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (i + 1) % panels.length;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (i - 1 + panels.length) % panels.length;
+        if (next !== -1) {
+          e.preventDefault();
+          setActive(next);
+          panels[next].focus();
+        }
+      });
+    });
+    setActive(0);
+  }
 </script>
