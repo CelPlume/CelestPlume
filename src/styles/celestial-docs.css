@@ -690,14 +690,15 @@ body {
   color: var(--cpd-primary);
 }
 
-/* 条目左侧连接线（服务端渲染：item 内 svg 向上伸出 6px，淡色打底，
+/* 条目左侧连接线（服务端渲染：item 内 svg 向上伸出 12px，淡色打底；
+   拐角对角画在 top-12..top，与客户端轨道 buildPath 的 45° 拐角完全对齐，
    激活区间由轨道层的主色线 + clip-path 高亮覆盖） */
 .cpd-toc-item-line-svg {
   position: absolute;
-  top: -6px;
+  top: -12px;
   inset-inline-start: 0;
   bottom: 0;
-  height: calc(100% + 6px);
+  height: calc(100% + 12px);
   z-index: 0;
   pointer-events: none;
 }

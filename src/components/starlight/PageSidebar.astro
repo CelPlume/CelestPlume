@@ -1,18 +1,33 @@
 ---
 // PageSidebar 覆盖：ClerkTOC（kit renderToc，Plumest 风格主色连接线 + 步骤圆徽），
-// 数据来自 Starlight 解析好的 toc.items。
+// 数据来自 Starlight 解析好的 toc.items（嵌套树，TocItem 含 children）。
 import { renderToc } from '../../lib/ui/toc';
 
+interface TocNode {
+  slug?: string;
+  text: string;
+  depth: number;
+  children?: TocNode[];
+}
+
 const { toc } = Astro.locals.starlightRoute;
-// 过滤 Overview 伪条目（Starlight 的 slug 为 "_top"，指向页面顶部且页面无此锚点，
-// 无法被 IntersectionObserver 激活，会导致轨道初始位置偏下、首项无线覆盖）
-const items = (toc?.items ?? [])
-  .filter((item) => item.slug && item.slug !== '_top')
-  .map((item) => ({
-    url: `#${item.slug}`,
-    title: item.text,
-    depth: item.depth,
-  }));
+
+// 把 Starlight 的嵌套目录树拍平成渲染用的扁平列表（含 h3/h4 层级，供拐角区分）。
+// 跳过 Overview 伪条目（slug "_top"，指向页面顶部且页面无此锚点，无法追踪激活），
+// 但保留其子项（页面实际标题树挂在它下方）。
+function flatten(nodes: TocNode[] | undefined, out: { url: string; title: string; depth: number }[]): void {
+  for (const node of nodes ?? []) {
+    if (!node.slug || node.slug === '_top') {
+      flatten(node.children, out);
+      continue;
+    }
+    out.push({ url: `#${node.slug}`, title: node.text, depth: node.depth });
+    flatten(node.children, out);
+  }
+}
+
+const items: { url: string; title: string; depth: number }[] = [];
+flatten(toc?.items as TocNode[] | undefined, items);
 ---
 
 <Fragment set:html={renderToc(items, { title: Astro.locals.t('tableOfContents.onThisPage') })} />

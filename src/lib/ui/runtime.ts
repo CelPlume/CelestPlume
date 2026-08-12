@@ -3,7 +3,7 @@
  *
  * 通过事件委托与 `data-cpd-*` 钩子接管构建器输出的静态 HTML：
  * - 侧边栏：折叠分组 / 桌面折叠 / 移动端抽屉 / 激活项滚动可见
- * - ClerkTOC：连接线与轨道测量（ResizeObserver）、激活检测（IntersectionObserver）
+ * - ClerkTOC：连接线与轨道测量（ResizeObserver）、激活检测（IntersectionObserver 可见集，指示条覆盖可见标题区间）
  * - Tabs / Accordions / 复制按钮 / 标题锚点复制 / 主题切换
  *
  * 用法：`initCelestialUI()` 一次性初始化；返回 dispose 函数供清理。
@@ -140,20 +140,34 @@ interface TrackMeasure {
   stepped: boolean[];
 }
 
-/** 生成连接线 path（默认样式：深度变化用三次贝塞尔过渡，clerk 用直线） */
-function buildPath(positions: [top: number, bottom: number, x: number][], curve = true): string {
-  let d = '';
-  for (let i = 0; i < positions.length; i++) {
-    const [top, bottom, x] = positions[i];
-    if (i === 0) {
-      d += `M${x} ${top} L${x} ${bottom}`;
+/**
+ * 生成连接线 path（fuma / BrushUp 风格）：深度变化处先垂直下行到拐角点，
+ * 再以对角直线连到下一项顶部；对角垂直跨度与层级缩进一致（约 45°）。
+ */
+function buildPath(positions: [top: number, bottom: number, x: number][]): string {
+  if (positions.length === 0) return '';
+  const DIAGONAL = 12;
+  const first = positions[0];
+  let d = `M${first[2]} 0 L${first[2]} ${first[0]}`;
+  let currentX = first[2];
+  let currentY = first[0];
+
+  for (let i = 1; i < positions.length; i++) {
+    const [top, , x] = positions[i];
+    const gapY = Math.max(0, top - currentY);
+    if (x === currentX) {
+      d += ` L${currentX} ${top}`;
     } else {
-      const [, upperBottom, upperX] = positions[i - 1];
-      d += curve
-        ? ` C${upperX} ${top - 4} ${x} ${upperBottom + 4} ${x} ${top} L${x} ${bottom}`
-        : ` L ${upperX} ${upperBottom} ${x} ${top} L${x} ${bottom}`;
+      const diag = Math.min(DIAGONAL, gapY / 2);
+      const cornerY = Math.max(currentY, top - diag);
+      d += ` L${currentX} ${cornerY} L${x} ${top}`;
     }
+    currentX = x;
+    currentY = top;
   }
+
+  const last = positions[positions.length - 1];
+  d += ` L${last[2]} ${last[1]}`;
   return d;
 }
 
@@ -214,24 +228,100 @@ function initToc(root: ParentNode): void {
   const scrollArea = toc.querySelector<HTMLElement>('[data-cpd-toc-scroll]');
   const itemEls = () => Array.from(container.querySelectorAll<HTMLElement>('[data-cpd-toc-item]'));
   let measure: TrackMeasure | null = null;
+  // 与 TOC 条目一一对应的文章标题元素（无对应锚点的为 undefined）
+  let headings: (HTMLElement | undefined)[] = [];
+  // 标题 id → TOC 条目索引
+  let idToIndex = new Map<string, number>();
+  // 当前视口内可见（任意比例相交）的标题 id
+  const visible = new Set<string>();
   let intersectionObserver: IntersectionObserver | null = null;
 
-  const applyActive = (items: { id: string; active: boolean }[]): void => {
-    const activeEls = itemEls();
-    const active = items.filter((item) => item.active);
-    if (active.length === 0) return;
+  const measureHeadings = (): void => {
+    headings = itemEls().map((el) => {
+      const href = el.getAttribute('href');
+      if (!href?.startsWith('#')) return undefined;
+      const h = document.getElementById(href.slice(1));
+      return h instanceof HTMLElement ? h : undefined;
+    });
+    idToIndex = new Map();
+    itemEls().forEach((el, i) => {
+      const href = el.getAttribute('href');
+      if (href?.startsWith('#')) idToIndex.set(href.slice(1), i);
+    });
+  };
 
-    const startIdx = activeEls.findIndex((el) => el.getAttribute('href') === `#${active[0].id}`);
-    const endIdx = activeEls.findIndex(
-      (el) => el.getAttribute('href') === `#${active[active.length - 1].id}`,
-    );
-    if (startIdx === -1 || !measure) return;
+  /**
+   * 指示条覆盖 [最上面可见标题, 最下面可见标题] 的连续区间：
+   * 视口内任意可见的标题（含页面末尾挤在一起的多个标题）都会被覆盖，
+   * 层级变化处用对角拐角连接，与 fuma / BrushUp 一致。
+   */
+  const applyRange = (startIdx: number, endIdx: number): void => {
+    if (!measure) return;
+    const items = itemEls();
+    const n = items.length;
+    if (n === 0) return;
+    const s = Math.max(0, Math.min(startIdx, n - 1));
+    const e = Math.max(s, Math.min(endIdx, n - 1));
+
+    items.forEach((el, i) => el.setAttribute('data-cpd-active', i >= s && i <= e ? 'true' : 'false'));
 
     const track = container.querySelector<HTMLElement>('[data-cpd-toc-track]');
-    if (!track) return;
+    if (track) {
+      track.style.setProperty('--cpd-track-top', `${measure.positions[s][0]}px`);
+      track.style.setProperty('--cpd-track-bottom', `${measure.positions[e][1]}px`);
+    }
 
-    track.style.setProperty('--cpd-track-top', `${measure.positions[startIdx][0]}px`);
-    track.style.setProperty('--cpd-track-bottom', `${measure.positions[endIdx][1]}px`);
+    // 激活区间首项自动滚动可见（滚动真实滚动容器，避免带动窗口）
+    if (scrollArea) {
+      const anchor = items[s];
+      let node: HTMLElement | null = scrollArea;
+      while (node && node !== document.body && node !== document.documentElement) {
+        if (node.scrollHeight > node.clientHeight) break;
+        node = node.parentElement;
+      }
+      const scroller = node ?? scrollArea;
+      const areaRect = scroller.getBoundingClientRect();
+      const anchorRect = anchor.getBoundingClientRect();
+      const target =
+        scroller.scrollTop + anchorRect.top - areaRect.top - (areaRect.height - anchorRect.height) / 2;
+      scroller.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+    }
+  };
+
+  /** 可见标题索引按视口上下排序 */
+  const getVisibleIndices = (): number[] => {
+    const idxs: number[] = [];
+    for (const id of visible) {
+      const i = idToIndex.get(id);
+      if (i !== undefined) idxs.push(i);
+    }
+    idxs.sort((a, b) => {
+      const ha = headings[a];
+      const hb = headings[b];
+      if (!ha || !hb) return a - b;
+      return ha.getBoundingClientRect().top - hb.getBoundingClientRect().top;
+    });
+    return idxs;
+  };
+
+  /** 无任何可见标题时的回退：最后一个顶部越过视口顶部的标题 */
+  const computeFallbackIndex = (): number => {
+    let cur = 0;
+    for (let i = 0; i < headings.length; i++) {
+      const h = headings[i];
+      if (!h) continue;
+      if (h.getBoundingClientRect().top <= 0) cur = i;
+      else break;
+    }
+    return cur;
+  };
+
+  const update = (): void => {
+    const visIdx = getVisibleIndices();
+    const cur = visIdx.length ? visIdx[0] : computeFallbackIndex();
+    const startIdx = visIdx.length ? visIdx[0] : cur;
+    const endIdx = visIdx.length ? visIdx[visIdx.length - 1] : cur;
+    applyRange(startIdx, endIdx);
   };
 
   const onMeasure = (): void => {
@@ -239,6 +329,8 @@ function initToc(root: ParentNode): void {
     if (items.length === 0) return;
     measure = measureToc(items);
     renderTrack(container, measure);
+    measureHeadings();
+    update();
   };
 
   // 初始测量 + 尺寸变化重测
@@ -247,84 +339,59 @@ function initToc(root: ParentNode): void {
     new ResizeObserver(onMeasure).observe(container);
   }
 
-  // 激活检测（Observer 移植：threshold 0.9 + 无激活时回退最近顶部）
-  const observerItems: { id: string; active: boolean; t: number }[] = [];
-  for (const el of itemEls()) {
-    const href = el.getAttribute('href');
-    const id = href?.startsWith('#') ? href.slice(1) : null;
-    if (id) observerItems.push({ id, active: false, t: 0 });
+  // 可见性检测：threshold 0（任意比例相交即视为可见），实时增删 visible 集合。
+  const setupObserver = (): void => {
+    if (intersectionObserver || headings.length === 0) return;
+    intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!(entry.target instanceof HTMLElement)) continue;
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        }
+        update();
+      },
+      { threshold: 0 },
+    );
+    for (const h of headings) if (h) intersectionObserver.observe(h);
+  };
+  setupObserver();
+
+  // 滚动 / 尺寸变化时重算（可见集合为空时依赖回退索引）
+  let scroller: Element = document.scrollingElement || document.documentElement;
+  if (headings.length > 0) {
+    let node = headings[0]?.parentElement ?? null;
+    while (node && node !== document.body && node !== document.documentElement) {
+      const s = getComputedStyle(node);
+      if (
+        node.scrollHeight > node.clientHeight &&
+        (s.overflowY === 'auto' || s.overflowY === 'scroll' || s.overflowY === 'overlay')
+      ) {
+        scroller = node;
+        break;
+      }
+      node = node.parentElement;
+    }
   }
 
-  const handleIntersection = (entries: IntersectionObserverEntry[]): void => {
-    if (entries.length === 0) return;
-
-    let hasActive = false;
-    const updated = observerItems.map((item) => {
-      const entry = entries.find((e) => e.target.id === item.id);
-      const active = entry ? entry.isIntersecting : item.active;
-      const next = { ...item, active, t: active && item.active !== active ? Date.now() : item.t };
-      if (active) hasActive = true;
-      return next;
+  let ticking = false;
+  const onScroll = (): void => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      update();
     });
-
-    // 回退：无任何标题在视口内时，选中最接近视口顶部的标题
-    if (!hasActive && entries[0].rootBounds) {
-      const viewTop = entries[0].rootBounds.top;
-      let min = Number.MAX_VALUE;
-      let fallbackIdx = -1;
-      for (let i = 0; i < updated.length; i++) {
-        const element = document.getElementById(updated[i].id);
-        if (!element) continue;
-        const d = Math.abs(viewTop - element.getBoundingClientRect().top);
-        if (d < min) {
-          fallbackIdx = i;
-          min = d;
-        }
-      }
-      if (fallbackIdx !== -1) {
-        updated[fallbackIdx] = { ...updated[fallbackIdx], active: true, t: Date.now() };
-      }
-    }
-
-    // 同步 DOM
-    for (const item of updated) {
-      const anchor = container.querySelector<HTMLElement>(`a[href="#${item.id}"]`);
-      anchor?.setAttribute('data-cpd-active', item.active ? 'true' : 'false');
-    }
-
-    const changed = updated.some((item, i) => observerItems[i]?.active !== item.active);
-    observerItems.splice(0, observerItems.length, ...updated);
-    if (changed) applyActive(updated);
-
-    // 激活项自动滚动可见（滚动真实滚动容器，避免带动窗口）
-    const activeItem = [...updated].sort((a, b) => b.t - a.t)[0];
-    if (activeItem && scrollArea) {
-      const anchor = container.querySelector<HTMLElement>(`a[href="#${activeItem.id}"]`);
-      if (anchor) {
-        // 优先使用实际可滚动的祖先（文档页 TOC 在固定壳内滚动）
-        let node: HTMLElement | null = scrollArea;
-        while (node && node !== document.body && node !== document.documentElement) {
-          if (node.scrollHeight > node.clientHeight) break;
-          node = node.parentElement;
-        }
-        const scroller = node ?? scrollArea;
-        const areaRect = scroller.getBoundingClientRect();
-        const anchorRect = anchor.getBoundingClientRect();
-        const target =
-          scroller.scrollTop + anchorRect.top - areaRect.top - (areaRect.height - anchorRect.height) / 2;
-        scroller.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
-      }
-    }
   };
 
-  const headings = observerItems
-    .map((item) => document.getElementById(item.id))
-    .filter((el): el is HTMLElement => el !== null);
-
-  if ('IntersectionObserver' in window && headings.length > 0) {
-    intersectionObserver = new IntersectionObserver(handleIntersection, { threshold: 0.9 });
-    headings.forEach((heading) => intersectionObserver?.observe(heading));
+  // scroll 事件不触发在 document.scrollingElement 上（实测只触发 window/document），
+  // 窗口滚动一律监听 window；内层滚动容器才监听该元素。
+  if (scroller === document.scrollingElement || scroller === document.documentElement) {
+    window.addEventListener('scroll', onScroll, { passive: true });
+  } else {
+    scroller.addEventListener('scroll', onScroll, { passive: true });
   }
+  window.addEventListener('resize', onScroll);
 }
 
 /* ============================================================

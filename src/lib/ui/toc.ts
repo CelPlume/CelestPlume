@@ -3,7 +3,7 @@
  *
  * 从零复刻 Plumest 的 ClerkTOC（连接线 + 步骤圆徽 + 轨道高亮）：
  * - **服务端渲染**每条目录的连接线（item 内 svg 向上伸出 6px，深度变化处画
- *   `C` 三次贝塞尔肘形曲线）+ 灰色编号圆徽（`--cpd-muted`）
+ *   对角肘形直线）+ 灰色编号圆徽（`--cpd-muted`）
  * - **客户端轨道**（runtime.ts 测量后注入）：覆盖在主色连接线上的完整 path +
  *   `clip-path` 矩形动画高亮当前激活区间 +
  *   激活区间的编号圆徽转主色
@@ -26,11 +26,11 @@ export function getItemOffset(depth: number): number {
   return 36 + BASE;
 }
 
-/** 连接线 x 偏移（px，Plumest getLineOffset） */
+/** 连接线 x 偏移（px，fuma getLineOffset：每级 12px，配对角拐角呈 45°） */
 export function getLineOffset(depth: number): number {
   if (depth <= 2) return BASE;
-  if (depth === 3) return 8 + BASE;
-  return 16 + BASE;
+  if (depth === 3) return 12 + BASE;
+  return 24 + BASE;
 }
 
 export interface RenderTocOptions extends TocOptions {
@@ -104,15 +104,19 @@ export function renderTocItem(item: TocItem, ctx: TocItemRenderContext): string 
   const parts: string[] = [];
   if (l0 !== l1) {
     parts.push(
-      `<path d="M ${l0 + 0.5} 0 C ${l0 + 0.5} 8 ${l1 + 0.5} 4 ${l1 + 0.5} 12" fill="none" class="cpd-toc-elbow"/>`,
+      `<path d="M ${l0 + 0.5} 0 L ${l1 + 0.5} 12" fill="none" class="cpd-toc-elbow"/>`,
     );
   }
+  // 竖线终点：若下一条目层级不同（此处会向下一条目画对角拐角），
+  // 竖线须在距底部 12px（拐角高度）处截止，与客户端轨道 buildPath 完全对齐；
+  // 否则一直画到底部。
+  const lineEnd = ctx.next && ctx.next.depth !== item.depth ? 'calc(100% - 12px)' : '100%';
   parts.push(
-    `<line x1="${l1 + 0.5}" y1="${l0 === l1 ? 6 : 12}" x2="${l1 + 0.5}" y2="100%" class="cpd-toc-line"/>`,
+    `<line x1="${l1 + 0.5}" y1="12" x2="${l1 + 0.5}" y2="${lineEnd}" class="cpd-toc-line"/>`,
   );
   if (item.step !== undefined) {
     parts.push(
-      `<g transform="translate(${l1 + 0.5}, ${l1 === l2 ? 3 : 6})">` +
+      `<g transform="translate(${l1 + 0.5}, ${l1 === l2 ? 9 : 12})">` +
         `<circle cx="0" cy="50%" r="8" class="cpd-toc-step-circle"/>` +
         `<text x="0" y="50%" text-anchor="middle" dominant-baseline="central" class="cpd-toc-step-text">${item.step}</text>` +
         `</g>`,
