@@ -4,6 +4,9 @@ description: Docker Compose、单容器与源码三种部署方式，以及数�
 sidebar:
   order: 6
 ---
+
+ # SDNUChronoSync 部署指南
+
 多用户课表与日程管理工具的完整部署指南，支持三种部署方式。
 
 ## 📋 目录
@@ -182,7 +185,7 @@ uv run python main.py
 
 ### 从 SQLite 迁移到 PostgreSQL
 
-完整命令、校验点和回滚步骤只维护在 [迁移 Runbook](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README_PG.md)。必须在停机维护窗口执行，期间禁止任一应用进程写入源库或目标库；先保留原 SQLite 和旧容器，只升级工作副本，并且只向 fresh 空 PostgreSQL 导入。
+完整命令、校验点和回滚步骤只维护在 [迁移 Runbook](../scripts/migrations/README_PG.md)。必须在停机维护窗口执行，期间禁止任一应用进程写入源库或目标库；先保留原 SQLite 和旧容器，只升级工作副本，并且只向 fresh 空 PostgreSQL 导入。
 
 ### 2. Docker 单容器部署
 
@@ -693,7 +696,7 @@ docker compose run --rm --entrypoint uv sdnu-chronosync \
   run alembic -c /app/alembic.ini upgrade head
 ```
 
-PostgreSQL 禁止用 `Base.metadata.create_all()` 或历史修复脚本绕过版本门禁。已有业务表但没有 `alembic_version` 时，按本文件 PostgreSQL 章节执行受限 bootstrap；SQLite 切换 PostgreSQL 时按 [迁移 Runbook](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README_PG.md) 执行 fresh cutover。
+PostgreSQL 禁止用 `Base.metadata.create_all()` 或历史修复脚本绕过版本门禁。已有业务表但没有 `alembic_version` 时，按本文件 PostgreSQL 章节执行受限 bootstrap；SQLite 切换 PostgreSQL 时按 [迁移 Runbook](../scripts/migrations/README_PG.md) 执行 fresh cutover。
 
 **常见错误：数据库和配置文件未生效**
 

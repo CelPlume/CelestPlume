@@ -8,6 +8,48 @@ All versions are archived here; the homepage only displays the last three months
 
 ## Changelog
 
+### v3.6.4 (2026-08-13) - Full dark mode refactor and frontend design system
+
+**Semantic Token System**
+
+- Established semantic CSS-variable tokens: `--bg-page/--bg-card/--bg-muted/--border/--text/--accent` etc., defined in `BaseLayout.astro`, with `:root` for light and `html.dark` for dark auto-switching; added layer tokens `--layer-dropdown(1200)/popover(1250)/modal(1400)/toast(1500)`
+- Tailwind `darkMode: 'class'`; `neutral` unifies scattered `gray/slate`, `primary` absorbs `sky`, removed `secondary` fuchsia palette
+- Six landing-page showcase mocks switched to consuming tokens (`var(--bg-card)` etc.), no more per-component hardcoded hex colors
+
+**Unified Components (consolidating scattered implementations)**
+
+- Added `InfoBox`: info/warning/danger variants, migrated TransferTeamModal / DissolveTeamModal / TemporaryTeamDrawer / ScheduleImporter etc.
+- Added `TabBar`: supports `stretch` for equal-width buttons, **sliding indicator capsule** with smooth switching (based on AinOfficialWiki Tabs pattern), migrated SystemSettings / TeamEditorModal / ScheduleAdjuster
+- `PickerPopover` panel and `CodeEditor` dark overrides (scoped `:global(html.dark)` fails in Vue SFC → moved to non-scoped `<style>`)
+
+**Tab System Conventions**
+
+- Two tab types: page option switching (profile / system settings / team management, active `dark:bg-neutral-700` + sliding indicator, no focus ring); selector switching (select all / clear, smart scheduling, container `dark:bg-neutral-900` recessed track + active `dark:bg-neutral-700` + light text)
+
+**Full dark-mode coverage for all components**
+
+- Schedules (week/day/calendar/import/export/share/empty classroom/adjustment), teams (view/edit/heatmap/temporary/batch add/smart scheduling), admin (user/team/system settings), auth/landing/navigation/showcase — all supplemented with `dark:` variants
+
+**Interaction & Backend Fixes**
+
+- Fixed nested modal (dissolve team) closing immediately on click: child modal toggle uses parent Dialog `:static` + `handleClose` guard
+- Fixed main button `hover:bg-primary-50` white text invisibility and illegal opacity `/300`
+- Fixed preset avatar upload 400: rasterize SVG to PNG before upload (backend rejects SVG + avoids XSS)
+- Fixed availability 422: team/temporary availability route week limit `30→53` (frontend sends calendar weeks)
+- Fixed theme icon hydration mismatch: dual-render sun/moon with `dark:block/hidden` toggle
+
+**Avatars & Docs**
+
+- 17 DiceBear preset accent variants consolidated to primary/neutral single-anchor tone
+- Added [Frontend Design Guide](docs/DESIGN.md) (700+ lines): tokens, palette, unified components, two-tab conventions, component inventory, lessons learned, verification methodology, commit conventions; established cross-references in AGENTS.md / README
+
+**Verification**
+
+- Frontend lint, type-check, and production build pass (14 pages)
+- Headless browser per-page dark audit: my-teams / team-view / user-management / team-management / system-settings etc. — all dark, 0 residual light
+- Real-device tests: TabBar sliding indicator aligns with active tab; dissolving modal inner-click does not close it
+
+ ### v3.6.3 (2026-08-09) - Brand & link migration: docs centralization, Footer revamp, and CelPlume unification
 ### v3.6.3 (2026-08-09) - Brand & link migration: docs centralization, Footer revamp, and CelPlume unification
 
 **Documentation**

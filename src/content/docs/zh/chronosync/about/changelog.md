@@ -8,18 +8,59 @@ sidebar:
 
 ## 📝 更新日志
 
+### v3.6.4 (2026-08-13) - 全站暗黑模式重构与前端设计体系
+
+**语义 Token 体系**
+
+- 建立语义 token（CSS 变量）：`--bg-page/--bg-card/--bg-muted/--border/--text/--accent` 等在 `BaseLayout.astro` 定义，`:root` 浅色、`html.dark` 深色自动切换；新增层级 token `--layer-dropdown(1200)/popover(1250)/modal(1400)/toast(1500)`
+- Tailwind `darkMode: 'class'`；`neutral` 统一替代散落的 `gray/slate`，`primary` 收敛 `sky`，删除 `secondary` fuchsia 色板
+- 六个着陆页 showcase mock 改为消费 token（`var(--bg-card)` 等），不再逐组件硬编码色
+
+**统一组件（收敛散落实现）**
+
+- 新增 `InfoBox`：info/warning/danger 三种提示框，迁移 TransferTeamModal/DissolveTeamModal/TemporaryTeamDrawer/ScheduleImporter 等
+- 新增 `TabBar`：支持 `stretch` 平分，**滑动指示胶囊**平滑切换（参考 AinOfficialWiki Tabs），迁移 SystemSettings/TeamEditorModal/ScheduleAdjuster
+- `PickerPopover` 面板、`CodeEditor` 代码编辑器深色覆写（scoped `:global(html.dark)` 不编译 → 改非 scoped `<style>`）
+
+**Tab 系统规范**
+
+- 区分两种 tab：页面选项切换（个人中心/系统设置/管理团队，激活 `dark:bg-neutral-700` + 滑动指示器，无 focus 光晕）；选择器切换（全选/清空、智能排班，容器 `dark:bg-neutral-900` 凹陷轨道 + 激活 `dark:bg-neutral-700` + 浅色文字）
+
+**组件深色全覆盖**
+
+- 课表（周/日/日历/导入/导出/分享/空教室/调休）、团队（视图/编辑/热力图/临时约课/批量添加/智能排班）、管理后台（用户/团队/系统设置）、认证/着陆/导航/展示，全量补 `dark:` 变体
+
+**交互与后端修复**
+
+- 修复嵌套弹窗（解散团队）点击即关闭：子弹窗开关加入父 Dialog `:static` 与 `handleClose` 守卫
+- 修复主按钮 `hover:bg-primary-50` 白字不可见与非法透明度 `/300`
+- 修复预设头像上传 400：SVG 栅格化为 PNG 上传（后端不接受 SVG，且规避 XSS）
+- 修复 availability 422：团队/临时 availability 路由周上限 `30→53`（前端发日历周）
+- 修复主题图标 hydration 不一致：双渲染 sun/moon 用 `dark:block/hidden` 切换
+
+**头像与文档**
+
+- 17 组 DiceBear 预设 accent 收敛为 primary/neutral 单锚调性
+- 新增[前端设计指南](docs/DESIGN.md)（约 700+ 行）：token、配色、统一组件、两种 tab 规范、组件全景清单、踩坑记录、验证方法论、提交规范；并在 AGENTS.md / README 建立引用
+
+**验证**
+
+- 前端 lint、类型检查与生产构建通过（14 页）
+- 无头浏览器逐页深色审计：my-teams/team-view/user-management/team-management/system-settings 等全深色、0 残留浅色
+- 实测：TabBar 滑动指示器对齐激活 tab；解散弹窗点击内部不关闭
+
 ### v3.6.3 (2026-08-09) - 品牌与链接迁移：站内文档、Footer 改版与 CelPlume 统一
 
 **文档整理**
 
-- 项目目录结构与 API 接口清单集中维护到[系统架构与技术参考](/zh/chronosync/dev/architecture/)，README 不再内联维护
+- 项目目录结构与 API 接口清单集中维护到[系统架构与技术参考](https://celplume.hxcn.space/zh/chronosync/dev/architecture/)，README 不再内联维护
 - 仓库 GitHub 链接统一为 [CelPlume/SDNUChronoSync](https://github.com/CelPlume/SDNUChronoSync)
 
 **站内链接迁移**
 
-- README、[完整更新日志](/zh/chronosync/about/changelog/)与 llms.txt / llms-full.txt 中的教程链接由 hs.cnies.org 迁移至站内页面（[保姆级用户教程](/zh/chronosync/tutorials/nanny-user-tutorial/)、[使用教程导航](/zh/chronosync/tutorials/chronosync-user-guide/)、[更新日志](/zh/chronosync/about/changelog/)）
+- README、[完整更新日志](https://celplume.hxcn.space/zh/chronosync/about/changelog/)与 llms.txt / llms-full.txt 中的教程链接由 hs.cnies.org 迁移至站内页面（[保姆级用户教程](https://celplume.hxcn.space/zh/chronosync/tutorials/nanny-user-tutorial/)、[使用教程导航](https://celplume.hxcn.space/zh/chronosync/tutorials/chronosync-user-guide/)、[更新日志](https://celplume.hxcn.space/zh/chronosync/about/changelog/)）
 - 前端导航（Navigation、MobileDrawer、首页）与教程入口常量同步指向站内页面，章节锚点适配新站（第二部分我的课表、3-导入课表、5-放假调休、第三部分团队协作）
-- 项目主页链接（hevspecu.hxcn.space）替换为[站内索引页](/zh/chronosync/)
+- 项目主页链接（hevspecu.hxcn.space）替换为[站内索引页](https://celplume.hxcn.space/zh/chronosync/)
 - 首页导航精简为「关于项目 / 使用教程 / Meet课程表」，移除「更新日志」与「项目主页」入口
 - 首页 hero 移除「特色功能」「使用教程」按钮，仅保留「立即注册 / 登录」
 
@@ -86,7 +127,7 @@ sidebar:
 
 **文档与验证**
 
-- 开发规范、完整版本历史和通用部署说明分别集中到[开发指南](/zh/chronosync/dev/development/)、本文件与[部署指南](/zh/chronosync/dev/deployment/)
+- 开发规范、完整版本历史和通用部署说明分别集中到[开发指南](https://celplume.hxcn.space/zh/chronosync/dev/development/)、本文件与[部署指南](https://celplume.hxcn.space/zh/chronosync/dev/deployment/)
 - 后端完整回归 `152 passed`；前端 lint 为 0 error，类型检查和生产构建通过；真实生产 SQLite 副本已完成 PostgreSQL 18 迁移与应用 smoke
 - 更新日志弹窗不再运行时请求外部站点：构建阶段直接读取仓库 `docs/CHANGELOG.md`，渲染最近三个月的版本条目并内联进页面，移除后端代理接口
 
@@ -102,7 +143,7 @@ sidebar:
 - 66 个阻塞端点由 `async def` 改为同步 `def`（FastAPI 线程池），登录不再卡死事件循环（登录期间 `/health` 从 168ms 降至 10ms），轻量端点并发不再线性排队
 - 新增 `RequestTimingMiddleware`，生产日志输出 `TIMING method path status X.Xms` 每请求耗时，支持定位慢端点
 - 课表接口响应体瘦身：个人端点不再嵌套完整 schedule/owner（857KB→735KB），团队聚合端点 3.47MB→1.52MB（243→153ms），筛选端点 349KB→150KB，并消除序列化 N+1
-- FastAPI 足以应对当前业务规模；关键性能基线与复测方法维护在[开发指南](/zh/chronosync/dev/development/)的性能章节
+- FastAPI 足以应对当前业务规模；关键性能基线与复测方法维护在[开发指南](https://celplume.hxcn.space/zh/chronosync/dev/development/)的性能章节
 
 **认证安全**
 
@@ -165,7 +206,7 @@ sidebar:
 
 - 数据库迁移工作流统一归入 `scripts/migrations/` 目录
 - 历史 Alembic 迁移链完整归档到 `scripts/migrations/legacy_alembic/`
-- 同步更新[迁移脚本说明](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README.md)中的迁移清单与执行规则
+- 同步更新[迁移脚本说明](https://celplume.hxcn.space/zh/chronosync/dev/development/#数据库迁移脚本规范)中的迁移清单与执行规则
 
 **管理员诊断与上传安全加固**
 
@@ -388,7 +429,7 @@ sidebar:
 - 支持 boolean 字段自动转换（SQLite 的 0/1 转为 PG 的 true/false）
 - 导入期间保持 PostgreSQL 外键检查开启，`schedule_adjustments` 先于 `events`，不使用 `session_replication_role`
 - 当前工具仅接受所有 tracked tables 均为空的目标库，不提供 `--force` 或清表模式；全部插入、序列修复和计数校验位于同一事务，失败会整体回滚并非零退出
-- 新增[迁移 Runbook](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README_PG.md)：完整的迁移步骤、验证方法和回滚方案
+- 新增[迁移 Runbook](https://celplume.hxcn.space/zh/chronosync/dev/deployment/#从-sqlite-迁移到-postgresql)：完整的迁移步骤、验证方法和回滚方案
 
 **Docker Compose 改造**
 
@@ -399,8 +440,8 @@ sidebar:
 
 **文档更新**
 
-- [部署指南](/zh/chronosync/dev/deployment/)新增“数据库配置”章节：PostgreSQL 连接池参数、`pg_dump`/`pg_restore` 备份恢复、从 SQLite 迁移的步骤
-- [项目说明](/zh/chronosync/)技术栈更新：数据库从 SQLite 改为 SQLite/PostgreSQL（推荐生产环境使用 PostgreSQL）
+- [部署指南](https://celplume.hxcn.space/zh/chronosync/dev/deployment/)新增“数据库配置”章节：PostgreSQL 连接池参数、`pg_dump`/`pg_restore` 备份恢复、从 SQLite 迁移的步骤
+- [项目说明](https://celplume.hxcn.space/zh/chronosync/)技术栈更新：数据库从 SQLite 改为 SQLite/PostgreSQL（推荐生产环境使用 PostgreSQL）
 
 ### v3.2.0 (2026-05-18) - UI视觉收敛、认证表单统一与移动端导航优化
 
@@ -600,7 +641,7 @@ sidebar:
 
 **数据库迁移**
 
-- 新增迁移脚本：`scripts/migrations/add_college_field.py`（升级到 v2.9.2+ 需先执行，详见[迁移脚本说明](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README.md)）
+- 新增迁移脚本：`scripts/migrations/add_college_field.py`（升级到 v2.9.2+ 需先执行，详见[迁移脚本说明](https://celplume.hxcn.space/zh/chronosync/dev/development/#数据库迁移脚本规范)）
 
 ### v2.9.1 (2026-01-22) - 课表引导与下拉体验修复
 
@@ -1435,8 +1476,8 @@ sidebar:
 - ✅ **界面更新**：导航栏、登录页、注册页全面使用新名称
 - ✅ **文档完善**：README 更新品牌信息
 - ✅ **导航增强**：新增"使用教程"和"关于"外部链接
-  - 使用教程：https://hs.cnies.org/archives/chronosync-user-guide
-  - 关于本项目：https://hs.cnies.org/archives/chronosync
+  - 使用教程：https://celplume.hxcn.space/zh/chronosync/tutorials/chronosync-user-guide/
+  - 关于本项目：https://celplume.hxcn.space/zh/chronosync/about/changelog/
 - ✅ **用户体验**：所有页面统一品牌形象
 
 ### v2.1.0 (2025-09-30) - 团队管理系统完整升级
