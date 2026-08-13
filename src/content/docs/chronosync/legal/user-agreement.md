@@ -49,7 +49,7 @@ You agree that when using the Service you will not:
 
 ## 6. Privacy
 
-Our processing of your personal information is described in the [Privacy Policy](./privacy-policy/), which forms part of these Terms.
+Our processing of your personal information is described in the [Privacy Policy](/chronosync/legal/privacy-policy/), which forms part of these Terms.
 
 ## 7. Disclaimer of Warranties
 

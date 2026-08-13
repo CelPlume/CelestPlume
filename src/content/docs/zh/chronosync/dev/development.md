@@ -12,7 +12,7 @@ sidebar:
 
 1. 数据模型放在 `backend/models.py`；结构变更必须同时提供现役 Alembic revision。
 2. API 路由放在 `backend/routers/`，业务逻辑放在 `backend/services/`，数据库访问复用 `backend/crud.py`。
-3. 新迁移脚本统一放在 `scripts/migrations/`，并同步更新[迁移脚本说明](../scripts/migrations/README.md)；SQLite 到 PostgreSQL 的生产切换步骤只维护在[迁移 Runbook](../scripts/migrations/README_PG.md)。
+3. 新迁移脚本统一放在 `scripts/migrations/`，并同步更新[迁移脚本说明](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README.md)；SQLite 到 PostgreSQL 的生产切换步骤只维护在[迁移 Runbook](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README_PG.md)。
 
 ### 前端
 
@@ -22,9 +22,9 @@ sidebar:
 
 ### 文档入口
 
-- [项目说明](../README.md)
-- [部署指南](DEPLOYMENT.md)
-- [完整更新日志](CHANGELOG.md)
+- [项目说明](/zh/chronosync/)
+- [部署指南](/zh/chronosync/dev/deployment/)
+- [完整更新日志](/zh/chronosync/about/changelog/)
 
 ## Build / Test / Run Scripts（构建/运行指令）
 
@@ -231,10 +231,10 @@ localStorage.removeItem('umami.disabled')
 | `backend/pyproject.toml` | `version = "x.y.z"` | Python 项目元数据，`uv` 和打包使用 |
 | `backend/main.py` | `version="x.y.z"`（FastAPI 初始化） | API 文档和 `/` 端点显示的版本 |
 | `backend/main.py` | 根端点返回的 `"version": "x.y.z"` | `GET /` 响应体 |
-| [`CHANGELOG.md`](CHANGELOG.md) | 新增 `### vX.Y.Z (...)` 完整记录 | 全部版本历史 |
-| [`README.md`](../README.md) | 最近三个月内保留同一版本记录 | 项目首页近期更新 |
+| [`CHANGELOG.md`](/zh/chronosync/about/changelog/) | 新增 `### vX.Y.Z (...)` 完整记录 | 全部版本历史 |
+| [`README.md`](/zh/chronosync/) | 最近三个月内保留同一版本记录 | 项目首页近期更新 |
 
-前端“更新日志”弹窗在构建阶段从 [`CHANGELOG.md`](CHANGELOG.md) 渲染（`frontend/src/layouts/DashboardLayout.astro`），且只展示相对构建日期最近三个月的版本条目（用户界面不显示该限制，无需手改版本号）。**变更版本号后必须核对**：弹窗构建产物与 README「最近三个月」区间展示同一批版本条目、同一最新版本号；两者不一致或最新版本未出现时不得发布。
+前端"更新日志"弹窗在构建阶段从 [`CHANGELOG.md`](/zh/chronosync/about/changelog/) 渲染（`frontend/src/layouts/DashboardLayout.astro`），且只展示相对构建日期最近三个月的版本条目（用户界面不显示该限制，无需手改版本号）。**变更版本号后必须核对**：弹窗构建产物与 README「最近三个月」区间展示同一批版本条目、同一最新版本号；两者不一致或最新版本未出现时不得发布。
 
 **CI/CD 自动行为**：推送到 `main` 分支时，GitHub Actions 自动从 `backend/pyproject.toml` 读取版本号，构建 Docker 镜像并打 `latest` 和 `x.y.z` 两个 tag 推送到 Docker Hub。推送 `v*` 格式的 git tag 时，还会额外追加该 git tag 作为镜像 tag。
 
@@ -250,16 +250,15 @@ git tag vX.Y.Z
 git push origin main --tags
 ```
 
-- 本仓库允许在子目录放置自己的 [`AGENTS.md`](../AGENTS.md) 覆盖局部规则；遇到冲突时以“就近目录”的 `AGENTS.md` 为准。
+- 本仓库允许在子目录放置自己的 [`AGENTS.md`](https://github.com/CelPlume/SDNUChronoSync/blob/main/AGENTS.md) 覆盖局部规则；遇到冲突时以"就近目录"的 `AGENTS.md` 为准。
 
 ### 数据库迁移脚本规范
 
 - 所有**新的**数据库迁移脚本必须放在 `scripts/migrations/`，**不得**再放到 `backend/migrations/`。
 - `backend/migrations/` 不再作为迁移脚本目录存在；历史 Alembic 资源统一归档到 `scripts/migrations/legacy_alembic/`，不要再把迁移文件放回 `backend/migrations/`。
 - 每新增、修改或废弃一个迁移脚本时，必须同步维护：
-  - [迁移脚本说明](../scripts/migrations/README.md)：脚本清单、引入版本、用途、适用数据库、使用方式、注意事项；
-  - [项目说明](../README.md)、[部署指南](DEPLOYMENT.md)或[完整更新日志](CHANGELOG.md)中与该变更直接相关的入口和升级说明。
-- 运行迁移脚本前，优先确认当前实际数据库类型与连接串来源；本项目当前以 PostgreSQL 为主，命令行执行前应显式加载 `backend/.env`。
+  - [迁移脚本说明](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README.md)：脚本清单、引入版本、用途、适用数据库、使用方式、注意事项；
+  - [项目说明](/zh/chronosync/)、[部署指南](/zh/chronosync/dev/deployment/)或[完整更新日志](/zh/chronosync/about/changelog/)中与该变更直接相关的入口和升级说明。
 - **模型与迁移 DDL 一致性（必须）**：新增列/表时，`models.py` 与 Alembic revision 必须逐项一致——列类型、nullable、以及 `server_default`（模型用 `server_default=text(...)`，迁移用 `server_default=...`，两侧都要有；参照 `is_default`/`is_hidden`/`token_version` 惯例）。缺失即视为 schema 漂移。
 - **新 head 同步（必须）**：新增 revision 成为新 head 后，必须同步更新 `backend/tests/test_postgres_integration.py` 的 `HEAD_REVISION`，否则 CI 的 fresh-upgrade 门禁必红。
 - **幂等守卫（必须）**：revision 内建表/加列操作需带 `if not exists` 风格守卫（参照 `d5e6f7a8b9c0`、`f0a1b2c3d4e5`）。

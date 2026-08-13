@@ -41,7 +41,7 @@ sidebar:
 **头像与文档**
 
 - 17 组 DiceBear 预设 accent 收敛为 primary/neutral 单锚调性
-- 新增[前端设计指南](docs/DESIGN.md)（约 700+ 行）：token、配色、统一组件、两种 tab 规范、组件全景清单、踩坑记录、验证方法论、提交规范；并在 AGENTS.md / README 建立引用
+- 新增[前端设计指南](/zh/chronosync/dev/design/)（约 700+ 行）：token、配色、统一组件、两种 tab 规范、组件全景清单、踩坑记录、验证方法论、提交规范；并在 AGENTS.md / README 建立引用
 
 **验证**
 
