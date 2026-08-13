@@ -616,6 +616,7 @@ sidebar:
 - [开发指南](/zh/chronosync/dev/development/)：本地开发、代码规范、质量门槛、性能安全基线、发布与迁移治理。
 - [SQLite 到 PostgreSQL 迁移 Runbook](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README_PG.md)：完整停机迁移、验证与回滚步骤。
 - [完整更新日志](/zh/chronosync/about/changelog/)：项目全部版本记录；本文仅展示最近三个月。
+- [前端设计指南](/zh/chronosync/dev/design/)：前端视觉/主题/暗黑模式设计体系 —— 语义 token、配色、统一组件（`InfoBox`/`TabBar`/`PickerPopover`/`CodeEditor`）、两种 tab 规范、组件全景清单与踩坑记录。
 
 
 ## 🔌 API 接口

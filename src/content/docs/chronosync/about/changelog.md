@@ -28,7 +28,7 @@ All versions are archived here; the homepage only displays the last three months
 
 **Full dark-mode coverage for all components**
 
-- Schedules (week/day/calendar/import/export/share/empty classroom/adjustment), teams (view/edit/heatmap/temporary/batch add/smart scheduling), admin (user/team/system settings), auth/landing/navigation/showcase — all supplemented with `dark:` variants
+- Schedules (week/day/calendar/import/export/share/empty classroom/adjustment), teams (view/edit/heatmap/temporary/batch add/smart scheduling), admin (user/team/system settings), auth/landing/navigation/showcase - all supplemented with `dark:` variants
 
 **Interaction & Backend Fixes**
 
@@ -46,7 +46,7 @@ All versions are archived here; the homepage only displays the last three months
 **Verification**
 
 - Frontend lint, type-check, and production build pass (14 pages)
-- Headless browser per-page dark audit: my-teams / team-view / user-management / team-management / system-settings etc. — all dark, 0 residual light
+- Headless browser per-page dark audit: my-teams / team-view / user-management / team-management / system-settings etc. - all dark, 0 residual light
 - Real-device tests: TabBar sliding indicator aligns with active tab; dissolving modal inner-click does not close it
 
  ### v3.6.3 (2026-08-09) - Brand & link migration: docs centralization, Footer revamp, and CelPlume unification
@@ -82,7 +82,7 @@ All versions are archived here; the homepage only displays the last three months
 **Post-login page load**
 
 - Fixed a regression introduced in v3.6.1 that left the post-login page stuck on "Loading...". Astro was emitting `<script define:vars>` as an unpacked classic inline script, so its raw `import` statement tripped the browser's *"Cannot use import statement outside a module"* error and `initAuth` never ran. The fix exposes the build-time changelog version via an inline variable script and loads the bootstrap as a proper `type="module"` bundle.
-- Avatar cross-origin cache requests now omit credentials (`credentials: 'omit'`). Alist returns `Access-Control-Allow-Origin: *`, which the browser rejects for credentialed requests — this was the source of the persistent CORS errors in the console.
+- Avatar cross-origin cache requests now omit credentials (`credentials: 'omit'`). Alist returns `Access-Control-Allow-Origin: *`, which the browser rejects for credentialed requests. This was the source of the persistent CORS errors in the console.
 
 **Changelog modal and "new version" badge**
 
@@ -92,7 +92,7 @@ All versions are archived here; the homepage only displays the last three months
 **Login and load performance**
 
 - Eliminated redundant `/api/auth/users/me` requests: the dashboard islands (navigation, my-schedule, email-bind check, mobile drawer) each had an independent Pinia instance and fired six identical requests on page load. A module-level single-flight wrapper deduplicates them into one shared request. The 401 token-clear path still runs only once.
-- `/api/admin/public/site-config` gets the same single-flight treatment (one request per page). Both public endpoints (`/code-injection` and `/site-config`) now return `Cache-Control: private, max-age=300` — config changes are infrequent, so the browser can reuse cached responses.
+- `/api/admin/public/site-config` gets the same single-flight treatment (one request per page). Both public endpoints (`/code-injection` and `/site-config`) now return `Cache-Control: private, max-age=300`. Config changes are infrequent, so the browser can reuse cached responses.
 - The changelog is now loaded on demand. The build phase renders the last three months into a `changelog.json` static asset, so the page no longer inlines ~32 KB of changelog HTML (dashboard first-payload drops from 99.5 KB to 56.9 KB). The JSON is only fetched when the user opens the changelog or a new version is detected.
 - Uvicorn worker count raised from 1 to 2, giving concurrent logins more headroom (the business connection pool caps at 60, below PostgreSQL's default 100).
 
@@ -138,7 +138,7 @@ All versions are archived here; the homepage only displays the last three months
 
 **Concurrency and response speed**
 
-- 66 blocking endpoints were changed from `async def` to synchronous `def` (FastAPI runs them in a thread pool). Login no longer stalls the event loop — `/health` during login dropped from 168 ms to 10 ms — and lightweight endpoints stop serializing behind each other.
+- 66 blocking endpoints were changed from `async def` to synchronous `def` (FastAPI runs them in a thread pool). Login no longer stalls the event loop (`/health` during login dropped from 168 ms to 10 ms) and lightweight endpoints stop serializing behind each other.
 - `RequestTimingMiddleware` was added; production logs now emit `TIMING method path status X.Xms` per request.
 - Schedule payloads shrank: personal endpoint no longer nests the full schedule/owner object (857 KB → 735 KB), team aggregation dropped from 3.47 MB to 1.52 MB (243 ms → 153 ms), the filter endpoint from 349 KB to 150 KB, and the serialization N+1 was eliminated.
 - FastAPI is adequate for the current scale; key performance baselines and re-test procedures live in the development guide.
@@ -159,7 +159,7 @@ All versions are archived here; the homepage only displays the last three months
 - Share-visit counting uses a database atomic increment, fixing concurrent-count lost updates.
 - Same-name team schedules get a database-level unique constraint so concurrent creation produces only one row.
 - Smart-scheduling anchors consistently use the target schedule's `start_date`.
-- Team create / import / member / admin operations each run in a single route-level transaction — any mid-operation failure rolls back the whole change.
+- Team create / import / member / admin operations each run in a single route-level transaction; any mid-operation failure rolls back the whole change.
 - `/health` now checks both the live database connection and the schema version, returning 503 until both pass.
 - Integration tests run against a real PostgreSQL instance in CI, covering migrations, concurrency, transactions, and health checks.
 - Backend Docker dependencies are frozen via `uv.lock` and installed with `uv sync --frozen`.
@@ -169,3 +169,304 @@ All versions are archived here; the homepage only displays the last three months
 **Tests and documentation**
 
 - Regression coverage expanded across JWT invalidation, rate-limit lockout, verification-code invalidation, bcrypt upgrade, the Alembic chain, and health checks. All current full-suite gates pass.
+### v3.5.0 (2026-08-01) - WebVPN off-campus access, dual-account auth, and academic connection security
+
+**Off-campus WebVPN academic access**
+
+- Schedule import and empty-classroom lookup now support WebVPN and direct connection modes, defaulting to the school's WebVPN.
+- Importer and empty-classroom lookup share the `JwxtAuthSession` to avoid protocol drift between the two auth implementations.
+- Sessions are explicitly bound to a connection mode and display unified-identity or academic-system captchas per upstream requirements.
+- Added deployment parameters for WebVPN, direct addresses, and session stability.
+
+**Direct-connection protection for off-campus deployments**
+
+- When the server cannot reach on-campus academic addresses, the frontend keeps but disables the "direct connection" option.
+- Clearly states direct mode is only for on-campus deployments while retaining backend direct capability for future recovery.
+
+**WebVPN + academic-system dual-account authentication**
+
+- WebVPN mode now uses two-stage authentication: first log in to unified identity, then enter a separate academic-system account/password in the same session.
+- Schedule import and empty-classroom lookup add an `auth_stage` state and a dedicated WebVPN login endpoint; academic login is blocked until stage one completes.
+- Each stage handles captchas separately; password fields are cleared immediately after submission.
+- If the academic password is wrong or upstream temporarily fails, the established WebVPN tunnel is kept. Retries do not require redoing unified identity.
+
+**Tunnel verification and credential security**
+
+- After a successful WebVPN login, the system actually probes the academic login page inside the tunnel instead of relying only on fixed domains or redirect results.
+- Captcha responses must be image type, avoiding WebVPN login pages or other HTML responses being mistaken for captchas.
+- WebVPN and academic-system credentials are used only for the current auth request; they are not written to the database, environment variables, cache, or logs.
+- Added regression tests for protocol, routes, session retries, and frontend stage switching; updated security conventions and usage docs.
+
+ ### v3.4.3 (2026-05-29) - Timezone consistency, team heatmap, and scheduling reliability fixes
+
+**Migration scripts and docs**
+
+- Database migration workflow consolidated under `scripts/migrations/`.
+- Historical Alembic migration chain fully archived to `scripts/migrations/legacy_alembic/`.
+- Migration list and execution rules in the migration script notes updated.
+
+**Admin diagnostics and upload security hardening**
+
+- Admin diagnostic endpoints add access control and input validation.
+- File upload pipeline error boundaries tightened to avoid leaking exception info to clients.
+
+**Team heatmap and share-link recovery**
+
+- Fixed inaccurate team-heatmap aggregation, restoring correct multi-member busy/free views.
+- Share-link management restored: validity periods, permission configuration, and QR code display.
+
+**Default-schedule parsing consistency**
+
+- Current-schedule resolution now always follows the default-schedule source of truth, with no more frontend/backend mismatches.
+
+**Timezone unification: calendar and exports follow Shanghai wall-clock time**
+
+- Calendar view and ICS export/import flows now generate and parse events in `Asia/Shanghai`.
+- Fixed event time offsets across timezones that caused schedule display and export inconsistencies.
+
+**Scheduling regression scenarios preserved**
+
+- Added a Team1 scheduling regression-test scenario document, making batch and smart scheduling repeatably verifiable.
+
+**Team scheduling preview creation-delay fix**
+
+- Team scheduling preview no longer shows events that have not yet been created; preview matches the final result.
+
+**Team insertion drift fix**
+
+- Batch and smart scheduling inserting into a reusable schedule no longer shifts events across weeks or dates.
+- Fixed the root cause of event misplacement when reusing an existing schedule write target.
+
+### v3.4.2 (2026-05-28) - Default schedule, share links, and scheduling stability release
+
+**Backend data layer and migrations**
+
+- `Schedule` model adds the `is_default` field, supporting the default-schedule mechanism.
+- `Schedule` lifecycle begins deriving from `start_date + total_weeks`; hidden and default states are modeled separately.
+- New share and collaboration data structures added, with CRUD / schema mappings completed.
+- Historical Alembic chain archived to `scripts/migrations/legacy_alembic/`; default/hidden-schedule data corrections are handled by `scripts/migrations/add_schedule_visibility_and_default_truth.py`.
+
+**Default-schedule selection and write strategy**
+
+- Backend `admin`, `import_route`, `schedule`, and `schedules` routes unify the default-schedule rule.
+- "Current schedule" reuses the default-schedule resolution instead of a separate judgment path.
+- Frontend `ScheduleEditor` adds a "set as default schedule" interaction.
+- Frontend schedule store loads the default schedule first on "My Schedule".
+- `frontend/src/types/index.ts` adds default-schedule related type definitions.
+
+**Batch and smart scheduling stability fixes**
+
+- `batch_operations.py` and `smart_schedule.py` support a consistent schedule-insert-target logic (new/default/specific).
+- Fixed smart-scheduling stability across conflicts, capacity, and week assignment.
+- Fixed batch-add and smart-scheduling modals whose inputs could not receive focus directly on first open.
+
+**Temporary availability and team-heatmap sharing**
+
+- Backend adds temporary-availability and team-heatmap share routes, a public-access endpoint, and a reusable availability service.
+- Frontend adds `TeamAvailabilityShareModal` with image/link sharing, permissions, validity period, and QR code display.
+- `AllTeamsViewPage`, `TeamViewPage`, `TemporaryTeamDrawer`, `TeamAvailabilityGrid`, and `TeamHeatmapDrawer` are wired into the share flow.
+- New share-page entry `frontend/src/pages/share.astro`; the public view is hosted by `PublicScheduleView`.
+
+**Frontend performance and layering fixes**
+
+- `UserAvatar` unified to a local-cache strategy with update-time-based invalidation, reducing duplicate avatar requests.
+- New `frontend/src/utils/avatarCache.ts` lowers bandwidth on member-heavy views.
+- `TeamSlotDetailDrawer` layering fixed so it is no longer hidden under upper drawers.
+
+### v3.4.1 (2026-05-28) - UI polish, temporary-availability search rework, and shared-free-time enhancements
+
+**UI de-AI-ification and layout fixes**
+
+- `ScheduleGanttWeekView` card height 68 px → 82 px, row spacing 78 px → 90 px, min row height 112 px → 130 px; fixes the "week x" truncation.
+- Gantt, week-list, and schedule-list views unified on the slate palette, rounded-2xl corners, soft shadows, removing the default AI-template feel.
+- `TeamMemberStrip` switches from circular initial-letter avatars to the `UserAvatar` component showing real avatars.
+
+**Temporary-availability search experience rework**
+
+- `TemporaryTeamDrawer` drops watch-based auto-search in favor of a button trigger + Enter shortcut.
+- Search results show avatar (`UserAvatar`), name, student ID, class, and college.
+- Backend `team.py` search and `temporary.py` availability endpoints return `avatar_url` and `college`.
+- Types `UserSearchResult` and `AvailabilitySlot` member arrays add `avatar_url` and `college`.
+
+**Shared free-time enhancements**
+
+- `TeamAvailabilityGrid` adds PNG export: centered "week x shared free time" title, bottom-right logo watermark (`/logo.png`, 140 px, opacity 0.6).
+- Clicking a busy/free cell opens the `TeamHeatmapDrawer` detail drawer, showing free/busy member lists (avatar + name + course info) for that slot.
+- `TeamAvailabilityGrid` adds a `#header-left` slot; the week input and export button align vertically inside the temporary-availability drawer.
+
+**Team view busy/free & heatmap integration**
+
+- `TeamViewPage` merges "busy/free view" and "heatmap" into a single "Free" view mode (week/month/free), removing the standalone `teamViewMode` tab.
+- `AllTeamsViewPage` desktop view-switcher adds a "Free" button; the mobile dropdown adds a "busy/free view" option.
+- Busy/free view adds a multi-select avatar picker (select all / clear / toggle single); shows a "select members to view" prompt when none are selected.
+- Clicking "Apply filters" immediately syncs the selected members and refreshes busy/free data, showing only filtered members.
+- `getWeekNumber` moved from a `TeamViewPage` local function to the shared `@/utils/date` utility.
+
+**Export and clipboard fixes**
+
+- `TeamSlotDetailDrawer` export area reworked into an expandable panel: multi-select export fields (name / student ID / class / college / free time) + format selection (TXT/CSV/EXCEL) + separate copy zones (name / student ID / name+student ID).
+- Excel export switched from dynamic `import('xlsx')` to static `import * as XLSX from 'xlsx'`; `astro.config.mjs` adds `optimizeDeps.include: ['xlsx']`, fixing the Vite 504 Outdated Optimize Dep error.
+- Clipboard copy adds a `navigator.clipboard` availability detection with a `document.execCommand('copy')` fallback off HTTPS, fixing `Cannot read properties of undefined (reading 'writeText')`.
+- Busy members are simplified to orange name tags; course/room details removed.
+
+**Layering fixes**
+
+- `TeamSlotDetailDrawer` z-index `z-50` → `z-[110]` → `z-[200]`, reliably covering `TemporaryTeamDrawer` (Headless UI Dialog z-[100]).
+
+### v3.4.0 (2026-05-27) - Team collaboration enhancements, batch scheduling, and smart scheduling
+
+**Team collaboration data layer**
+
+- `models.py` adds Team settings fields: `visibility_model`, `allow_member_invite`, `max_members`, `join_policy`, `shift_definitions`, `schedule_config`.
+- 7 new data models: `TeamScheduleTask` (scheduling task), `TeamShiftDefinition` (shift definition), `TeamScheduledEvent` (scheduled-event link), `TeamBatchOperation` (batch-op record), `TeamBatchOperationItem` (batch-op detail), `TeamRecurringEventRule` (recurring scheduling rule), `TemporaryTeam` (temporary team).
+- `schemas.py` adds 16 Pydantic schemas covering scheduling tasks, batch ops, and temporary teams.
+- `crud.py` adds `get_events_by_schedule_id()`, `create_batch_operation()`, `complete_batch_operation()`.
+- New Alembic migration `b3c4d5e6f7a8`: new `teams` columns + 7 new tables.
+
+**Batch scheduling**
+
+- `POST /api/teams/{id}/batch-events/preview`: conflict preview returning per-user conflict details (day_of_week + time-overlap detection).
+- `POST /api/teams/{id}/batch-events/execute`: batch-creates course events, supporting `skip` and `force` conflict strategies.
+- Conflict dedup by `(user_id, week, day_of_week)` to avoid duplicate conflicts from multiple `Event` rows of the same course.
+- Auto-creates a "{team name} team schedule" `Schedule` for members without one, Monday-aligned with `semester_start`.
+- `GET /api/teams/{id}/batch-operations/{id}`: details merged per user (weeks/days/title), one row per user.
+- Supports the `schedule_target` parameter: `default` (active schedule) or `new` (new team schedule).
+
+**Smart scheduling**
+
+- `POST /api/teams/{id}/schedule-tasks/preview`: runs the greedy algorithm on preview, returning member-assignment stats, failed slots, and a user-name map.
+- `POST /api/teams/{id}/schedule-tasks`: creates the scheduling task, auto-writing to the batch-op log.
+- Two modes: week mode (`selected_weeks` + `shifts`) and date mode (`specific_dates`, per-date `required_count`).
+- Stable greedy algorithm: groups by `(name, day_of_week)`, takes the intersection of members available across all weeks (stable set), picks exactly `needed` as primary, assigns the same primary every week, and replaces only on conflicts.
+- Replacement candidates exclude already-assigned members; `max_per_member` applies globally.
+- Auto-infers `semester_start` (from `selected_weeks` or `specific_dates`).
+- FK safety: failed records use `member_ids[0]` instead of `user_id=0`.
+
+**Temporary team lookup**
+
+- `POST /api/temporary/availability`: availability for any member combination without joining a team.
+- Supports date-range filtering and three visibility levels (`busy_only` / `course_title` / `full_detail`).
+- Frontend `TemporaryTeamDrawer`: quick member search, multi-member shared-free-slots view.
+
+**Team settings extensions**
+
+- Team editor modal reworked into 3 tabs: team info, member management, team operations.
+- Configurable: visibility model, join policy (free / approval / invite), max members, member-invite toggle.
+- The team-operations tab hosts the batch- and smart-scheduling entries.
+
+**PostgreSQL migration fixes**
+
+- Fixed Alembic initial schema missing the new `teams` columns and 7 tables (`create_all()` does not `ALTER` existing tables).
+- New `repair_team_tables.py`: an idempotent PG-repair script covering new columns, team-collaboration tables, and `temporary_shares` / `team_heatmap_shares` full DDL and required indexes.
+- `sqlite_to_postgres.py` updates `TABLES_IN_ORDER` to 18 tables, fully covering `temporary_shares` and `team_heatmap_shares`.
+
+**New frontend components**
+
+- `BatchTeamEventModal`: batch-scheduling modal, HeadlessUI Dialog, conflict-preview panel, blue missing-schedule notice bar, schedule write-target selection.
+- `TeamScheduleTaskModal`: smart-scheduling modal, pill-style weekday selector, week/date dual-mode switch, result display (member counts + list/calendar views).
+- `BatchOperationsLog`: batch-op log panel with inline detail expansion (not a bottom overlay), per-user merged view.
+- `TemporaryTeamDrawer`: temporary-team lookup drawer, quick member search, shared-free-time view.
+- `TeamAvailabilityGrid`: color-coded availability grid.
+- `TeamMemberSchedulePanel`: member personal schedule panel.
+- `TeamMemberStrip`: member avatar strip (add / remove / role select).
+- `TeamSlotDetailDrawer`: slot detail drawer.
+
+**UI fixes and unification**
+
+- Deleted `CreatorTeamManagement.vue`; functionality merged into `TeamEditorModal` tabs.
+- All modals unified to the HeadlessUI Dialog pattern (`ModalTitleCard`, `bg-slate-950/40 backdrop-blur-sm` backdrop, `ring-1 ring-slate-200/80`, `rounded-xl`, `input-base` inputs).
+- Nested-modal layering: parent Dialog uses `:static` to disable FocusTrap, child Dialog uses `z-[200]`.
+- `ScheduleEditor` fix: parent Dialog gets `:static` when the delete-confirm modal opens to prevent focus stealing.
+- `StackedEventsModal` uses the `UserAvatar` component for real avatars.
+- `Navigation` admin section font `font-medium` → `font-semibold`.
+
+### v3.3.1 (2026-05-27) - In-app browser guidance, CI/CD auto-build, and sequence fixes
+
+**In-app browser guidance**
+
+- New `frontend/src/utils/inAppBrowser.ts`: detects WeChat, QQ, WeCom, DingTalk, and Alipay in-app browsers.
+- New `frontend/src/components/InAppBrowserPrompt.vue`: dual-mode guidance component (dialog + toast).
+- Dialog mode: first in-app open shows step guidance with a globe icon before the title and a horizontal three-dot-menu icon in the steps.
+- Toast mode: re-opening within the same day after the dialog was shown produces a light toast notice.
+- localStorage records the dialog timestamp; the dialog is not shown again within 24h; sessionStorage prevents re-triggering on in-app navigation.
+- Integrated pages: home, login, register, forgot password, shared schedule, my schedule, team view (7 pages).
+- Toast-system extension: `Toast` interface adds `iconSvg` and `inlineSvg`; `ToastItem` supports custom icons and inline-SVG descriptions.
+
+**CI/CD auto-build**
+
+- New `.github/workflows/docker-publish.yml`: auto-builds a Docker image on push to `main`, tagging `latest` + `x.y.z`.
+- Pushing a `v*` git tag also uses that tag as the image tag.
+- AGENTS.md adds a version-management section listing the 4 version locations that must change together and the manual release flow.
+
+**PostgreSQL sequence fix**
+
+- `scripts/migrations/sqlite_to_postgres.py` adds a sequence-reset step: after import, sets the sequences of all tables with an `id` column to `MAX(id)`.
+- Fixes `UniqueViolation` on new inserts after an SQLite migration caused by unreset sequences.
+
+### v3.3.0 (2026-05-26) - PostgreSQL support, Alembic migrations, and data-migration tooling
+
+**PostgreSQL database support**
+
+- New `psycopg[binary]` driver dependency; backend can connect to PostgreSQL.
+- `database.py` adds the `pool_recycle` parameter (default 1800 s) to prevent long-idle connections from being dropped by the server.
+- Engine creation logs the database type (SQLite / PostgreSQL) without leaking the connection string or password.
+- `models.py` association tables `user_teams` and `team_admins` add `ondelete=CASCADE`; PG cleans up related rows on user/team deletion.
+- `models.py` index fields are given explicit `String(N)` lengths (`student_id=50`, `full_name=100`, etc.), improving PG index efficiency.
+
+**Alembic migration system**
+
+- Alembic initialized, reading the connection string dynamically from the `DATABASE_URL` env var.
+- New `initial_schema` migration: creates all tables on PostgreSQL; skipped on SQLite (handled by `create_all`).
+- New `add_performance_indexes` migration: composite indexes for `schedules(owner_id, status)`, `events(schedule_id, day_of_week)`, and `login_records(user_id, login_time)`.
+- Future model changes go exclusively through Alembic migrations, with no more manual SQL scripts.
+
+**SQLite-to-PostgreSQL data-migration tool**
+
+- New `scripts/migrations/sqlite_to_postgres.py`: validates SQLite integrity and the PostgreSQL target schema, then migrates all 18 tracked tables in FK-dependency order (including `temporary_shares` and `team_heatmap_shares`).
+- Auto-converts boolean fields (SQLite `0`/`1` → PG `true`/`false`).
+- PostgreSQL FK checks stay on during import; `schedule_adjustments` before `events`; `session_replication_role` is not used.
+- The tool only accepts empty target tables for all tracked tables; there is no `--force` or table-truncation mode; all inserts, sequence fixes, and count checks run in a single transaction, rolling back on any failure with a non-zero exit code.
+- New migration Runbook: full migration steps, verification, and rollback procedure.
+
+**Docker Compose rework**
+
+- `docker-compose.yml` adds a `db` service (`postgres:latest`) with a healthcheck and a `postgres_data` persistent volume.
+- App `DATABASE_URL` switches to a PostgreSQL connection string; `depends_on` adds the db healthcheck.
+- Removed the deprecated `version` attribute and undefined network references.
+- New `.env.example` and `backend/.env.example` providing `POSTGRES_PASSWORD`, `SECRET_KEY`, connection-pool, and other config templates.
+
+**Docs updated**
+
+- Deployment guide adds a "Database configuration" section: PG pool params, `pg_dump` / `pg_restore` backup/restore, SQLite-migration steps.
+- Project-intro tech stack updated: SQLite → SQLite / PostgreSQL (PostgreSQL recommended for production).
+
+### v3.2.0 (2026-05-18) - UI visual convergence, unified auth forms, and mobile navigation optimization
+
+**UI visual convergence and typography**
+
+- Removed default shadows from base input / button / dropdown components; only overlays and modals keep shadows, producing a cleaner, flatter UI.
+- Radius system unified: inputs `rounded-lg` (8 px), list cards `rounded-xl` (12 px); removed 22 px / 28 px / 32 px oversized radii.
+- Removed BaseLayout's global forced `border-radius: 1rem`; components now control their own radii.
+- Heading weights unified from `font-black` / `font-bold` down to `font-semibold`; body contrast improved from `gray-500` to `slate-600` for readability.
+- Removed all-caps labels and high tracking (e.g. "Day Agenda" → "Day Schedule"), restoring normal Chinese wording.
+- `PageHeaderCard` removes gradient background / shadow / ring, switching to a pure-stroke container for a lighter look.
+- `Navigation` sidebar switches from `shadow-sm ring` to a `border-r` divider; admin-section `red` lowered to a less saturated `rose`.
+- `MyTeamsPage` metrics area and team-code area flatten (no nested cards).
+- Danger color unified from `red` to a lower-saturation `rose`, reducing visual aggression.
+
+**Auth-form UI unification**
+
+- Login / register / forgot-password forms unified to the `input-base` CSS class, replacing inline styles.
+- Standard radius unified from `rounded-xl` to `rounded-lg` for visual consistency.
+- Button styles simplified: gradient backgrounds and shadows removed.
+- `AuthShell` decorative background elements and ribbon animation removed, returning to a minimal design.
+- Color variables unified from `gray` to `slate` for palette consistency.
+- Card styles simplified: `backdrop-blur` and frosted-glass effects removed.
+
+**Mobile bottom tab bar**
+
+- New `MobileBottomTabBar`: a fixed bottom quick-navigation bar for mobile with four high-frequency entries: schedule, team, empty classroom, profile.
+- The tab bar is fixed to the viewport bottom and shows only below the `lg` breakpoint (`lg:hidden`).
+- Supports iPhone safe-area inset (`env(safe-area-inset-bottom)`) to avoid obscuring the Home indicator.
+- Main content area auto-adds `pb-20` bottom padding so the tab bar does not cover content.
+- The existing mobile top bar, drawer, sidebar, and desktop layout are unchanged.
