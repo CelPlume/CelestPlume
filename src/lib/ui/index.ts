@@ -98,5 +98,7 @@ export type {
 } from './components';
 export { initCelestialUI } from './runtime';
 export type { CelestialUiOptions } from './runtime';
+export { githubCard, githubCards, fetchGithubRepo } from './github-card';
+export type { GithubCardOptions, GithubCardsLayout, GithubRepoData } from './github-card';
 export { renderImageZoom } from './image-zoom';
 export type { ImageZoomOptions } from './image-zoom';

@@ -873,6 +873,7 @@ body {
 .cpd-article a.cpd-button::after,
 .cpd-article a.cpd-card::after,
 .cpd-article a.cpd-dropdown-item::after,
+.cpd-article a.cpd-github-card::after,
 .cpd-card a::after,
 .cpd-btn a::after,
 .cpd-heading-anchor::after,
@@ -1389,6 +1390,101 @@ a.cpd-card:hover {
 .cpd-card-children {
   font-size: 0.875rem;
   color: var(--cpd-muted-foreground);
+}
+
+/* —— GitHubCard（githubCard 构建器；整卡链接，标题 owner/repo；
+   单个水平居中；githubCards 网格 2 列或整行堆叠） —— */
+.cpd-article a.cpd-github-card,
+a.cpd-github-card {
+  display: block;
+  width: 100%;
+  max-width: 480px;
+  margin-inline: auto;
+  padding: 1.25rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: var(--cpd-radius);
+  background: var(--cpd-card);
+  color: var(--cpd-card-foreground);
+  text-decoration: none;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+.cpd-article a.cpd-github-card:hover,
+a.cpd-github-card:hover {
+  background: var(--cpd-accent);
+  border-color: var(--cpd-ring);
+  text-decoration: none;
+}
+.cpd-github-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-block: 0.25rem;
+}
+@media (max-width: 40rem) {
+  .cpd-github-cards {
+    grid-template-columns: 1fr;
+  }
+}
+/* 网格单元内的卡片铺满单元格，不再 480px 居中；行高取同列最高卡片 */
+.cpd-github-cards a.cpd-github-card {
+  max-width: none;
+  margin-inline: 0;
+  height: 100%;
+}
+/* 整行堆叠：每行一卡铺满整行 */
+.cpd-github-cards.cpd-github-cards-stack {
+  grid-template-columns: 1fr;
+}
+.cpd-github-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.cpd-github-card-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-family: var(--cpd-font-mono);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+.cpd-github-card-icon {
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-github-card-desc {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-github-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-github-card-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+.cpd-github-card-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+}
+.cpd-github-card-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.cpd-github-card-stat .cpd-github-card-icon {
+  width: 1em;
+  height: 1em;
 }
 
 /* —— Steps —— */

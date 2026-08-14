@@ -43,13 +43,14 @@ shell swapped in via component overrides; a live demo of the whole kit
 ```text
 src/
 ├── lib/ui/                  # the kit (pure TS)
-│   ├── html.ts              #   escape / attrs / el primitives
+│   ├── html.ts             #   escape / attrs / el primitives
 │   ├── types.ts             #   shared types (NavNode, TocItem, …)
 │   ├── icons.ts             #   inline lucide-style SVG set
 │   ├── tokens.ts            #   design tokens (TS → CSS variables)
 │   ├── sidebar.ts           #   left sidebar builder
 │   ├── toc.ts               #   ClerkTOC builder + heading collector
 │   ├── components.ts        #   callout, cards, steps, tabs, … builders
+│   ├── github-card.ts       #   GitHubCard builder + build-time fetch
 │   ├── runtime.ts           #   framework-free client runtime
 │   └── index.ts             #   public API barrel
 ├── styles/

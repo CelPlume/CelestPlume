@@ -1,0 +1,91 @@
+---
+title: GitHub Card
+description: Display GitHub repository cards with githubCard() and githubCards() from the Docs Kit.
+sidebar:
+  order: 20
+---
+
+import GitHubCard from '../../../../components/kit/GitHubCard.astro';
+import GitHubCards from '../../../../components/kit/GitHubCards.astro';
+
+`githubCard()` renders a single GitHub repository card; `githubCards()` renders
+a grid (two columns) or a full-width stack. The whole card is a link and the
+title shows `owner/repo`. Metadata (description, language) and star/fork
+counts are fetched from the GitHub API at build time, then refreshed in the
+browser.
+
+## Single
+
+A standalone card is capped at `480px` and horizontally centered.
+
+<GitHubCard owner="CelPlume" repo="CelestPlume" />
+
+```astro
+---
+import GitHubCard from '../../../../components/kit/GitHubCard.astro';
+---
+
+<GitHubCard owner="CelPlume" repo="CelestPlume" />
+```
+
+## Grid (two columns)
+
+`githubCards()` renders any number of cards in a responsive two-column grid;
+cards in a row share the height of the tallest one.
+
+<GitHubCards
+  items={[
+    { owner: 'CelPlume', repo: 'CelestPlume' },
+    { owner: 'CelPlume', repo: 'BookmarkHarbor' },
+  ]}
+/>
+
+```astro
+---
+import GitHubCards from '../../../../components/kit/GitHubCards.astro';
+---
+
+<GitHubCards
+  items={[
+    { owner: 'CelPlume', repo: 'CelestPlume' },
+    { owner: 'CelPlume', repo: 'BookmarkHarbor' },
+  ]}
+/>
+```
+
+## Full-width stack
+
+Pass `layout="stack"` to render one card per row, each filling the full row
+width.
+
+<GitHubCards items={[{ owner: 'CelPlume', repo: 'squoosh' }]} layout="stack" />
+
+```astro
+---
+import GitHubCards from '../../../../components/kit/GitHubCards.astro';
+---
+
+<GitHubCards items={[{ owner: 'CelPlume', repo: 'squoosh' }]} layout="stack" />
+```
+
+## Props
+
+`GitHubCard` takes one set of options; `GitHubCards` takes `items` (an array
+of the same options) plus an optional `layout`.
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `owner` | `string` | — | Repository owner (user or organization). |
+| `repo` | `string` | — | Repository name. |
+| `target` | `string` | `'_blank'` | Link target for the repository URL. |
+| `auth` | `string` | `''` | GitHub token for the build-time request. |
+| `layout` | `'grid' \| 'stack'` | `'grid'` | `GitHubCards` only: two columns or one card per row. |
+
+## Notes
+
+- The whole card links to the repository; the title shows `owner/repo`.
+- Build-time data comes from the GitHub REST API; a failed request renders a
+  plain link card.
+- Star/fork counts and missing metadata refresh in the browser and are cached
+  in `localStorage` to respect the API rate limit.
+- Requires network access to `api.github.com` at build and runtime.

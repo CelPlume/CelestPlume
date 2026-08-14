@@ -12,6 +12,7 @@
 import { getLineOffset } from './toc';
 import { applyTheme, resolveInitialTheme, LANG_STORAGE_KEY, type CpdThemeMode } from './tokens';
 import { Icon } from './icons';
+import { githubLanguageColor } from './github-card';
 import { initImageZoom } from './image-zoom-runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -823,6 +824,82 @@ function initDrawers(root: ParentNode): void {
 }
 
 /* ============================================================
+   GitHubCard（构建期抓取失败时回填描述/语言/star/fork；
+   localStorage 缓存遵守 API 限流）
+   ============================================================ */
+
+interface GithubRuntimeData {
+  description: string;
+  language: string;
+  stars: number;
+  forks: number;
+}
+
+async function fetchGithubRepoData(
+  owner: string,
+  repo: string,
+): Promise<GithubRuntimeData | null> {
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`,
+    );
+    if (!res.ok) return null;
+    const data: Record<string, unknown> = await res.json();
+    return {
+      description: typeof data.description === 'string' ? data.description : '',
+      language: typeof data.language === 'string' && data.language ? data.language : 'Other',
+      stars: typeof data.stargazers_count === 'number' ? data.stargazers_count : 0,
+      forks: typeof data.forks_count === 'number' ? data.forks_count : 0,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function initGithubCards(root: ParentNode): void {
+  root.querySelectorAll<HTMLElement>('[data-cpd-github-card]').forEach((card) => {
+    const owner = card.getAttribute('data-cpd-github-owner');
+    const repo = card.getAttribute('data-cpd-github-repo');
+    if (!owner || !repo) return;
+
+    const apply = (data: GithubRuntimeData): void => {
+      if (data.description) {
+        const desc = card.querySelector<HTMLElement>('[data-cpd-github-desc]');
+        if (desc) desc.textContent = data.description;
+      }
+      if (data.language) {
+        const lang = card.querySelector<HTMLElement>('[data-cpd-github-lang]');
+        const dot = card.querySelector<HTMLElement>('[data-cpd-github-lang-color]');
+        if (lang) lang.textContent = data.language;
+        if (dot) dot.style.backgroundColor = githubLanguageColor(data.language);
+      }
+      const stars = card.querySelector<HTMLElement>('[data-cpd-github-stars-num]');
+      const forks = card.querySelector<HTMLElement>('[data-cpd-github-forks-num]');
+      if (stars) stars.textContent = String(data.stars);
+      if (forks) forks.textContent = String(data.forks);
+    };
+
+    const cacheKey = `cpd-github-${owner}/${repo}`;
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) apply(JSON.parse(cached) as GithubRuntimeData);
+    } catch {
+      // 缓存损坏时忽略，仍走一次实时抓取
+    }
+
+    void fetchGithubRepoData(owner, repo).then((data) => {
+      if (!data) return;
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify(data));
+      } catch {
+        // 隐私模式等写失败时忽略
+      }
+      apply(data);
+    });
+  });
+}
+
+/* ============================================================
    入口
    ============================================================ */
 
@@ -852,6 +929,7 @@ export function initCelestialUI(options: CelestialUiOptions = {}): () => void {
   initImageZoom(root);
   initTheme(root);
   initLang(root);
+  initGithubCards(root);
 
   return () => {
     // 清理由事件委托挂在 root 上的监听（由调用方决定是否真正移除）

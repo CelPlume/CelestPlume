@@ -44,6 +44,7 @@ src/
 │   ├── sidebar.ts           #   左侧边栏构建器
 │   ├── toc.ts               #   ClerkTOC 构建器 + 标题收集
 │   ├── components.ts        #   callout / cards / steps / tabs 等构建器
+│   ├── github-card.ts       #   GitHubCard 构建器 + 构建期抓取
 │   ├── runtime.ts           #   无框架客户端运行时
 │   └── index.ts             #   公共 API 出口
 ├── styles/

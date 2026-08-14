@@ -1,0 +1,87 @@
+---
+title: GitHub 卡片
+description: 用 Docs Kit 的 githubCard() 与 githubCards() 展示 GitHub 仓库卡片。
+sidebar:
+  order: 20
+---
+
+import GitHubCard from '../../../../../components/kit/GitHubCard.astro';
+import GitHubCards from '../../../../../components/kit/GitHubCards.astro';
+
+`githubCard()` 渲染单张 GitHub 仓库卡片；`githubCards()` 渲染网格（双列）或
+整行堆叠。整卡为链接，标题显示 `owner/repo`。描述、语言与 star/fork 数在
+构建期抓取 GitHub API，并在浏览器中实时刷新。
+
+## 单个
+
+独立卡片上限 `480px`，水平居中。
+
+<GitHubCard owner="CelPlume" repo="CelestPlume" />
+
+```astro
+---
+import GitHubCard from '../../../../../components/kit/GitHubCard.astro';
+---
+
+<GitHubCard owner="CelPlume" repo="CelestPlume" />
+```
+
+## 网格（双列）
+
+`githubCards()` 把任意数量的卡片渲染进响应式双列网格；同一行的卡片取最高者
+等高。
+
+<GitHubCards
+  items={[
+    { owner: 'CelPlume', repo: 'CelestPlume' },
+    { owner: 'CelPlume', repo: 'BookmarkHarbor' },
+  ]}
+/>
+
+```astro
+---
+import GitHubCards from '../../../../../components/kit/GitHubCards.astro';
+---
+
+<GitHubCards
+  items={[
+    { owner: 'CelPlume', repo: 'CelestPlume' },
+    { owner: 'CelPlume', repo: 'BookmarkHarbor' },
+  ]}
+/>
+```
+
+## 整行堆叠
+
+传入 `layout="stack"` 让每行一张卡片，铺满整行宽度。
+
+<GitHubCards items={[{ owner: 'CelPlume', repo: 'squoosh' }]} layout="stack" />
+
+```astro
+---
+import GitHubCards from '../../../../../components/kit/GitHubCards.astro';
+---
+
+<GitHubCards items={[{ owner: 'CelPlume', repo: 'squoosh' }]} layout="stack" />
+```
+
+## Props
+
+`GitHubCard` 接受一组选项；`GitHubCards` 接受 `items`（同样的选项组成的数组）
+以及可选的 `layout`。
+
+| 选项 | 类型 | 默认值 | 说明 |
+| --- | --- | --- | --- |
+| `owner` | `string` | — | 仓库所有者（用户或组织）。 |
+| `repo` | `string` | — | 仓库名称。 |
+| `target` | `string` | `'_blank'` | 仓库链接的打开方式。 |
+| `auth` | `string` | `''` | 构建期请求使用的 GitHub token。 |
+| `layout` | `'grid' \| 'stack'` | `'grid'` | 仅 `GitHubCards`：双列或每行一卡。 |
+
+## 说明
+
+- 整卡链接到仓库；标题显示 `owner/repo`。
+- 构建期数据来自 GitHub REST API；请求失败时渲染为纯链接卡片。
+- star/fork 数与缺失的元数据在浏览器中刷新，并缓存于 `localStorage`
+  以遵守 API 限流。
+- 构建与运行时都需要能访问 `api.github.com`。

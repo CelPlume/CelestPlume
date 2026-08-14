@@ -1,0 +1,33 @@
+---
+// GitHubCards — Docs Kit githubCards() 的 Astro 异步包装。
+// 抓取多张卡片的仓库元数据后调用同步构建器渲染网格。
+// 用法：
+//   <GitHubCards items={[{ owner: 'CelPlume', repo: 'CelestPlume' }, …]} />
+//   <GitHubCards items={[…]} layout="stack" />   // 每行一卡铺满整行
+import { githubCards, fetchGithubRepo } from '../../lib/ui/github-card';
+
+interface RepoItem {
+  /** 仓库所有者（用户或组织） */
+  owner: string;
+  /** 仓库名 */
+  repo: string;
+  /** 仓库链接的打开方式 */
+  target?: string;
+  /** 构建期请求使用的 GitHub token（可选） */
+  auth?: string;
+}
+
+interface Props {
+  items: RepoItem[];
+  /** 网格布局：默认双列；stack 为每行一卡铺满整行 */
+  layout?: 'grid' | 'stack';
+}
+
+const { items, layout } = Astro.props;
+
+const dataList = await Promise.all(
+  items.map((item) => fetchGithubRepo(item.owner, item.repo, item.auth)),
+);
+---
+
+<Fragment set:html={githubCards(items, dataList, { layout })} />

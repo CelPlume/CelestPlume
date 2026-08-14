@@ -1,0 +1,24 @@
+---
+// GitHubCard — Docs Kit githubCard() 的 Astro 异步包装。
+// MDX frontmatter 不支持 top-level await，故在组件 frontmatter（支持 await）中
+// 抓取仓库元数据，再调用同步构建器渲染。
+// 用法：<GitHubCard owner="CelPlume" repo="CelestPlume" />
+import { githubCard, fetchGithubRepo } from '../../lib/ui/github-card';
+
+interface Props {
+  /** 仓库所有者（用户或组织） */
+  owner: string;
+  /** 仓库名 */
+  repo: string;
+  /** 仓库链接的打开方式 */
+  target?: string;
+  /** 构建期请求使用的 GitHub token（可选） */
+  auth?: string;
+}
+
+const { owner, repo, target, auth } = Astro.props;
+
+const data = await fetchGithubRepo(owner, repo, auth);
+---
+
+<Fragment set:html={githubCard({ owner, repo, target }, data)} />
