@@ -75,7 +75,7 @@ const navProjectsMenu = dropProjects
   )
   .join('');
 
-const navProjectsTrigger = `<span>${t.nav.projects}</span>${KitIcon.chevronDown({ class: 'cp-nav-drop-chevron' })}`;
+const navProjectsTrigger = `${KitIcon.layoutGrid({ class: 'cp-nav-link-icon' })}<span>${t.nav.projects}</span>`;
 ---
 
 <header class="cp-nav" data-cp-nav-variant={variant}>
@@ -95,10 +95,25 @@ const navProjectsTrigger = `<span>${t.nav.projects}</span>${KitIcon.chevronDown(
 
     <nav class="cp-nav-links" aria-label={zh ? '主导航' : 'Primary'}>
       <ul>
-        <li><a href={homeHref}>{t.nav.home}</a></li>
+        <li>
+          <a href={homeHref}>
+            <Icon name="lucide:home" size={16} aria-hidden="true" />
+            {t.nav.home}
+          </a>
+        </li>
         <li><Fragment set:html={dropdown({ hover: true, triggerClass: 'cp-nav-drop-btn', trigger: navProjectsTrigger, content: navProjectsMenu })} /></li>
-        <li><a href={contributeHref}>{t.nav.contribute}</a></li>
-        <li><a href={aboutHref}>{t.nav.about}</a></li>
+        <li>
+          <a href={contributeHref}>
+            <Icon name="lucide:book-open" size={16} aria-hidden="true" />
+            {t.nav.contribute}
+          </a>
+        </li>
+        <li>
+          <a href={aboutHref}>
+            <Icon name="lucide:info" size={16} aria-hidden="true" />
+            {t.nav.about}
+          </a>
+        </li>
       </ul>
     </nav>
 
@@ -152,7 +167,10 @@ const navProjectsTrigger = `<span>${t.nav.projects}</span>${KitIcon.chevronDown(
       </div>
       <div class="cp-nav-drawer-body">
         <nav class="cp-nav-drawer-nav" aria-label={zh ? '导航菜单' : 'Navigation menu'}>
-          <a href={homeHref}>{t.nav.home}</a>
+          <a href={homeHref}>
+            <Icon name="lucide:home" size={16} aria-hidden="true" />
+            {t.nav.home}
+          </a>
           <p class="cp-nav-drawer-heading">{t.nav.projects}</p>
           {dropProjects.map((p) => (
             <a href={p.href}>
@@ -160,8 +178,14 @@ const navProjectsTrigger = `<span>${t.nav.projects}</span>${KitIcon.chevronDown(
               {p.label}
             </a>
           ))}
-          <a href={contributeHref}>{t.nav.contribute}</a>
-          <a href={aboutHref}>{t.nav.about}</a>
+          <a href={contributeHref}>
+            <Icon name="lucide:book-open" size={16} aria-hidden="true" />
+            {t.nav.contribute}
+          </a>
+          <a href={aboutHref}>
+            <Icon name="lucide:info" size={16} aria-hidden="true" />
+            {t.nav.about}
+          </a>
         </nav>
         <div class="cp-nav-drawer-foot">
           <a class="cp-nav-drawer-lang" href={langHref} title={langTitle} aria-label={langTitle} {...{ [langSwitchAttr]: '' }}>

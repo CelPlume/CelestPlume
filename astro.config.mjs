@@ -290,6 +290,8 @@ export default defineConfig({
           'mouse-pointer-click',
           'link',
           'message-square',
+          'home',
+          'info',
         ],
       },
     }),
