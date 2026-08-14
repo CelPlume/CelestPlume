@@ -132,6 +132,24 @@ Collapsing the sidebar sets `data-cpd-collapsed` on `.cpd-layout`, which
 shrinks the sidebar grid column to `0` and slides the aside out; a floating
 expand button reappears.
 
+## Icons
+
+The kit ships its own lucide-style stroke icons in `src/lib/ui/icons/` —
+**one file per icon** (rule in `AGENTS.md`). A new icon is a new `<name>.ts`
+file exporting a function; `icons/index.ts` aggregates them into `Icon`:
+
+```ts
+// src/lib/ui/icons/star.ts
+import { svg } from './svg';
+import type { IconOptions } from './svg';
+
+export const star = (o?: IconOptions) => svg('<path d="…"/>', o);
+```
+
+Use `Icon.<name>({ class })` inside builders. Size is controlled by `class`;
+color inherits `currentColor`. Do not add a new icon by editing an existing
+file — create a new one.
+
 ## Motion
 
 Micro-interactions animate at `150ms ease` (links, cards, copy buttons,

@@ -123,6 +123,10 @@ localStorage.removeItem('umami.disabled');
 - 用法：`import { Icon } from 'astro-icon/components'`，`<Icon name="lucide:calendar-days" />`
 - 新增图标时：`bun add @iconify-json/<set>`，并在 `astro.config.mjs` 的 `icon({ include: ... })` 中登记图标名
 - 项目数据中的图标字段（`celestial-tokens.ts` 的 `Project.icon`）存 Iconify 名（如 `lucide:brain`），不得存 emoji
+- **Docs Kit 图标（`src/lib/ui/icons/`）**：每个图标**单独一个文件**（一个图标一个文件，
+  禁止把所有图标塞进单个文件）。新增图标时在 `icons/` 下新建 `<name>.ts`（lucide 风格路径，
+  `export const <name> = (o?: IconOptions) => svg('…', o)`），再在 `icons/index.ts` 聚合进
+  `Icon` 对象，由 `src/lib/ui/index.ts` 统一导出
 
 ## 主页设计风格（神圣诗意 / 天文主题）
 

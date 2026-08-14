@@ -46,7 +46,10 @@ src/
 ├── lib/ui/                  # the kit (pure TS)
 │   ├── html.ts             #   escape / attrs / el primitives
 │   ├── types.ts             #   shared types (NavNode, TocItem, …)
-│   ├── icons.ts             #   inline lucide-style SVG set
+│   ├── icons/               #   inline lucide-style SVG set — one file per icon
+│   │   ├── svg.ts           #   svg() render primitive
+│   │   ├── <name>.ts        #   one icon per file (see AGENTS.md)
+│   │   └── index.ts         #   Icon object aggregate
 │   ├── tokens.ts            #   design tokens (TS → CSS variables)
 │   ├── sidebar.ts           #   left sidebar builder
 │   ├── toc.ts               #   ClerkTOC builder + heading collector

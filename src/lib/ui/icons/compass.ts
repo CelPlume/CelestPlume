@@ -1,0 +1,5 @@
+import { svg } from './svg';
+import type { IconOptions } from './svg';
+
+/** compass — lucide 风格图标 */
+export const compass = (o?: IconOptions) => svg('<circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36z"/>', o);

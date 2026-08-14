@@ -40,7 +40,10 @@ src/
 ├── lib/ui/                  # Kit（纯 TS）
 │   ├── html.ts              #   escape / attrs / el 原语
 │   ├── types.ts             #   共享类型（NavNode、TocItem 等）
-│   ├── icons.ts             #   内联 lucide 风格 SVG 图标集
+│   ├── icons/               #   内联 lucide 风格 SVG 图标集——一个图标一个文件
+│   │   ├── svg.ts           #   svg() 渲染原语
+│   │   ├── <name>.ts        #   每个图标一个文件（见 AGENTS.md）
+│   │   └── index.ts         #   Icon 对象汇总
 │   ├── tokens.ts            #   设计令牌（TS 常量 → CSS 变量）
 │   ├── sidebar.ts           #   左侧边栏构建器
 │   ├── toc.ts               #   ClerkTOC 构建器 + 标题收集

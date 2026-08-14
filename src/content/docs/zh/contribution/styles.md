@@ -124,6 +124,23 @@ Kit 支持三种模式：
 折叠侧边栏时在 `.cpd-layout` 上设置 `data-cpd-collapsed`，网格列宽收为
 `0`、侧边栏滑出；浮动展开按钮随之出现。
 
+## 图标
+
+Kit 自带 lucide 风格线条图标，位于 `src/lib/ui/icons/` —— **一个图标一个
+文件**（规定见 `AGENTS.md`）。新增图标即新增一个 `<name>.ts` 文件导出函数，
+由 `icons/index.ts` 汇总进 `Icon`：
+
+```ts
+// src/lib/ui/icons/star.ts
+import { svg } from './svg';
+import type { IconOptions } from './svg';
+
+export const star = (o?: IconOptions) => svg('<path d="…"/>', o);
+```
+
+在构建器里用 `Icon.<name>({ class })`；尺寸由 `class` 控制，颜色继承
+`currentColor`。禁止通过修改既有文件来新增图标——一律新建文件。
+
 ## 动效
 
 微交互以 `150ms ease` 动画（链接、卡片、复制按钮、chevron）；较大表面以
