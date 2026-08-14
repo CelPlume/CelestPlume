@@ -159,6 +159,8 @@ export default defineConfig({
       ],
       // ClerkTOC 层级：h2–h4
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
+      // 官方 lastUpdated：页脚显示最近更新日期（取自 Git 提交历史，可用 frontmatter 覆盖）
+      lastUpdated: true,
       // 用 Plumest 风格的组件整体替换 Starlight 可见外壳
       components: {
         PageFrame: './src/components/starlight/PageFrame.astro',
