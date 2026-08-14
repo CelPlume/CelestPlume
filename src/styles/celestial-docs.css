@@ -1350,6 +1350,7 @@ body {
 }
 .cpd-card {
   display: block;
+  height: 100%;
   padding: 1rem;
   border: 1px solid var(--cpd-border);
   border-radius: var(--cpd-radius);
@@ -1363,31 +1364,37 @@ a.cpd-card:hover {
   border-color: var(--cpd-ring);
   text-decoration: none;
 }
-.cpd-card-icon {
-  width: fit-content;
-  margin-bottom: 0.5rem;
-  padding: 0.375rem;
-  border: 1px solid var(--cpd-border);
-  border-radius: var(--cpd-radius);
-  background: var(--cpd-muted);
-  color: var(--cpd-muted-foreground);
-  box-shadow: 0 4px 12px -6px rgb(0 0 0 / 0.3);
+/* 卡片内部以 .cpd-card 前缀收束，压过 .cpd-article h1–h6 的标题规则 */
+.cpd-card .cpd-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
-.cpd-card-icon svg {
+.cpd-card .cpd-card-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-card .cpd-card-icon svg {
   width: 1rem;
   height: 1rem;
 }
-.cpd-card-title {
-  margin: 0 0 0.25rem;
+.cpd-card .cpd-card-title {
+  margin: 0;
+  font-family: var(--cpd-font-sans);
   font-size: 0.875rem;
   font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: normal;
 }
-.cpd-card-desc {
-  margin: 0;
+.cpd-card .cpd-card-desc {
+  margin: 0.5rem 0 0;
   font-size: 0.875rem;
+  line-height: 1.5;
   color: var(--cpd-muted-foreground);
 }
-.cpd-card-children {
+.cpd-card .cpd-card-children {
+  margin-top: 0.5rem;
   font-size: 0.875rem;
   color: var(--cpd-muted-foreground);
 }
@@ -1738,11 +1745,14 @@ a.cpd-github-card:hover {
   padding: 1rem;
   border: 1px solid var(--cpd-border);
   border-radius: var(--cpd-radius);
+  background: var(--cpd-card);
+  color: var(--cpd-card-foreground);
   text-decoration: none;
-  transition: background-color 150ms ease;
+  transition: background-color 150ms ease, border-color 150ms ease;
 }
 .cpd-article a.cpd-pagination-item:hover {
   background: var(--cpd-accent);
+  border-color: var(--cpd-ring);
   text-decoration: none;
 }
 .cpd-pagination-next {

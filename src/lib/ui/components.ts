@@ -135,8 +135,10 @@ export interface CardOptions {
 
 export function card(options: CardOptions): string {
   const inner = [
-    options.icon ? el('div', { class: 'cpd-card-icon' }, resolveIcon(options.icon)) : '',
-    el('h3', { class: 'cpd-card-title' }, options.title),
+    el('div', { class: 'cpd-card-head' }, [
+      options.icon ? el('span', { class: 'cpd-card-icon' }, resolveIcon(options.icon)) : '',
+      el('h3', { class: 'cpd-card-title' }, options.title),
+    ]),
     options.description ? el('p', { class: 'cpd-card-desc' }, options.description) : '',
     options.children ? el('div', { class: 'cpd-card-children' }, options.children) : '',
   ].join('');
