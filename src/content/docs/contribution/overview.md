@@ -31,6 +31,7 @@ behavior, but keep the kit framework-free.
 
 | Page | Covers |
 | --- | --- |
+| [Design System](/contribution/design-system/) | Principles, color, typography, spacing, icons, motion at a glance |
 | [Styles](/contribution/styles/) | Design tokens, palette, typography, layout grid |
 | [Components](/contribution/components/) | Component reference — one page per builder, live previews |
 

@@ -26,6 +26,7 @@ description: 贡献分类的定位、Docs Kit 的组织方式与新增组件的�
 
 | 页面 | 内容 |
 | --- | --- |
+| [设计系统](/zh/contribution/design-system/) | 设计原则、色彩、字体、间距、图标、动效一览 |
 | [样式规范](/zh/contribution/styles/) | 设计令牌、色板、字体、布局网格 |
 | [组件文档](/zh/contribution/components/) | 组件参考——每个构建器独立一页、带实时预览 |
 

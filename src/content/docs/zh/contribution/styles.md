@@ -85,9 +85,10 @@ Kit 支持三种模式：
 
 | 字体族 | 变量 | 用途 |
 | --- | --- | --- |
-| Inter | `--cpd-font-sans` | 正文、界面 |
-| Cormorant Garamond / Noto Serif SC | `--cpd-font-display` | 侧边栏品牌、标题 |
-| 系统等宽 | `--cpd-font-mono` | 代码、TOC 阶数数字 |
+| Manrope + LxgwNeoXiHei | `--cpd-font-sans` | 正文、界面 |
+| Plus Jakarta Sans + LxgwNeoXiHei | `--cpd-font-display` | 标题、导航、面包屑、kbd |
+| Maple Mono + Fira Code | `--cpd-font-mono` | 代码、TOC 阶数数字 |
+| Libertine + LxgwNeoZhiSong | `--cpd-font-serif` | 品牌衬线（页头、侧栏） |
 
 正文 `1rem / 1.75` 行高；文章标题从 `2rem`（h1）到 `1.05rem`（h4），
 字重 600，大标题带轻微负字距。行内代码为带边框的 `--cpd-secondary`
@@ -122,6 +123,12 @@ Kit 支持三种模式：
 
 折叠侧边栏时在 `.cpd-layout` 上设置 `data-cpd-collapsed`，网格列宽收为
 `0`、侧边栏滑出；浮动展开按钮随之出现。
+
+## 动效
+
+微交互以 `150ms ease` 动画（链接、卡片、复制按钮、chevron）；较大表面以
+`200ms ease`（抽屉、折叠面板、文件树）。动效只改动 `opacity`、
+`transform` 与 `background-color`——绝不触碰布局属性。
 
 ## 新增令牌
 

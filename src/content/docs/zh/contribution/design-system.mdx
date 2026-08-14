@@ -1,0 +1,93 @@
+---
+title: 设计系统
+description: Plumest 设计系统一览——设计原则、色彩、字体、间距、图标、动效。
+---
+
+**Plumest** 是天空之翼（CelestPlume）文档的设计系统：中性 zinc 基底 + 近黑主色、
+单一金色强调色，以及一个纯 TypeScript 无框架 Kit（`src/lib/ui/`）。
+每个值都是令牌，每个类都带 `cpd-` 前缀。
+
+## 设计原则
+
+- **平淡但精致。** 无渐变、无重阴影、无装饰；层级来自字重、间距与发丝级边框。
+- **令牌驱动。** 颜色与度量都在 `src/lib/ui/tokens.ts` 中声明，CSS 以
+  `--cpd-*` 变量消费；禁止在 CSS 中硬编码取值。
+- **单一强调。** 天空之翼金（`--cpd-gold`）是唯一的彩色强调，其余保持中性。
+- **无框架。** 构建器返回 HTML 字符串，交互经 `data-cpd-*` 钩子在运行时挂接。
+- **中日混排安全。** 拉丁字体栈自动回落 LxgwNeoXiHei 显示中文；禁止写死
+  仅含拉丁字体的栈。
+
+## 色彩
+
+色板为中性 zinc 基底，每个令牌在 `tokens.ts` 中并列声明浅/深两套值
+（完整表格见 [样式规范](/zh/contribution/styles/)）。
+
+- `--cpd-background` / `--cpd-foreground` —— 页面画布与文字。
+- `--cpd-card` / `--cpd-card-foreground` —— 抬升表面（卡片、代码）。
+- `--cpd-muted` / `--cpd-muted-foreground` —— 次要文字与胶囊。
+- `--cpd-border` / `--cpd-ring` —— 发丝线与焦点环。
+- `--cpd-primary` —— 近黑（浅色 `#171717` / 深色 `#fafafa`）；活跃链接、
+  侧栏高亮项、ClerkTOC 轨道。
+- `--cpd-gold` —— 天空之翼金强调色。
+
+五种语义色深浅主题共享，驱动提示框、徽标与 TOC 步骤圆点：
+
+| 令牌 | 用途 |
+| --- | --- |
+| `--cpd-info` | 信息 |
+| `--cpd-warning` | 警示 |
+| `--cpd-error` | 破坏性 |
+| `--cpd-success` | 正向 |
+| `--cpd-idea` | 建议 |
+
+## 字体
+
+| 字体族 | 变量 | 用途 |
+| --- | --- | --- |
+| Manrope + LxgwNeoXiHei | `--cpd-font-sans` | 正文、UI |
+| Plus Jakarta Sans + LxgwNeoXiHei | `--cpd-font-display` | 标题、导航、面包屑、kbd |
+| Maple Mono + Fira Code | `--cpd-font-mono` | 代码、TOC 步骤数字 |
+| Libertine + LxgwNeoZhiSong | `--cpd-font-serif` | 品牌衬线（页头、侧栏） |
+
+正文 `1rem / 1.75` 行高；文章标题按 `2.25rem`（h1）→ `1.5rem`（h2）→
+`1.25rem`（h3）→ `1.05rem`（h4）缩放，字重 600。
+
+## 间距与圆角
+
+- 间距单位 `--cpd-spacing: 0.25rem`；缩进用 `calc(N * var(--cpd-spacing))`。
+- 圆角 `--cpd-radius: 8px` 通用；小胶囊用 `6px`（`calc(radius − 2px)`）。
+- 正文列 `--cpd-page-max-width: 800px`；整体版心 `97rem`；侧栏与目录栏
+  `256px`。
+
+## 图标
+
+Kit 自带 lucide 风格线条图标，位于 `src/lib/ui/icons/` —— **一个图标一个文件**
+（规定见 [AGENTS.md]）。新增图标即新增一个 `<name>.ts` 文件导出函数，由
+`Icon` 对象汇总。
+
+```ts
+// src/lib/ui/icons/star.ts
+import { svg } from './svg';
+import type { IconOptions } from './svg';
+
+export const star = (o?: IconOptions) => svg('<path d="…"/>', o);
+```
+
+在构建器里用 `Icon.<name>({ class })`；尺寸由 `class` 控制，颜色继承
+`currentColor`。
+
+## 动效
+
+微交互用 `150ms ease`（链接、卡片、复制按钮）；较大表面用 `200ms ease`
+（抽屉、折叠面板、文件树）。所有动效只改 opacity、transform 或 background
+——绝不触发重排。
+
+## 主题
+
+三种模式（`dark` / `light` / `system`）持久化到 `localStorage['celplume-theme']`；
+`html[data-cpd-theme]` 保存解析后的实际值，是 CSS 唯一读取的属性。
+
+## 组件
+
+每个构建器都在 [组件文档](/zh/contribution/components/) 中实时呈现——
+每个组件独立一页，带实时预览、Props 表格与说明。

@@ -1,0 +1,98 @@
+---
+title: Design System
+description: The Plumest design system at a glance — principles, color, typography, spacing, icons, motion.
+---
+
+**Plumest** is the CelestPlume docs design system: a neutral zinc base with a
+near-black primary, a single gold accent, and a framework-free TypeScript kit
+(`src/lib/ui/`). Every value is a token; every class is `cpd-`-prefixed.
+
+## Principles
+
+- **Boring but polished.** No gradients, no heavy shadows, no decoration.
+  Hierarchy comes from weight, spacing and a hairline border.
+- **Token-driven.** Colors and metrics live in `src/lib/ui/tokens.ts`; CSS
+  consumes them as `--cpd-*` variables. Never hard-code values in CSS.
+- **One accent.** CelestPlume gold (`--cpd-gold`) is the only chromatic
+  accent; everything else stays neutral.
+- **Framework-free.** Builders return HTML strings; interaction is attached
+  at runtime through `data-cpd-*` hooks.
+- **CJK-safe type stacks.** Latin families fall back to LxgwNeoXiHei for
+  Chinese; nothing hard-codes a Latin-only font.
+
+## Color
+
+The palette is a neutral zinc base. Each token declares its light and dark
+value side by side in `tokens.ts` (full table in [Styles](/contribution/styles/)).
+
+- `--cpd-background` / `--cpd-foreground` — page canvas and text.
+- `--cpd-card` / `--cpd-card-foreground` — raised surfaces (cards, code).
+- `--cpd-muted` / `--cpd-muted-foreground` — secondary text and chips.
+- `--cpd-border` / `--cpd-ring` — hairlines and focus rings.
+- `--cpd-primary` — near-black (light `#171717` / dark `#fafafa`); active
+  links, sidebar active items, the ClerkTOC track.
+- `--cpd-gold` — the CelestPlume gold accent.
+
+Five semantic colors are shared across themes and drive callouts, badges and
+the TOC step dots:
+
+| Token | Role |
+| --- | --- |
+| `--cpd-info` | informational |
+| `--cpd-warning` | caution |
+| `--cpd-error` | destructive |
+| `--cpd-success` | positive |
+| `--cpd-idea` | suggestion |
+
+## Typography
+
+| Family | Variable | Usage |
+| --- | --- | --- |
+| Manrope + LxgwNeoXiHei | `--cpd-font-sans` | body, UI |
+| Plus Jakarta Sans + LxgwNeoXiHei | `--cpd-font-display` | headings, nav, breadcrumb, kbd |
+| Maple Mono + Fira Code | `--cpd-font-mono` | code, TOC step numbers |
+| Libertine + LxgwNeoZhiSong | `--cpd-font-serif` | brand serif (header, sidebar) |
+
+Body copy is `1rem / 1.75` line-height. Article headings scale `2.25rem`
+(h1) → `1.5rem` (h2) → `1.25rem` (h3) → `1.05rem` (h4), weight 600.
+
+## Spacing and radius
+
+- Spacing unit `--cpd-spacing: 0.25rem`; indents are `calc(N * var(--cpd-spacing))`.
+- Radius `--cpd-radius: 8px` everywhere; small chips use `6px` (`calc(radius − 2px)`).
+- Article column `--cpd-page-max-width: 800px`; overall layout `97rem`;
+  sidebar and TOC rails `256px`.
+
+## Icons
+
+The kit ships its own lucide-style stroke icons in `src/lib/ui/icons/` —
+**one file per icon** (rule in [AGENTS.md]). A new icon is a new `<name>.ts`
+file exporting a function; the `Icon` object aggregates them.
+
+```ts
+// src/lib/ui/icons/star.ts
+import { svg } from './svg';
+import type { IconOptions } from './svg';
+
+export const star = (o?: IconOptions) => svg('<path d="…"/>', o);
+```
+
+Use `Icon.<name>({ class })` inside builders; size is controlled by `class`,
+color inherits `currentColor`.
+
+## Motion
+
+Micro-interactions use `150ms ease` (links, cards, copy buttons); larger
+surfaces use `200ms ease` (drawers, accordions, tree folders). All motion is
+opacity, transform or background — never layout-thrashing.
+
+## Theme
+
+Three modes (`dark` / `light` / `system`) persist to
+`localStorage['celplume-theme']`. `html[data-cpd-theme]` holds the resolved
+value and is the only attribute CSS reads.
+
+## Components
+
+Every builder is documented live in [Components](/contribution/components/),
+one page per component with a live preview, a props table and notes.

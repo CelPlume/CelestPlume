@@ -87,9 +87,10 @@ The kit supports three modes:
 
 | Family | Variable | Usage |
 | --- | --- | --- |
-| Inter | `--cpd-font-sans` | body, UI |
-| Cormorant Garamond / Noto Serif SC | `--cpd-font-display` | sidebar brand, headings |
-| system mono | `--cpd-font-mono` | code, TOC step numbers |
+| Manrope + LxgwNeoXiHei | `--cpd-font-sans` | body, UI |
+| Plus Jakarta Sans + LxgwNeoXiHei | `--cpd-font-display` | headings, nav, breadcrumb, kbd |
+| Maple Mono + Fira Code | `--cpd-font-mono` | code, TOC step numbers |
+| Libertine + LxgwNeoZhiSong | `--cpd-font-serif` | brand serif (header, sidebar) |
 
 Body copy is `1rem / 1.75` line-height; article headings scale from
 `2rem` (h1) down to `1.05rem` (h4), weight 600, with negative
@@ -130,6 +131,13 @@ The demo still uses the five-column CSS grid (ported from Plumest):
 Collapsing the sidebar sets `data-cpd-collapsed` on `.cpd-layout`, which
 shrinks the sidebar grid column to `0` and slides the aside out; a floating
 expand button reappears.
+
+## Motion
+
+Micro-interactions animate at `150ms ease` (links, cards, copy buttons,
+chevrons); larger surfaces at `200ms ease` (drawers, accordions, tree
+folders). Motion only touches `opacity`, `transform` and `background-color`
+— never layout properties.
 
 ## Adding a token
 

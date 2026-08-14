@@ -142,6 +142,11 @@ export default defineConfig({
               link: '/contribution/overview/',
             },
             {
+              label: 'Design System',
+              translations: { 'zh-CN': '设计系统' },
+              link: '/contribution/design-system/',
+            },
+            {
               label: 'Styles',
               translations: { 'zh-CN': '样式规范' },
               link: '/contribution/styles/',
