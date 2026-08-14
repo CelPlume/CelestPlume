@@ -191,6 +191,14 @@
   font-size: 13px;
   line-height: 1.6;
 }
+/* frames 关闭后 .expressive-code 容器即卡片（边框/圆角/背景由外层提供）：
+   取消 pre 自身边框与圆角，补上代码内边距 */
+.cpd-md-content .expressive-code pre {
+  margin: 0;
+  border: none !important;
+  border-radius: 0;
+  padding: 1rem;
+}
 /* expressive-code 自带复制按钮改为隐藏，统一使用 kit 复制按钮（check 图标效果） */
 .cpd-md-content .expressive-code .copy {
   display: none !important;

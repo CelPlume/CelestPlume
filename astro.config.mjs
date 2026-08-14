@@ -162,6 +162,8 @@ export default defineConfig({
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/CelPlume/CelestPlume' },
       ],
+      // 关闭 expressive-code 的 frame（macOS 红绿灯终端条等外壳）
+      expressiveCode: { frames: false },
       // ClerkTOC 层级：h2–h4
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
       // 官方 lastUpdated：页脚显示最近更新日期（取自 Git 提交历史，可用 frontmatter 覆盖）
