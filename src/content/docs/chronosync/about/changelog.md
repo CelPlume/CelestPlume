@@ -297,6 +297,41 @@ All versions are archived here; the homepage only displays the last three months
 - Batch and smart scheduling inserting into a reusable schedule no longer shifts events across weeks or dates.
 - Fixed the root cause of event misplacement when reusing an existing schedule write target.
 
+### v3.4.3 (2026-05-29) - Timezone consistency, team heatmaps, and scheduling reliability fixes
+
+**Migration scripts and docs cleanup**
+
+- Database migration workflow consolidated under `scripts/migrations/`
+- Historical Alembic migration chain archived to `scripts/migrations/legacy_alembic/`
+- Synced the migration list and execution rules in the [migration script docs](https://celplume.hxcn.space/zh/chronosync/dev/development/#数据库迁移脚本规范)
+
+**Admin diagnostics and upload security hardening**
+
+- Admin diagnostic endpoints gained access control and input validation
+- Tightened error boundaries in the file-upload pipeline to avoid leaking exception details to clients
+
+**Team heatmap and share-link restoration**
+
+- Fixed inaccurate team heatmap aggregation, restoring correct multi-person busy/free views
+- Share-link management restored: validity period, permission config, and QR display
+
+**Default-schedule resolution consistency**
+
+- Current-schedule resolution now uniformly follows the default-schedule source of truth, eliminating frontend/backend mismatches
+
+**Timezone unification: calendar and exports follow Shanghai wall-clock**
+
+- Calendar view and ICS export/import flows now generate and parse events in the `Asia/Shanghai` timezone
+- Fixed cross-timezone event time drift causing schedule display and export mismatches
+
+**Scheduling regression scenarios retained**
+
+- Added Team1 scheduling regression test scenario docs so batch and smart scheduling remain repeatably verifiable
+
+**Team scheduling preview delayed-creation fix**
+
+- Team scheduling preview no longer shows events that have not actually been created yet, keeping preview consistent with the final result
+
 ### v3.4.2 (2026-05-28) - Default schedule, share links, and scheduling stability release
 
 **Backend data layer and migrations**
