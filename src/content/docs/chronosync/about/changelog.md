@@ -8,6 +8,66 @@ All versions are archived here; the homepage only displays the last three months
 
 ## Changelog
 
+### v3.6.5 (2026-08-16) - Unified academic query module: empty classrooms / exams / grades
+
+**Unified academic query entry**
+
+- Reworked "empty classroom lookup" into a unified "Academic Query" entry (nav "Academic Query", URL `/dashboard/query`) with three tabs: empty classrooms / exams / grades; backend consolidated onto `/api/query` session and routes, removing the old `/api/classroom`
+- Empty classroom query: filter by semester / campus / building / venue category / capacity / venue name / weeks / weekday / periods, with export support
+- Tabs span the full page width (consistent on landscape / portrait); welcome page shown by default after login; URL `?tab=grade` deep-links to a tab
+
+**Exam query and import**
+
+- Exam query: filter by exam name / time / college / course, showing date, time, location, seat, offering college
+- One-click import to schedule: import into an existing schedule or create a new one (title "Course name (Exam)", auto-parsed start/end times and location)
+
+**Grade query and profile display**
+
+- Grade query: auto-selects the current semester and shows results directly; shows both all-semester GPA and current-semester GPA, with the all-semester GPA counted as the official one
+- Grade filters: all / pass / fail / makeup / retake-pass (based on the academic system's exam-nature field)
+- "Show in profile" checkbox persists a semester grade snapshot to the profile "Grades" tab, viewable without re-login
+
+**Academic login and session**
+
+- Academic login is now a two-step dialog (WebVPN → academic account), captcha refreshes on click
+- Removed local session timeout: every query live-checks the academic system; upstream login-expiry pages (including unified-auth security-wall pages) now show a unified "academic login expired" prompt and re-login dialog
+- Exams / grades default to the current semester, falling back to the just-ended spring semester during summer break
+
+**Academic login gate and queue**
+
+- Login serialization: global 30s login gate + queue cap of 10 (credentials not queued in gate mode; the frontend submits real login only when it's the user's turn); 3 login attempts within 30 minutes for the same account lock it for 30 minutes
+- Global circuit breaker: evidence of the school's security-wall (3 times / 10 minutes) pauses login for 1-5 minutes to avoid triggering school CAS risk control
+- Queue UX: login dialog shows "position / estimated wait", auto-submits when it's the user's turn; timed-out queue items auto-re-enqueue (max 2 times); closing the dialog cancels the queue
+- Session keep-alive: successful academic sessions are lightly probed every 25 minutes (multi-worker election via Redis distributed lock); security-wall detection marks the session expired and reports a breaker event
+- Encrypted cookie storage: academic cookie jars are Fernet-encrypted into the database and Redis hot cache (`jwxt:session:*`); keys live only in server files / environment variables
+- Redis deployment: docker-compose adds a `redis:7-alpine` service (isolated internal network, health checks); app and Redis share gate / queue / breaker / cache state
+
+**Concurrency and security fixes**
+
+- Lock ownership: login gate and keep-alive distributed locks carry random owner tokens; release compares tokens (compare-and-delete) so stale holders cannot delete a new holder's lock
+- Atomicity: queueing (enqueue / peek / head-consume), breaker counts, session cache projections, and keep-alive scanning claims all moved to Redis Lua atomic scripts; an in-process fallback provides an equivalent single-lock implementation
+- Redis fail-closed: startup refused when `REDIS_URL` is configured but unreachable; runtime gate failures return 503 for login
+- Key security: Fernet key file created atomically (O_EXCL + 0600); encryption failures error out instead of writing plaintext cookies; key file excluded from the Docker build context and image
+- Session serialization: per-user mutex for academic operations (login / captcha / query / keep-alive probe); keep-alive scans use short per-user transactions
+- Version protection: session persistence and invalidation use `updated_at` version CAS in a single transaction, so stale keep-alive/probes cannot overwrite a fresh login
+- Database connection release: query / login / keep-alive routes close and return DB connections during upstream HTTP; persistence/invalidation use short transactions
+- Import session hardening: schedule import sessions moved to shared encrypted storage, bound to the creating user, atomically claimed; ZFW import is a single transaction
+- Auth hardening: legacy password-hash upgrades use version CAS; `token_version` increments atomically in SQL; production `SECRET_KEY` requires ≥32 chars and rejects placeholders; email uniqueness moved to a case-insensitive unique index; captcha emails get per-IP hourly quotas
+- Idempotent writes: duplicate shared-schedule imports return the original schedule (import ledger); ICS imports update idempotently by `source_uid`; batch/smart scheduling support `Idempotency-Key`
+- Team concurrency: batch deletion / member management use team row locks with stable ordering to avoid reverse lock-ring deadlocks; scheduling re-checks conflicts inside the row lock; preview endpoints are read-only; team transfer carries creator CAS
+- Public-share minimization: public share responses strip student IDs / class / grade / college; share permission enums reject unknown values with 422
+- Frontend flow governance: login / queue flows carry generation markers so stale polling/login responses are not written back; "remember password" cache gets a 7-day TTL and generation guard; 401 handling compares the token at request time
+
+**Site config and stability fixes**
+
+- Added a "default semester start date" to site settings: admins set it under Settings → Site Config (saved to `config.toml`); it pre-fills the start date when users create schedules (also for academic / ICS import-created schedules), falling back to the creation day when unset
+- Fixed: academic login queue overflow (10 people) now correctly returns 429 with a "retry later" message, previously returning 500 due to a route variable shadowing `fastapi.status`; added route-level regression tests
+
+**Data migration and deployment**
+
+- Added 5 Alembic revisions (current head `d3e5f7a9b1c3`): email unique index, `email_send_logs`, `schedule_share_imports`, `events.source_uid`, batch/scheduling `idempotency_key`
+- PostgreSQL deployments must run `alembic upgrade head` before startup; production direct academic endpoints refuse plaintext HTTP (unless explicitly `JWXT_ALLOW_PLAIN_HTTP=1`)
+
 ### v3.6.4 (2026-08-13) - Full dark mode refactor and frontend design system
 
 **Semantic Token System**
