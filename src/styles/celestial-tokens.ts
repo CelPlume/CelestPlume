@@ -246,6 +246,30 @@ export const PROJECTS: Project[] = [
     },
   },
   {
+    id: 'picumet',
+    icon: 'lucide:cloud',
+    en: {
+      title: 'Picumet',
+      description:
+        'Picumet is a multi-cloud object storage management platform running on the Cloudflare edge network. A unified file manager with fine-grained access control, share links, and PicGo/PicList integration across R2, AWS S3, and Oracle Cloud.',
+      tags: ['Object Storage', 'Cloudflare', 'Multi-cloud'],
+      buttons: [
+        { label: 'Read Docs', link: '/picumet/', style: 'primary' },
+        { label: 'GitHub', link: 'https://github.com/CelPlume/Picumet', style: 'secondary' },
+      ],
+    },
+    zh: {
+      title: 'Picumet',
+      description:
+        'Picumet 是一个运行在 Cloudflare 边缘网络上的多云对象存储管理平台。统一的文件管理界面、细粒度权限控制、分享链接与 PicGo/PicList 接入，覆盖 R2、AWS S3 与 Oracle Cloud。',
+      tags: ['对象存储', 'Cloudflare', '多云'],
+      buttons: [
+        { label: '阅读文档', link: '/zh/picumet/', style: 'primary' },
+        { label: 'GitHub', link: 'https://github.com/CelPlume/Picumet', style: 'secondary' },
+      ],
+    },
+  },
+  {
     id: 'squoosh',
     icon: 'lucide:image-down',
     en: {

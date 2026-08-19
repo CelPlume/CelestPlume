@@ -133,6 +133,43 @@ export default defineConfig({
           autogenerate: { directory: 'bookmark-harbor' },
         },
         {
+          label: 'Picumet',
+          translations: { 'zh-CN': 'Picumet' },
+          items: [
+            {
+              label: 'About',
+              translations: { 'zh-CN': '关于项目' },
+              items: [
+                {
+                  label: 'About Picumet',
+                  translations: { 'zh-CN': 'Picumet' },
+                  link: '/picumet/',
+                },
+                {
+                  label: 'Progress',
+                  translations: { 'zh-CN': '实施进度' },
+                  link: '/picumet/about/progress/',
+                },
+              ],
+            },
+            {
+              label: 'Development',
+              translations: { 'zh-CN': '开发部署' },
+              autogenerate: { directory: 'picumet/dev' },
+            },
+            {
+              label: 'API Reference',
+              translations: { 'zh-CN': 'API 参考' },
+              autogenerate: { directory: 'picumet/api' },
+            },
+            {
+              label: 'Frontend',
+              translations: { 'zh-CN': '前端指南' },
+              autogenerate: { directory: 'picumet/ui' },
+            },
+          ],
+        },
+        {
           label: 'Contribution',
           translations: { 'zh-CN': '贡献' },
           items: [
@@ -259,7 +296,7 @@ export default defineConfig({
           attrs: {
             name: 'keywords',
             content:
-              'CelPlume, Celest Plume, documentation portal, open source, Astro, Starlight, Plumest, ChronoSync, BookmarkHarbor',
+              'CelPlume, Celest Plume, documentation portal, open source, Astro, Starlight, Plumest, ChronoSync, BookmarkHarbor, Picumet',
           },
         },
       ],
@@ -272,6 +309,7 @@ export default defineConfig({
         lucide: [
           'calendar-days',
           'file-text',
+          'cloud',
           'bookmark',
           'image-down',
           'zap',

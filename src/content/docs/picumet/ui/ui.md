@@ -1,0 +1,322 @@
+---
+title: "Frontend Guide"
+description: "Routes, layout, responsive design, accessibility, and interactions."
+sidebar:
+  order: 1
+---
+
+## Before you begin
+
+- Node.js 22 or later with [bun](https://bun.sh/) 1.3 or later installed.
+- A running backend. See [DEVELOPMENT.md](/picumet/dev/development/) for setup instructions.
+- Basic familiarity with React, TypeScript, and Tailwind CSS.
+
+To start the development server:
+
+1. Change into the `frontend/` directory.
+2. Run `bun install` to install dependencies.
+3. Run `bun run dev` to start Vite.
+
+The development server serves the app at the URL that Vite prints, usually `http://localhost:5173`.
+
+## Overview
+
+The frontend lives in the `frontend/` directory and talks to the Workers API over HTTP. It uses these tools:
+
+- React 18 with `react-router-dom` for routing.
+- Vite for building and hot reload.
+- TypeScript for type safety, with shared types imported from `shared/types.ts`.
+- Tailwind CSS for styling.
+- i18next for Chinese and English localization.
+- TanStack Query for server state, caching, and mutations.
+
+Every page loads lazily with `React.lazy` and `Suspense`, so the initial bundle stays small.
+
+## Page routes
+
+The router in `frontend/src/App.tsx` defines the routes below. Unauthenticated users who open a protected route land on `/login` with a `redirect` query parameter; after sign-in, the app sends them back. Admin routes check the signed-in user's role and show a permission message when the role is not `admin`.
+
+```mermaid
+flowchart LR
+    USER["User"] -->|Signed out| PUBLIC
+    USER -->|Signed in| AUTH
+    USER -->|Admin| ADMIN
+
+    subgraph PUBLIC["Public routes"]
+        direction TB
+        R1["/ Landing"]
+        R2["/login Sign in"]
+        R3["/register Sign up"]
+        R4["/reset-password Reset password"]
+        R5["/free-mode Free mode"]
+        R6["/share/:id Share page"]
+        R7["/i/:id Image short link"]
+    end
+
+    subgraph AUTH["Authenticated routes"]
+        direction TB
+        R8["/files File manager"]
+        R9["/shares My shares"]
+        R10["/settings/profile Profile"]
+        R11["/settings/security Security"]
+        R12["/settings/api-keys API keys"]
+        R13["/settings/appearance Appearance"]
+    end
+
+    subgraph ADMIN["Admin routes"]
+        direction TB
+        R14["/admin Dashboard"]
+        R15["/admin/users Users"]
+        R16["/admin/storage Storage"]
+        R17["/admin/permissions Permission rules"]
+        R18["/admin/shares Shares"]
+        R19["/admin/files All files"]
+        R20["/admin/logs Access logs"]
+        R21["/admin/settings System settings"]
+    end
+```
+
+### Page map
+
+| Page | Path | Access | Component |
+| :--- | :--- | :--- | :--- |
+| Landing | `/` | Public | `Landing` |
+| Sign in | `/login` | Public | `Login` |
+| Sign up | `/register` | Public | `Register` |
+| Reset password | `/reset-password` | Public | `ResetPassword` |
+| Free mode | `/free-mode` | Public | `FreeMode` |
+| Share page | `/share/:id` `/i/:id` | Public | `SharePage` |
+| File manager | `/files` `/files/*` | Signed in | `Files` |
+| My shares | `/shares` | Signed in | `MyShares` |
+| Settings layout | `/settings/*` | Signed in | `SettingsLayout` |
+| Profile | `/settings/profile` | Signed in | `Profile` |
+| Security | `/settings/security` | Signed in | `Security` |
+| API keys | `/settings/api-keys` | Signed in | `ApiKeys` |
+| Appearance | `/settings/appearance` | Signed in | `Appearance` |
+| Admin layout | `/admin` | Admin | `AdminLayout` |
+| Dashboard | `/admin` | Admin | `Dashboard` |
+| Users | `/admin/users` | Admin | `Users` |
+| Storage | `/admin/storage` | Admin | `Storage` |
+| Mount points | `/admin/mounts` | Admin | Redirects to `/admin/storage?tab=mounts` |
+| Permission rules | `/admin/permissions` | Admin | `Permissions` |
+| Shares | `/admin/shares` | Admin | `Shares` |
+| All files | `/admin/files` | Admin | `Files` |
+| Access logs | `/admin/logs` | Admin | `Logs` |
+| System settings | `/admin/settings` | Admin | `Settings` |
+
+## Layout
+
+### App shell
+
+The `AppShell` component wraps the signed-in pages and provides the common chrome:
+
+- A sticky top bar with the logo, site title, primary navigation, and a right cluster for the theme toggle, language switcher, and user menu.
+- An announcement banner below the top bar.
+- A centered content area with a maximum width of `1400px`.
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│ [☰] [Logo] [Files] [Shares] [Settings] [Admin]  [◐] [中] [@]│
+├─────────────────────────────────────────────────────────────┤
+│   Announcement banner                                       │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│                    Main content area                        │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+On screens narrower than `768px`, the top bar hides the navigation and shows a hamburger button. The button opens a left-side `Drawer` with the same links.
+
+### File manager workspace
+
+The file manager (`/files`) arranges content into three regions:
+
+```text
+┌──────────────────────────────────────────────────────────────┐
+│ Breadcrumb                       [↑ Upload] [+ New] [☑] [▦] │
+│ [Search] [Sort ▾] [Order]                                    │
+├────────────┬──────────────────────────────────────┬──────────┤
+│            │  File cards / file list              │          │
+│  Sidebar   │  ┌────┐ ┌────┐ ┌────┐ ┌────┐        │ Props    │
+│  Folders   │  │ ▤  │ │ ▤  │ │ 🖼 │ │ 📄 │        │ panel    │
+│  Types     │  └────┘ └────┘ └────┘ └────┘        │          │
+│  Favorites │                                        │          │
+│            │  [Bulk actions bar · sticky bottom]   │          │
+└────────────┴──────────────────────────────────────┴──────────┘
+```
+
+- **Breadcrumb**: shows the current folder path; each segment navigates to that folder.
+- **Toolbar**: contains **Upload**, **New folder**, **Select** and batch-select, plus the grid/list view toggle.
+- **Search and sort**: filter by name and sort by name, time, or size, ascending or descending.
+- **Content**: renders a responsive card grid or a list of rows.
+- **Properties panel**: opens on the right when you select a file or choose **Properties** from a menu.
+- **Bulk actions bar**: sticks to the bottom of the viewport while you select any item.
+
+### Share pages
+
+**Public share page.** The route `/share/:id` renders one shared item, and `/i/:id` serves the image short link. Password-protected shares show a password gate before the content loads. After verification, the page shows the title, creator, size, expiry, and view-count badges, plus download, copy-link, and QR actions. The QR code renders locally with the `qrcode` library. The image short link renders the image directly, without the surrounding card.
+
+**Share list.** The route `/shares` lists the links you created. A view toggle switches between a responsive card grid and a row list. Each card shows the file icon, title, status badge, size, expiry, view count, and download count, with quick actions for QR code, open, copy link, and revoke. The list paginates with a configurable page size, 20 by default.
+
+### Settings and admin pages
+
+The settings layout (`/settings/*`) shows a vertical nav with **Profile**, **Security**, **API keys**, and **Appearance**. The admin layout (`/admin`) uses two columns: a vertical nav on the left and the page content on the right. The nav stacks above the content on mobile. Admin pages include the dashboard with stat cards, user management, storage configuration, permission rules, share management, all files, access logs, and system settings.
+
+### Public pages
+
+The sign-in (`/login`), sign-up (`/register`), and reset-password (`/reset-password`) pages share a centered card layout. Sign-up collects username, password, email, and an optional invite code, and it can enforce Cloudflare Turnstile when the site enables it. After a successful sign-in, the app navigates to the `redirect` target, or to `/files` when no target exists. The free-mode page (`/free-mode`) lets visitors connect their own R2, S3, or Oracle bucket with temporary credentials; the credentials stay in server memory for the session.
+
+### Top bar components
+
+| Component | Location | Purpose |
+| :--- | :--- | :--- |
+| `Logo` | Top-left | Brand mark; uses the site logo and title from site settings. |
+| `ThemeToggle` | Top-right | Switches between light, dark, and system theme. |
+| `LanguageSwitcher` | Top-right | Toggles Chinese and English. |
+| `UserMenu` | Top-right | Shows the display name; links to settings and sign out. |
+| `AnnouncementBanner` | Below top bar | Shows site announcements that admins publish. |
+
+## Responsive design
+
+The interface uses three viewport ranges:
+
+| Breakpoint | Width | Layout behavior |
+| :--- | :--- | :--- |
+| Mobile | Below `640px` | Sidebar and navigation collapse into drawers; card grid shows 2 columns; the properties panel opens as a right drawer. |
+| Tablet | `768px`–`1024px` | Navigation stays in the top bar; card grid shows 3–4 columns. |
+| Desktop | `1024px` and above | Card grid shows 5 columns; the properties panel sticks to the right edge. |
+
+Design decisions:
+
+- **Sidebar to drawer**: the primary navigation lives in the top bar on tablet and desktop. On mobile, the hamburger button opens a left drawer.
+- **Properties panel**: on `sm` and wider the panel renders as a fixed right column that stays visible while you scroll. On mobile it renders inside a right-side `Drawer`. A `matchMedia('(max-width: 639px)')` gate (`isMobile`) keeps the drawer open only on phones, so the hidden desktop column never locks page scrolling on larger screens.
+- **Card grid**: the grid uses `grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5`, so columns grow with the viewport.
+- **Bulk actions bar**: a scan across widths from `350px` to `1080px` confirms the bar stays visible without overlapping content or causing horizontal scroll. Buttons show icons only on narrow screens and add labels from `1024px` upward.
+- **Tables and badges**: secondary table columns hide below `sm` (`hidden sm:block`). Badges use `whitespace-nowrap` and a shrink-safe layout so rows stay aligned on narrow screens; permission-rule cards wrap the whole group instead of misaligning.
+
+## Theming
+
+The theme store in `frontend/src/stores/theme.ts` persists appearance in `localStorage` and applies CSS variables on `document.documentElement`.
+
+### Theme mode
+
+Users pick **light**, **dark**, or **system**. In system mode the app follows `prefers-color-scheme` and reacts to live changes. Dark mode toggles a `dark` class on the root element.
+
+### Accent color
+
+Users pick an accent color from presets or with a color picker. The app converts the hex value to an HSL triple and writes it to the `--primary` and `--ring` CSS variables. Tailwind consumes these as `hsl(var(--primary))`. The app computes a foreground color with the YIQ formula, so text and icons stay readable on light or dark accents.
+
+### Blur and background
+
+- **Blur**: the **Enable blur** switch sets `--enable-blur`; dialogs, dropdowns, and the top bar use it for `backdrop-filter`.
+- **Background image**: users upload an image up to `2MB` (JPG, PNG, or WebP) or leave no background. The image stores as a base64 data URL in `localStorage`. A solid-color background option no longer exists.
+
+### File icons and folder display
+
+| Setting | Options | Effect |
+| :--- | :--- | :--- |
+| File icon style | `iconify` or `emoji` | Switches icon rendering between Iconify glyphs and emoji. |
+| Folder display | `icon` or `contents` | Shows a plain folder icon or a 2x2 preview of the folder's first four items. |
+| Custom emoji | Per file | A per-file emoji set in the properties panel overrides the icon. |
+
+## Accessibility
+
+The interface follows standard web accessibility practices:
+
+- **Semantic structure**: pages use `header`, `nav`, `main`, and `footer` landmarks; forms use `<label>`, `<input>`, and `<button>`.
+- **Labels**: every field has a visible label; icon-only buttons provide `aria-label`, such as the grid/list view toggle and the menu button.
+- **Focus**: interactive elements receive a visible focus ring; the tab order follows the DOM order.
+- **Contrast**: body text meets WCAG contrast guidance, and the YIQ-based accent foreground keeps interactive text readable.
+- **Alt text**: meaningful images carry descriptive `alt`; the logo and decorative glyphs use `alt=""` or an aria label where appropriate.
+- **Reduced motion**: interface animations are short and subtle; the bulk actions bar uses a small slide-in animation.
+
+## Interaction
+
+### Selecting files
+
+Click a card or row to select one item. Hold **Ctrl**/**Cmd** or **Shift** while clicking to extend the selection. The **Select** toolbar button enters multi-select mode, where the menu offers **Select all**, **Invert selection**, and **Clear selection**. Checkboxes appear on every card while in multi-select mode or when you hover.
+
+### Opening files
+
+Double-click an item to open it:
+
+- Folders navigate into their contents.
+- Images, videos, audio, and code open in the preview modal.
+- Other files start a download.
+
+### Previewing files
+
+The preview modal handles media types:
+
+- **Images**: zoom from `50%` to `300%`, rotate by `90°`, and download the original. Controls stay pinned to the bottom, so the zoomed image cannot cover them.
+- **Video and audio**: a native player with playback, seek, volume, and full-screen controls.
+- **Code**: syntax highlighting with highlight.js; the app HTML-escapes the source before highlighting, so it never renders raw HTML or Markdown.
+- **Password-protected files**: the modal asks for a password before loading the content.
+
+### Context menus and hover actions
+
+Right-click a file to select it and open the properties panel. Hovering a card or row reveals a checkbox and a three-dot menu at the top-right corner. The menu provides open, download, copy link, share, rename, move, set password, properties, and delete.
+
+### Uploading files
+
+The upload dialog opens from the toolbar or an empty state. You can drag files onto the drop zone or select them with the file picker. The dialog shows the target folder and queues each file with a progress bar. Uploads run up to three at a time through a session-based flow: the app requests an upload session, sends the object either directly with a presigned URL or through the Worker proxy, then completes the session. Failed tasks show an error and a retry button.
+
+### Dragging files
+
+Drag files onto the upload dialog's drop zone to add them to the queue. You can also drag files between folders to move them; verification notes remain tracked in the progress document.
+
+### Copying links
+
+The copy-link flow handles single files and multi-select batches:
+
+- **Single file**: copying a non-media file copies the direct link immediately. Copying an image or video opens the copy-link dialog.
+- **Batch**: the bulk action bar copies all selected files; if the selection contains an image or video, the app opens the copy-link dialog.
+- **Dialog**: shows the selected files as chips, a format picker with **Direct link**, **HTML code**, and **Markdown code**, and a **Signed link** switch. Signed links expire after one hour. The app joins the generated links with newlines and writes them to the clipboard.
+
+### Folder previews
+
+With folder display set to `contents`, each folder card shows a 2x2 grid of its first four items, ordered by the current sort. Folders and files show icons, images show thumbnails, and videos show a canvas-captured frame. An empty folder falls back to the folder icon.
+
+### Video thumbnails
+
+The card renders video thumbnails entirely in the browser. A hidden `<video>` element seeks to about `20%` of the duration, draws the frame to a `<canvas>`, and exports it as a JPEG data URL. If decoding or CORS fails, the card falls back to a file icon.
+
+### Image previews
+
+Image cards fetch a preview URL and render the image inline. The app caches the URL per file, and it remembers failed URLs, so the same broken URL does not cause repeated requests.
+
+### Bulk actions
+
+The bulk actions bar appears as soon as you select at least one item. It offers download, share (single selection only), copy link, move, rename (single selection only), delete, and properties (single selection only), plus a **Clear selection** button.
+
+## Performance
+
+- **Route-level lazy loading**: every page loads with `React.lazy` and `Suspense`, so the browser fetches page code only when the route opens.
+- **Server state caching**: TanStack Query caches file listings and mutation state, which avoids redundant requests.
+- **Image URL cache**: preview URLs resolve once per file and reuse from an in-memory map.
+- **Client-side thumbnails**: video cards generate thumbnails locally with canvas, so they do not consume server bandwidth or storage.
+- **Lazy-loaded images**: folder-preview thumbnails load with `loading="lazy"`.
+
+## Checklist
+
+Use this list when reviewing a UI change:
+
+- [ ] Every interactive element has a visible focus indicator.
+- [ ] Icon-only buttons have `aria-label` text.
+- [ ] Meaningful images have descriptive `alt`; decorative images use `alt=""`.
+- [ ] Forms label every field and use the correct input types.
+- [ ] The layout reflows at `640px`, `768px`, and `1024px` without horizontal scroll.
+- [ ] Hover-only actions also work with keyboard and touch input.
+- [ ] The bulk actions bar stays visible from `350px` to `1080px`.
+- [ ] New pages lazy-load through the router.
+- [ ] Theme changes persist to `localStorage` and respect the system preference.
+
+## What's next
+
+- [Architecture guide](/picumet/dev/architecture/) for backend services and shared types.
+- [API reference](/picumet/api/api/) for the HTTP endpoints the UI calls.
+- [Development guide](/picumet/dev/development/) for local setup, tests, and conventions.
+- [Deployment guide](/picumet/dev/deployment/) for shipping to Cloudflare.
+- [Progress report](/picumet/about/progress/) for the implementation status and roadmap.
+- [Project overview](../README.md)
