@@ -132,8 +132,30 @@ export default defineConfig({
         },
         {
           label: 'BookmarkHarbor',
-          translations: { 'zh-CN': 'BookmarkHarbor' },
-          autogenerate: { directory: 'bookmark-harbor' },
+          translations: { 'zh-CN': '书签浏览器' },
+          items: [
+            {
+              label: 'About',
+              translations: { 'zh-CN': '关于项目' },
+              items: [
+                {
+                  label: 'About BookmarkHarbor',
+                  translations: { 'zh-CN': '书签浏览器' },
+                  link: '/bookmark-harbor/',
+                },
+              ],
+            },
+            {
+              label: 'Development',
+              translations: { 'zh-CN': '开发部署' },
+              autogenerate: { directory: 'bookmark-harbor/dev' },
+            },
+            {
+              label: 'Frontend',
+              translations: { 'zh-CN': '前端指南' },
+              autogenerate: { directory: 'bookmark-harbor/ui' },
+            },
+          ],
         },
         {
           label: 'Picumet',
