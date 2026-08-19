@@ -50,6 +50,11 @@ import { sunMoon } from './sunMoon';
 import { heading } from './heading';
 import { tag } from './tag';
 import { keyboard } from './keyboard';
+import { zoomIn } from './zoomIn';
+import { zoomOut } from './zoomOut';
+import { maximize } from './maximize';
+import { maximize2 } from './maximize2';
+import { rotateCcw } from './rotateCcw';
 
 export const Icon = {
   chevronDown: chevronDown,
@@ -97,6 +102,11 @@ export const Icon = {
   heading: heading,
   tag: tag,
   keyboard: keyboard,
+  zoomIn: zoomIn,
+  zoomOut: zoomOut,
+  maximize: maximize,
+  maximize2: maximize2,
+  rotateCcw: rotateCcw,
 } as const;
 
 export type IconName = keyof typeof Icon;

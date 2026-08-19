@@ -2210,3 +2210,169 @@ a.cpd-github-card:hover {
     transform: translateY(0);
   }
 }
+
+/* ============================================================
+   Mermaid 图表（remark-mermaid 容器 + 缩放/平移/复制工具栏）
+   ============================================================ */
+.cpd-mermaid {
+  position: relative;
+  margin-block: 1.5rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: var(--cpd-radius);
+  background: var(--cpd-card);
+  overflow: hidden;
+}
+.cpd-mermaid-viewport {
+  position: relative;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none; /* 拖动平移时防止选中图表文本 */
+  touch-action: none; /* 让指针拖动接管（不做浏览器默认滚动/缩放） */
+}
+.cpd-mermaid-viewport.is-panning {
+  cursor: grabbing;
+}
+/* svg 直接铺满视口宽度，高度随 viewBox 宽高比自适应（不固定尺寸）；
+   overflow: visible 让放大/平移后的内容溢出 svg 盒仍可见（由视口裁剪） */
+.cpd-mermaid-viewport > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  overflow: visible;
+}
+.cpd-mermaid-viewport > svg a {
+  text-decoration: none;
+}
+
+/* 占位符（客户端渲染完成前） */
+.cpd-mermaid-ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  min-height: 12rem;
+  padding: 1rem;
+  color: var(--cpd-muted-foreground);
+  font-size: 0.875rem;
+}
+.cpd-mermaid-ph-spinner {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  border: 2px solid var(--cpd-border);
+  border-top-color: var(--cpd-primary);
+  animation: cpd-mermaid-spin 0.8s linear infinite;
+}
+@keyframes cpd-mermaid-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 工具栏（右上角 Dropdown 触发按钮） */
+.cpd-mermaid-toolbar {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 5;
+}
+.cpd-mermaid-toolbar-btn.cpd-dropdown-trigger {
+  padding: 0.375rem;
+  border-radius: 0.5rem;
+}
+.cpd-mermaid-toolbar-caret {
+  display: inline-flex;
+  opacity: 0.6;
+}
+.cpd-mermaid-toolbar-btn svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* 渲染失败兜底：展示错误信息 + 原始源码（可继续复制） */
+.cpd-mermaid-error-box {
+  padding: 1rem 1.25rem;
+  font-family: var(--cpd-font-mono);
+}
+.cpd-mermaid-error-head {
+  margin: 0 0 0.5rem;
+  color: var(--cpd-error, #d9534f);
+  font-family: var(--cpd-font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.cpd-mermaid-error-src {
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: var(--cpd-radius);
+  background: var(--cpd-background);
+  color: var(--cpd-foreground);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 24rem;
+  overflow: auto;
+}
+
+/* 全屏弹层（与 ImageZoom 交互一致：全屏遮罩 + 关闭按钮 + Escape/点遮罩退出；
+   对话框铺满视口，图表经 contain() 同时适配宽高并居中） */
+.cpd-mermaid-fs {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  width: 100dvw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: color-mix(in srgb, var(--cpd-background) 82%, transparent);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  overflow: hidden;
+}
+.cpd-mermaid-fs::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+.cpd-mermaid-fs-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem 1.75rem;
+}
+.cpd-mermaid-fs-viewport {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--cpd-border);
+  border-radius: var(--cpd-radius);
+  background: var(--cpd-card);
+}
+.cpd-mermaid-fs-close {
+  position: absolute;
+  top: 0.625rem;
+  right: 0.625rem;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--cpd-dd-border, var(--cpd-border));
+  border-radius: 0.5rem;
+  background: var(--cpd-dd-trigger-bg, var(--cpd-card));
+  color: var(--cpd-dd-fg, var(--cpd-foreground));
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.cpd-mermaid-fs-close:hover {
+  background: var(--cpd-dd-hover, var(--cpd-muted));
+}
+.cpd-mermaid-fs-close svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
