@@ -210,7 +210,7 @@ export const PROJECTS: Project[] = [
       ],
     },
     zh: {
-      title: 'BookmarkHarbor',
+      title: '书签浏览器',
       description:
         '书签浏览器：像文件管理器一样管理书签，本地存储更安全，开源、现代美观、支持多语言。通过文件夹与标签组织你的收藏，数据保存在本地，安全可控。',
       tags: ['书签', '文件管理器', '隐私'],
