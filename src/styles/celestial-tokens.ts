@@ -178,31 +178,6 @@ export const PROJECTS: Project[] = [
     },
   },
   {
-    id: 'gastigado',
-    icon: 'lucide:zap',
-    hero: 7,
-    en: {
-      title: 'Gastigado Fast Image',
-      description:
-        'A lightweight, high-performance image hosting solution supporting multiple image formats and CDN acceleration. API-based upload, management, and retrieval provide the best experience for storing and sharing images.',
-      tags: ['Image', 'CDN', 'Web'],
-      buttons: [
-        { label: 'Get Started', link: 'https://gastigado.cnies.org', style: 'primary' },
-        { label: 'GitHub', link: 'https://github.com/HevSpecu', style: 'secondary' },
-      ],
-    },
-    zh: {
-      title: 'Gastigado Fast Image',
-      description:
-        '轻量级、高性能的图床解决方案，支持多种图片格式、CDN 加速。支持API上传、管理和获取图片，为您的图片存储和分享提供最佳体验。',
-      tags: ['图像', 'CDN', 'Web'],
-      buttons: [
-        { label: '开始使用', link: 'https://gastigado.cnies.org', style: 'primary' },
-        { label: 'GitHub', link: 'https://github.com/HevSpecu', style: 'secondary' },
-      ],
-    },
-  },
-  {
     id: 'resume',
     icon: 'lucide:file-text',
     hero: 3,
@@ -248,6 +223,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'picumet',
     icon: 'lucide:cloud',
+    hero: 7,
     en: {
       title: 'Picumet',
       description:
@@ -270,26 +246,26 @@ export const PROJECTS: Project[] = [
     },
   },
   {
-    id: 'squoosh',
-    icon: 'lucide:image-down',
+    id: 'gastigado',
+    icon: 'lucide:zap',
     en: {
-      title: 'Squoosh',
+      title: 'Gastigado Fast Image',
       description:
-        'Browser-based image compressor with a rich codec set (AVIF, WebP, mozJPEG, PNG, QOI) and side-by-side live preview. No upload, fully private. Supports 8 languages including Simplified Chinese, Traditional Chinese, Japanese, and Korean, with automatic browser detection.',
-      tags: ['Image', 'Compression', 'Web'],
+        'A lightweight, high-performance image hosting solution supporting multiple image formats and CDN acceleration. API-based upload, management, and retrieval provide the best experience for storing and sharing images.',
+      tags: ['Image', 'CDN', 'Web'],
       buttons: [
-        { label: 'Open App', link: 'https://squoosh.hxcn.dev', style: 'primary' },
-        { label: 'GitHub', link: 'https://github.com/CelPlume/squoosh', style: 'secondary' },
+        { label: 'Get Started', link: 'https://gastigado.cnies.org', style: 'primary' },
+        { label: 'GitHub', link: 'https://github.com/HevSpecu', style: 'secondary' },
       ],
     },
     zh: {
-      title: 'Squoosh',
+      title: 'Gastigado Fast Image',
       description:
-        '浏览器端图像压缩工具，内置丰富编码器（AVIF、WebP、mozJPEG、PNG、QOI）与并排实时预览。无需上传，完全本地处理。支持 8 种语言（含简体中文、繁体中文），浏览器自动检测。',
-      tags: ['图像', '压缩', 'Web'],
+        '轻量级、高性能的图床解决方案，支持多种图片格式、CDN 加速。支持API上传、管理和获取图片，为您的图片存储和分享提供最佳体验。',
+      tags: ['图像', 'CDN', 'Web'],
       buttons: [
-        { label: '打开应用', link: 'https://squoosh.hxcn.dev', style: 'primary' },
-        { label: 'GitHub', link: 'https://github.com/CelPlume/squoosh', style: 'secondary' },
+        { label: '开始使用', link: 'https://gastigado.cnies.org', style: 'primary' },
+        { label: 'GitHub', link: 'https://github.com/HevSpecu', style: 'secondary' },
       ],
     },
   },
