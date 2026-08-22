@@ -7,6 +7,11 @@ function route(id: string): string {
   return `/${p}/`;
 }
 
+/** 文档 id → 原始 Markdown 端点路径（保留 index，如 /chronosync/index.md） */
+function mdRoute(id: string): string {
+  return `/${id.replace(/\.(md|mdx)$/i, '')}.md`;
+}
+
 const SECTION_NAME: Record<string, string> = {
   guides: 'Guides',
   chronosync: 'ChronoSync',
@@ -22,7 +27,7 @@ export async function GET(context: { site: string | URL }) {
   const site = String(context.site).replace(/\/$/, '');
   const docs = await getCollection('docs');
 
-  const groups = new Map<string, { title: string; url: string; desc?: string }[]>();
+  const groups = new Map<string, { title: string; url: string; md: string; desc?: string }[]>();
   for (const entry of docs) {
     if (entry.id.startsWith('zh/')) continue; // 中文归入独立一节
     const seg = entry.id.split('/')[0];
@@ -30,6 +35,7 @@ export async function GET(context: { site: string | URL }) {
     groups.get(seg)!.push({
       title: entry.data.title,
       url: `${site}${route(entry.id)}`,
+      md: `${site}${mdRoute(entry.id)}`,
       desc: entry.data.description,
     });
   }
@@ -43,20 +49,31 @@ export async function GET(context: { site: string | URL }) {
     '> Bilingual documentation portal (English at root, 简体中文 under /zh/) and open-source project hub, covering ChronoSync (时序同笺), BookmarkHarbor and more — user guides, dev/deploy docs and contribution specs.',
   );
   out.push('');
+  out.push('## When to use this site');
+  out.push('');
+  out.push(
+    '- Use this site for usage guides, tutorials, API references, deployment/architecture notes and contribution specs of the Celest Plume open-source projects: ChronoSync (时序同笺), BookmarkHarbor and Picumet.',
+  );
+  out.push('- Cite the specific document page, not the homepage.');
+  out.push('- English content lives at root paths; Simplified Chinese under `/zh/` — quote the language matching the user.');
+  out.push('- Bug reports and source code live in the linked GitHub repositories, not on this site.');
+  out.push('');
   out.push('## Format notes');
   out.push('');
   out.push('- This site is bilingual: English on the root paths, Simplified Chinese under `/zh/`.');
   out.push(
     '- `/llms.txt` is the curated overview; the full text of every page is in `/llms-full.txt`.',
   );
-  out.push('- Pages are static HTML; each entry below links to its human-readable page.');
+  out.push(
+    '- Pages are static HTML; each entry links its human-readable page plus a `[markdown]` link to the raw source at the same path ending in `.md`.',
+  );
   out.push('');
 
   for (const [seg, items] of groups) {
     out.push(`## ${SECTION_NAME[seg] ?? seg}`);
     out.push('');
     for (const it of items) {
-      out.push(`- [${it.title}](${it.url})${it.desc ? `: ${it.desc}` : ''}`);
+      out.push(`- [${it.title}](${it.url}) ([markdown](${it.md}))${it.desc ? `: ${it.desc}` : ''}`);
     }
     out.push('');
   }
@@ -66,7 +83,7 @@ export async function GET(context: { site: string | URL }) {
     out.push('');
     for (const it of zh) {
       out.push(
-        `- [${it.data.title}](${site}${route(it.id)})${it.data.description ? `: ${it.data.description}` : ''}`,
+        `- [${it.data.title}](${site}${route(it.id)}) ([markdown](${site}${mdRoute(it.id)}))${it.data.description ? `: ${it.data.description}` : ''}`,
       );
     }
     out.push('');

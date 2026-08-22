@@ -24,6 +24,48 @@ const t = getUI(locale);
 
 const siteUrl = Astro.site ?? new URL('https://celplume.hxcn.space');
 const currentPath = Astro.url.pathname;
+
+// JSON-LD 结构化数据：WebSite + Organization，供 AI/搜索引擎程序化解析站点身份
+const siteOrigin = siteUrl.origin;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${siteOrigin}/#website`,
+      name: 'Celest Plume',
+      alternateName: 'CelPlume',
+      url: `${siteOrigin}/`,
+      description:
+        description ??
+        'Bilingual documentation portal and open-source project hub: ChronoSync, BookmarkHarbor, Picumet.',
+      inLanguage: locale === 'zh' ? 'zh-CN' : 'en',
+      publisher: { '@id': `${siteOrigin}/#organization` },
+    },
+    {
+      '@type': 'Organization',
+      '@id': `${siteOrigin}/#organization`,
+      name: 'Celest Plume',
+      alternateName: 'CelPlume',
+      url: `${siteOrigin}/`,
+      logo: `${siteOrigin}/images/CelPlume.webp`,
+      email: 'hxcn@cnies.org',
+      sameAs: [
+        'https://github.com/CelPlume',
+        'https://github.com/CelPlume/CelestPlume',
+        'https://x.com/CelPlume',
+      ],
+      contactPoint: [
+        {
+          '@type': 'ContactPoint',
+          email: 'hxcn@cnies.org',
+          contactType: 'customer support',
+          availableLanguage: ['English', 'Chinese'],
+        },
+      ],
+    },
+  ],
+};
 ---
 
 <!doctype html>
@@ -128,6 +170,9 @@ const currentPath = Astro.url.pathname;
         }
       })();
     </script>
+
+    <!-- JSON-LD 结构化数据（站点身份，AI/搜索引擎解析用） -->
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   </head>
   <body>

@@ -84,6 +84,8 @@ export default defineConfig({
         root: { label: 'English', lang: 'en' },
         zh: { label: '简体中文', lang: 'zh-CN' },
       },
+      // 404 页由 src/pages/404.astro 提供（含 agent 恢复入口），禁用 Starlight 内置 404 避免路由冲突
+      disable404Route: true,
       // 文档侧边栏树（同时是 Pagefind / sitemap / 分页的数据源）
       sidebar: [
         {

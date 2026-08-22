@@ -1,0 +1,103 @@
+---
+/**
+ * 全站 404 页：静态输出为 /404.html，托管层以真实 404 状态返回。
+ * 为 agent 提供恢复入口（站点地图 / llms.txt / 文档首页），
+ * 避免其误判路径存在；同时给人类访客可用的导航。
+ * EN + ZH 双语短文案（本页不区分 locale，两种语言访客共用）。
+ */
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="Page not found. Recovery links: sitemap, llms.txt, docs home." />
+    <title>404 · Celest Plume</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --night: #0a0f1c;
+        --pearl: #f8f5ef;
+        --gold: #d4af6c;
+        --moonlight: #b8c5d6;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: var(--night);
+        color: var(--pearl);
+        font-family: 'Manrope', 'LxgwNeoXiHei', ui-sans-serif, system-ui, sans-serif;
+        text-align: center;
+        padding: 2rem;
+      }
+      main {
+        max-width: 34rem;
+      }
+      .code {
+        font-size: clamp(4rem, 14vw, 7rem);
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        color: var(--gold);
+        line-height: 1;
+      }
+      h1 {
+        margin-top: 1rem;
+        font-size: 1.25rem;
+        font-weight: 400;
+      }
+      p {
+        margin-top: 0.75rem;
+        color: var(--moonlight);
+        font-size: 0.95rem;
+        line-height: 1.7;
+      }
+      ul {
+        margin-top: 2rem;
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: center;
+      }
+      a {
+        display: inline-block;
+        padding: 0.55rem 1.1rem;
+        border: 1px solid rgb(212 175 108 / 45%);
+        border-radius: 999px;
+        color: var(--pearl);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition:
+          border-color 0.2s,
+          color 0.2s;
+      }
+      a:hover,
+      a:focus-visible {
+        border-color: var(--gold);
+        color: var(--gold);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="code">404</div>
+      <h1>This page does not exist.</h1>
+      <p>Try one of the entry points below.</p>
+      <p>页面不存在，请从下面的入口继续。</p>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/zh/">首页（中文）</a></li>
+        <li><a href="/sitemap.xml">Sitemap</a></li>
+        <li><a href="/llms.txt">llms.txt</a></li>
+        <li><a href="/llms-full.txt">llms-full.txt</a></li>
+      </ul>
+    </main>
+  </body>
+</html>
