@@ -1,0 +1,19 @@
+# Cloudflare Pages 响应头规则（构建时复制到 dist/ 根目录，由 Pages 解析，
+# 不自身作为静态资源对外提供）
+#
+# 现状（实测生产站）：所有静态资源为 `cache-control: public, max-age=0,
+# must-revalidate`，即每次导航每个字体都要走一轮条件请求（文档页约 11 个
+# 字体文件）。本地字体 `lxgw-neoxihei-400.woff2` 单文件 3.07 MiB，首屏代价
+# 主要在于首次下载，重复访问的收益在于省掉这些往返。
+#
+# 为什么不是 immutable：/fonts/ 下的文件名不含内容指纹，而字体子集需要随
+# 文档新增中文字符重新生成（见 AGENTS.md「字体管理」），路径不变、内容会变。
+# `immutable` + 一年 max-age 会把旧字体锁在回访者本地，导致新增汉字显示为
+# 缺字方块。故取「30 天新鲜 + 7 天后台刷新」：新鲜期内零请求，过期后首个
+# 请求仍命中旧缓存（stale-while-revalidate）并静默更新。
+#
+# 如需真正的一年 immutable，前提是把字体文件名加上内容指纹
+# （如 lxgw-neoxihei-400.<hash>.woff2），同时改 src/styles/fonts/*.css。
+
+/fonts/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
