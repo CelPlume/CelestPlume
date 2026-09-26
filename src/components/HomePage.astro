@@ -257,8 +257,8 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
 
       const pointer = { active: false, x: 0, y: 0, smoothX: 0, smoothY: 0 };
 
-      // 品牌衬线栈（已加载：Libertine / LxgwNeoZhiSong），与 celestial.css --font-display 对齐
-      const fontFamily = FONTS.display;
+      // Canvas 字体栈（见 FONTS.canvas）：不含 CJK 字族，且只写 PARTICLE_TEXT.text（拉丁）。
+      const fontFamily = FONTS.canvas;
       const fontWeight = PARTICLE_TEXT.fontWeight;
 
       const getColors = () => {
@@ -272,7 +272,7 @@ const displayProjects = [...getFeaturedProjects(), ...getOtherProjects()];
           (async () => {
             if (!('fonts' in document)) return;
             try {
-              await document.fonts.load(`${fontWeight} 100px ${fontFamily}`);
+              await document.fonts.load(`${fontWeight} 100px ${fontFamily}`, PARTICLE_TEXT.text);
             } catch {
               /* ignore */
             }

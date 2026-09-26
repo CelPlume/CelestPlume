@@ -241,6 +241,10 @@ python3 -m fontTools.subset LXGWNeoZhiSong.ttf --text-file=/tmp/chars.txt \
 - 品牌衬线（docs 页头/侧栏与主页同款）：`--cpd-font-serif: 'Libertine','LxgwNeoZhiSong',Georgia,serif`
 - mono：`'Maple Mono','Fira Code','LxgwNeoXiHei',ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New','Roboto Mono','Microsoft YaHei UI','Microsoft YaHei',monospace`
 - 主页衬线：`--font-display: 'Libertine','LxgwNeoZhiSong',Georgia,serif`；`--font-serif: 'LxgwNeoZhiSong','Libertine',Georgia,serif`
+- **英文页剥掉 CJK 字体族**：`:root:lang(en)` 覆盖（`celestial.css` 的 `--font-*`
+  与 `celestial-docs.css` 的 `--cpd-font-*`），使英文页零散中文（项目中文名、
+  语言链接、中文搜索结果）回落系统 CJK 字体，不触发全量 LxgwNeoXiHei
+  （3.07 MiB）下载；新增字体栈变量时必须同步维护该覆盖
 
 **主题（深浅色三态）**：`celplume-theme` 存 `dark|light|system`（默认 system 跟随系统）。
 `html[data-cpd-theme]`（docs）/ `html[data-home-theme]`（主页）= 实际深浅；`data-cpd-theme-mode` /

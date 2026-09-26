@@ -92,6 +92,10 @@ The kit supports three modes:
 | Maple Mono + Fira Code | `--cpd-font-mono` | code, TOC step numbers |
 | Libertine + LxgwNeoZhiSong | `--cpd-font-serif` | brand serif (header, sidebar) |
 
+English pages (`html[lang='en']`) drop the CJK families from every stack, so
+incidental Chinese renders in the system CJK font instead of downloading the
+3.07 MiB LxgwNeoXiHei; Chinese pages keep the stacks above.
+
 Body copy is `1rem / 1.75` line-height; article headings scale from
 `2rem` (h1) down to `1.05rem` (h4), weight 600, with negative
 letter-spacing on large sizes. Inline code uses a bordered `--cpd-secondary`

@@ -76,10 +76,11 @@ const searchLabel = zh ? '站内搜索' : 'Search this site';
     --pf-accent-soft: color-mix(in srgb, var(--cp-gold-soft) 16%, transparent);
     --pf-shadow: 0 24px 60px rgba(8, 18, 40, 0.28);
     --pf-overlay: rgba(3, 6, 12, 0.55);
-    --pf-font: 'Manrope', 'LxgwNeoXiHei', ui-sans-serif, system-ui, 'Segoe UI', Roboto,
-      'Helvetica Neue', Arial, sans-serif;
-    --pf-mono: 'Maple Mono', 'Fira Code', 'LxgwNeoXiHei', ui-monospace, SFMono-Regular, Menlo,
-      Monaco, Consolas, monospace;
+    /* 字体跟随当前页面语言栈（英文页已剥离 CJK 字体族，见 celestial-docs.css / celestial.css） */
+    --pf-font: var(--cpd-font-sans, var(--font-sans, 'Manrope', ui-sans-serif, system-ui, 'Segoe UI', Roboto,
+      'Helvetica Neue', Arial, sans-serif));
+    --pf-mono: var(--cpd-font-mono, 'Maple Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo,
+      Monaco, Consolas, monospace);
   }
 
   /* 遮罩 + 卡片 */

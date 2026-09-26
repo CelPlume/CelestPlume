@@ -40,6 +40,10 @@ export const FONTS = {
   serif: "'LxgwNeoZhiSong','Libertine',Georgia,serif",
   // 正文：英文 Manrope 优先（无 CJK），中文 LxgwNeoXiHei；回落系统 sans
   sans: "'Manrope','LxgwNeoXiHei',ui-sans-serif,system-ui,'Segoe UI',Roboto,'Source Sans 3','Helvetica Neue',Arial,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji',sans-serif",
+  // Canvas 专用（HomePage 粒子文字）：不列 CJK 字族。
+  // Canvas 解析 ctx.font / OffscreenCanvas 测量会为栈中每个字族发起下载，
+  // 而画布只写 PARTICLE_TEXT.text（固定拉丁），列上 LxgwNeo* 等于白拉整个中文子集。
+  canvas: "'Libertine',Georgia,serif",
 } as const;
 
 /* ============================================================

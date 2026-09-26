@@ -34,7 +34,9 @@ const brandName = t.brand.name;
 // 语言切换：保持当前路径仅切语言前缀（与旧 Header 逻辑一致）
 const isZhPath = pathname.startsWith('/zh');
 const langHref = isZhPath ? (pathname.replace(/^\/zh/, '') || '/') : `/zh${pathname}`;
-const langLabel = isZhPath ? 'EN' : '中';
+// 语言切换标签用 ASCII 语言码（EN / ZH），不用「中」：
+// 「中」在 Manrope 无字形，会回退到全量 LxgwNeoXiHei（3.07 MiB）整包下载。
+const langLabel = isZhPath ? 'EN' : 'ZH';
 const langTitle = isZhPath ? 'Switch to English' : '切换到中文';
 
 // 导航四项（项目 dropdown 目标从 PROJECTS 取标题，单一事实来源）

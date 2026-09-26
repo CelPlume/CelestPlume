@@ -17,8 +17,11 @@ near-black primary, a single gold accent, and a framework-free TypeScript kit
   accent; everything else stays neutral.
 - **Framework-free.** Builders return HTML strings; interaction is attached
   at runtime through `data-cpd-*` hooks.
-- **CJK-safe type stacks.** Latin families fall back to LxgwNeoXiHei for
-  Chinese; nothing hard-codes a Latin-only font.
+- **CJK-safe type stacks, per locale.** Chinese pages pair the Latin families
+  with LxgwNeoXiHei / LxgwNeoZhiSong. English pages drop those CJK families
+  through `:root:lang(en)`, so incidental Chinese — project names, language
+  links, Chinese search hits — falls back to the system CJK font instead of
+  downloading the 3.07 MiB full font.
 
 ## Color
 

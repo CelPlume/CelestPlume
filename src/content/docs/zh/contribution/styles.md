@@ -90,6 +90,9 @@ Kit 支持三种模式：
 | Maple Mono + Fira Code | `--cpd-font-mono` | 代码、TOC 阶数数字 |
 | Libertine + LxgwNeoZhiSong | `--cpd-font-serif` | 品牌衬线（页头、侧栏） |
 
+英文页（`html[lang='en']`）的字体栈会剥掉 CJK 字体族：零散中文回落系统
+CJK 字体，不触发 3.07 MiB 的 LxgwNeoXiHei 下载；中文页保持上表栈。
+
 正文 `1rem / 1.75` 行高；文章标题从 `2rem`（h1）到 `1.05rem`（h4），
 字重 600，大标题带轻微负字距。行内代码为带边框的 `--cpd-secondary`
 小片；代码块（文档页为 astro-expressive-code）渲染为单层 `--cpd-card`：

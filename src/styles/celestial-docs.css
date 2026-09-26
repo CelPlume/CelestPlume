@@ -45,6 +45,17 @@
   color-scheme: light;
 }
 
+/* 英文文档页移除 CJK 字体族（与上文同值，只是剥掉 LxgwNeo*）：
+   英文页只会出现零散中文（项目中文名、语言链接、中文搜索结果），
+   为几个字形下载全量 LxgwNeoXiHei（3.07 MiB）不划算；这些字形回落到
+   系统自带的 CJK 字体。中文页（html lang="zh-CN"）不受影响。 */
+:root:lang(en) {
+  --cpd-font-sans: 'Manrope', ui-sans-serif, system-ui, 'Segoe UI', Roboto, 'Source Sans 3', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+  --cpd-font-display: 'Plus Jakarta Sans', ui-sans-serif, system-ui, 'Segoe UI', Roboto, 'Source Sans 3', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+  --cpd-font-mono: 'Maple Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', 'Roboto Mono', 'Microsoft YaHei UI', 'Microsoft YaHei', monospace;
+  --cpd-font-serif: 'Libertine', Georgia, serif;
+}
+
 /* 正文基准字体（文档页 body） */
 body {
   font-family: var(--cpd-font-sans);

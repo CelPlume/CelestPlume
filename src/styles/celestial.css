@@ -49,6 +49,16 @@
   color-scheme: dark;
 }
 
+/* 英文主页移除 CJK 字体族（同上，剥掉 LxgwNeo*）：
+   英文主页只有零散中文（项目中文名「时序同笺」、页脚「中文文档」），
+   不值得为此下载全量 LxgwNeoXiHei（3.07 MiB）与 LxgwNeoZhiSong；
+   这些字形回落到系统自带的 CJK 字体。中文主页（html lang="zh-CN"）不受影响。 */
+:root:lang(en) {
+  --font-display: 'Libertine', Georgia, serif;
+  --font-serif:   'Libertine', Georgia, serif;
+  --font-sans:    'Manrope', ui-sans-serif, system-ui, 'Segoe UI', Roboto, 'Source Sans 3', 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
+}
+
 /* —— Light 模式（主页通过 data-home-theme 触发） —— */
 :root[data-home-theme='light'] {
   --cp-pearl:        #1a1a2e;
