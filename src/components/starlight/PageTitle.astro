@@ -82,9 +82,55 @@ const actionsHtml = [
 const updatedText = lastUpdated
   ? lastUpdated.toLocaleDateString(lang, { dateStyle: 'medium', timeZone: 'UTC' })
   : undefined;
+
+// 移动端本文导航（<1280px 显示；桌面用右侧 Plumest TOC）：折叠在面包屑下
+interface TocNode {
+  slug?: string;
+  text: string;
+  depth: number;
+  children?: TocNode[];
+}
+function flattenToc(nodes: TocNode[] | undefined, out: { slug: string; text: string; depth: number }[]): void {
+  for (const node of nodes ?? []) {
+    if (!node.slug || node.slug === '_top') {
+      flattenToc(node.children, out);
+      continue;
+    }
+    out.push({ slug: node.slug, text: node.text, depth: node.depth });
+    flattenToc(node.children, out);
+  }
+}
+const tocItems: { slug: string; text: string; depth: number }[] = [];
+flattenToc(Astro.locals.starlightRoute.toc?.items as TocNode[] | undefined, tocItems);
+
+const mobileToc = tocItems.length
+  ? el(
+      'details',
+      { class: 'cpd-toc-mobile' },
+      [
+        el('summary', { class: 'cpd-toc-mobile-summary' }, [
+          Icon.list({ class: 'cpd-toc-mobile-icon' }),
+          el('span', {}, zh ? '本文导航' : 'On this page'),
+          Icon.chevronDown({ class: 'cpd-toc-mobile-chevron' }),
+        ]),
+        el('div', { class: 'cpd-toc-mobile-body' }, tocItems.map((it) =>
+          el(
+            'a',
+            {
+              class: 'cpd-toc-mobile-item',
+              href: `#${it.slug}`,
+              style: { paddingInlineStart: `${it.depth <= 2 ? 12 : it.depth === 3 ? 24 : 36}px` },
+            },
+            it.text,
+          ),
+        )),
+      ],
+    )
+  : '';
 ---
 
 <Fragment set:html={crumbHtml} />
+<Fragment set:html={mobileToc} />
 <h1 class="cpd-docs-title">{entry.data.title}</h1>
 {entry.data.description && <p class="cpd-docs-description">{entry.data.description}</p>}
 <div class="cpd-page-actions">

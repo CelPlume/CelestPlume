@@ -734,6 +734,71 @@ body {
   color: var(--cpd-primary-foreground);
 }
 
+/* —— 移动端本文导航（<1280px；桌面为右侧 Plumest TOC） —— */
+.cpd-toc-mobile {
+  display: none;
+  margin: 0 0 1rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: var(--cpd-radius);
+  background: var(--cpd-card);
+}
+@media (max-width: 1279px) {
+  .cpd-toc-mobile {
+    display: block;
+  }
+}
+.cpd-toc-mobile-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  font-family: var(--cpd-font-display);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--cpd-foreground);
+}
+.cpd-toc-mobile-summary::-webkit-details-marker {
+  display: none;
+}
+.cpd-toc-mobile-summary:hover {
+  color: var(--cpd-accent-foreground);
+}
+.cpd-toc-mobile-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-toc-mobile-chevron {
+  margin-inline-start: auto;
+  width: 1rem;
+  height: 1rem;
+  color: var(--cpd-muted-foreground);
+  transition: transform 150ms ease;
+}
+.cpd-toc-mobile[open] .cpd-toc-mobile-chevron {
+  transform: rotate(180deg);
+}
+.cpd-toc-mobile-body {
+  padding: 0.25rem 0.5rem 0.625rem;
+  border-top: 1px solid var(--cpd-border);
+}
+.cpd-toc-mobile-item {
+  display: block;
+  padding-block: 0.375rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--cpd-muted-foreground);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  transition: color 150ms ease;
+}
+.cpd-toc-mobile-item:hover {
+  color: var(--cpd-accent-foreground);
+}
+
 /* ============================================================
    4. 正文排版（cpd-article）
    ============================================================ */

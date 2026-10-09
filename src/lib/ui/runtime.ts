@@ -586,15 +586,20 @@ function initTreeFolders(root: ParentNode): void {
 export function initDropdowns(root: ParentNode = document): void {
   const CLOSE_DELAY_MS = 150;
 
-  // Portal 语义：fixed 菜单定位到触发按钮下方（sideOffset 8）
+  // Portal 语义：fixed 菜单定位到触发按钮下方（sideOffset 8）；
+  // 横向按视口自适应——右缘放不下时右对齐触发按钮（展开在左侧）
   const positionMenu = (dd: HTMLElement): void => {
     const trigger = dd.querySelector<HTMLElement>('[data-cpd-dropdown-trigger]');
     const menu = dd.querySelector<HTMLElement>('[data-cpd-dropdown-menu]');
     if (!trigger || !menu) return;
     const rect = trigger.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) return;
+    const menuWidth = menu.offsetWidth || 300;
+    const viewport = document.documentElement.clientWidth;
+    let left = rect.left;
+    if (left + menuWidth > viewport - 8) left = Math.max(8, rect.right - menuWidth);
     menu.style.top = `${rect.bottom + 8}px`;
-    menu.style.left = `${rect.left}px`;
+    menu.style.left = `${left}px`;
   };
   const positionOpenMenus = () => {
     root.querySelectorAll<HTMLElement>('[data-cpd-dropdown][data-open="true"]').forEach(positionMenu);
