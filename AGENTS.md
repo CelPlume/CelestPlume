@@ -104,6 +104,19 @@ localStorage.setItem('umami.disabled', 1);
 localStorage.removeItem('umami.disabled');
 ```
 
+## 多语言 SEO 铁律（重要）
+
+- **严禁**添加任何基于 IP 或 `Accept-Language` 的自动 301 / JS 跳转（Google 爬虫
+  几乎全部来自美国 IP，自动跳转会导致多语言收录全军覆没）。语言切换一律由用户
+  显式点击（`ThemeProvider.astro` 的语言重定向块是「偏好修正」而非 IP 猜测，
+  属于允许范围）。
+- **hreflang 声明三处分工**：文档页由 Starlight 自动发射（含 `x-default`）；
+  主页由 `src/layouts/Home.astro` 手工声明（独立 head）；`sitemap.xml` 的
+  `x-default` 由 `astro.config.mjs` 的 `flatSitemap()` 钩子注入。新增页面类型时
+  勿重复或遗漏。
+- **IndexNow 暂未接入**（决策记录：等部署管线明确后再立项，key 文件与提交脚本
+  均未部署）。
+
 ## 命名与 i18n 规范
 
 - 英文页面品牌名：`Celest Plume`（完整名，hero/关于等详细处使用）、`CelPlume`（缩写，导航/按钮/卡片等一般位置使用）
@@ -162,11 +175,19 @@ Plumest 指代本样式；**不得**再以其他项目/框架的样式名命名�
 
 ## Docs Kit（无框架组件库，重要）
 
-- **`src/lib/ui/`** —— 纯 TypeScript 手搓的 Plumest 风格文档 UI（左侧边栏 / ClerkTOC
-  （Plumest 风格主色连接线 + 步骤圆徽，文档页右侧栏与 demo 页共用）/ 文档样式 /
-  内容组件），**不依赖 React、零运行时依赖**；构建器返回 HTML 字符串，
+- **`src/lib/ui/`** —— 纯 TypeScript 手搓的 Plumest 风格文档 UI（左侧边栏 / Plumest TOC
+  （block 风格：圆角背景滑块 + `clip-path` 驱动，文档页右侧栏与 demo 页共用）/ 文档样式 /
+  内容组件 / TypeTable 契约表格），**不依赖 React、零运行时依赖**；构建器返回 HTML 字符串，
   `src/lib/ui/runtime.ts` 通过 `data-cpd-*` 钩子接管交互
-- 内容组件不含 inline-toc（已按需求移除）；文章内嵌目录请直接用右侧 ClerkTOC
+- 内容组件不含 inline-toc（已按需求移除）；文章内嵌目录请直接用右侧 Plumest TOC
+- **Agent 端点降级管线**：`/<id>.md` 端点与 `/llms-full.txt` 输出的不是原始 MDX，
+  而是经 `src/lib/agent/downlevel.ts` 降级的纯净 GFM（剥离 `import`、整块剔除
+  `<Preview>` 演示、`<GitHubCard(s)>` 转仓库链接）。**新增可在正文使用的内容组件时，
+  必须同步扩展 `downlevel.ts` 的映射**，否则 agent 抓取会残留 JSX。
+- **Props/参数契约表格一律用 `<PropsTable>`**（构建器 `typeTable()`），
+  不要再写原始 markdown 表格；中文页传
+  `labels={{ prop: '参数', type: '类型', default: '默认值' }}`。
+  范例见 `src/content/docs/contribution/components/type-table.mdx`（EN+ZH）。
 - **构建器文本内的行内代码一律用 `code()` 组件**：构建器参数（如
   `step('...')`、`callout('...')`、`tabs({ panels: [{ content }] })`）输出纯 HTML，
   **不解析 markdown**，反引号 `` ` `` 会原样显示。需要行内代码时写

@@ -33,12 +33,27 @@ function flatSitemap() {
         const index = join(out, 'sitemap-index.xml');
         try {
           let xml = await readFile(chunk, 'utf8');
+          // 为每个 <url> 增补 hreflang="x-default"（指向默认 locale 的同路径 URL）。
+          // @astrojs/sitemap 的 i18n 选项只发射每 locale 一条 alternate，没有 x-default 概念；
+          // Google 建议多语言站显式声明 x-default。
+          xml = xml.replace(/<url>([\s\S]*?)<\/url>/g, (block) => {
+            if (block.includes('hreflang="x-default"')) return block;
+            const en =
+              /hreflang="en"\s+href="([^"]+)"/.exec(block)?.[1] ??
+              /<loc>([^<]*)<\/loc>/.exec(block)?.[1]?.replace('/zh', '') ??
+              null;
+            if (!en) return block;
+            return block.replace(
+              '</url>',
+              `<xhtml:link rel="alternate" hreflang="x-default" href="${en}"/></url>`,
+            );
+          });
           // 美化：标签间换行（仅加空白，不改变 XML 语义）
           xml = xml.replace(/></g, '>\n<');
           await writeFile(join(out, 'sitemap.xml'), xml);
           await rm(chunk, { force: true });
           await rm(index, { force: true });
-          logger.info('`sitemap.xml` generated (flat, pretty, hreflang kept)');
+          logger.info('`sitemap.xml` generated (flat, pretty, hreflang + x-default)');
         } catch (err) {
           logger.error(`flat-sitemap: ${/** @type {Error} */ (err).message}`);
         }
@@ -228,7 +243,7 @@ export default defineConfig({
       ],
       // 关闭 expressive-code 的 frame（macOS 红绿灯终端条等外壳）
       expressiveCode: { frames: false },
-      // ClerkTOC 层级：h2–h4
+      // Plumest TOC 层级：h2–h4
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
       // 官方 lastUpdated：页脚显示最近更新日期（取自 Git 提交历史，可用 frontmatter 覆盖）
       lastUpdated: true,

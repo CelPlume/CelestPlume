@@ -85,6 +85,11 @@ const jsonLd = {
     <title>{title}</title>
 
     <link rel="canonical" href={new URL(currentPath, siteUrl).toString()} />
+    <!-- hreflang：主页是独立 head（非 Starlight 页面），需自行声明语言备用链接；
+         x-default 指向默认语言（英文根路径）。文档页由 Starlight 自动生成，勿重复添加 -->
+    <link rel="alternate" hreflang="en" href={new URL('/', siteUrl).toString()} />
+    <link rel="alternate" hreflang="zh-CN" href={new URL('/zh/', siteUrl).toString()} />
+    <link rel="alternate" hreflang="x-default" href={new URL('/', siteUrl).toString()} />
     <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS" />
     <link rel="describedby" href="/llms.txt" />
 
