@@ -924,6 +924,7 @@ body {
 .cpd-article a.cpd-card::after,
 .cpd-article a.cpd-dropdown-item::after,
 .cpd-article a.cpd-github-card::after,
+.cpd-article a.cpd-bili-card::after,
 .cpd-card a::after,
 .cpd-btn a::after,
 .cpd-heading-anchor::after,
@@ -1544,6 +1545,131 @@ a.cpd-github-card:hover {
   height: 1em;
 }
 
+/* —— Bilibili 链接卡片（封面在左 16:9 + 标题/简介/UP主） —— */
+.cpd-article a.cpd-bili-card,
+a.cpd-bili-card {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 480px;
+  margin-block: 0.75rem;
+  padding: 0.625rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: var(--cpd-radius);
+  background: var(--cpd-card);
+  color: var(--cpd-card-foreground);
+  text-decoration: none;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+.cpd-article a.cpd-bili-card:hover,
+a.cpd-bili-card:hover {
+  border-color: color-mix(in oklab, var(--cpd-gold) 45%, var(--cpd-border));
+}
+@media (max-width: 30rem) {
+  .cpd-article a.cpd-bili-card,
+  a.cpd-bili-card {
+    grid-template-columns: 1fr;
+  }
+}
+.cpd-bili-card-cover {
+  position: relative;
+  display: block;
+  align-self: start;
+  aspect-ratio: 16 / 9;
+  border-radius: calc(var(--cpd-radius) - 2px);
+  overflow: hidden;
+  background: var(--cpd-secondary);
+}
+.cpd-bili-card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cpd-bili-card-duration {
+  position: absolute;
+  right: 0.375rem;
+  bottom: 0.375rem;
+  padding: 0.05rem 0.35rem;
+  border-radius: 0.25rem;
+  background: color-mix(in oklab, #000 72%, transparent);
+  color: #fff;
+  font-family: var(--cpd-font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+}
+.cpd-bili-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  min-width: 0;
+}
+.cpd-bili-card-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.cpd-bili-card-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-bili-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: auto;
+  font-size: 0.8125rem;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-bili-card-up {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-width: 0;
+}
+.cpd-bili-card-avatar {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.cpd-bili-card-source {
+  flex: none;
+}
+/* 卡片自身为 grid 容器，全局外链箭头 ::after 会掉到新行；
+   箭头改为内联在「Bilibili」文字右侧 */
+.cpd-bili-card-source::after {
+  content: '';
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  margin-left: 0.25em;
+  vertical-align: -0.05em;
+  background-color: currentColor;
+  opacity: 0.7;
+  transition: opacity 150ms ease, transform 150ms ease;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 7h10v10'/%3E%3Cpath d='M7 17 17 7'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M7 7h10v10'/%3E%3Cpath d='M7 17 17 7'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+a.cpd-bili-card:hover .cpd-bili-card-source::after {
+  opacity: 1;
+  transform: translateX(1px);
+}
+@media (max-width: 30rem) {
+  .cpd-bili-card-cover {
+    /* 窄屏封面在顶部，占满卡片宽度 */
+    order: -1;
+  }
+}
+
 /* —— Steps —— */
 .cpd-steps {
   counter-reset: cpd-step;
@@ -2113,6 +2239,450 @@ a.cpd-github-card:hover {
 }
 
 /* ============================================================
+   6b. 写作语法扩展（移植 Shirone 的 Plume 兼容语法，Plumest 视觉）
+      马克笔 ==mark== / 隐秘文本 :spoiler / 缩写词 <abbr> /
+      内容注释 [+tag] / Bilibili Facade / 加密解锁门
+   ============================================================ */
+
+/* ---- 马克笔高亮：语义变体由 color-mix 驱动，底部荧光笔式覆盖 ---- */
+.cpd-article mark.cpd-marker {
+  padding-inline: 0.08em;
+  background: transparent;
+  color: inherit;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.cpd-article mark.cpd-marker--primary {
+  --cpd-marker-accent: var(--cpd-gold);
+}
+.cpd-article mark.cpd-marker--secondary {
+  --cpd-marker-accent: var(--cpd-accent-foreground);
+}
+.cpd-article mark.cpd-marker--tertiary {
+  --cpd-marker-accent: var(--cpd-info);
+}
+.cpd-article mark.cpd-marker--error {
+  --cpd-marker-accent: var(--cpd-error);
+}
+.cpd-article mark.cpd-marker--tip {
+  --cpd-marker-accent: var(--cpd-success);
+}
+.cpd-article mark.cpd-marker {
+  box-shadow: inset 0 -0.62em 0 color-mix(in oklab, var(--cpd-marker-accent, var(--cpd-gold)) 34%, transparent);
+}
+
+/* ---- 隐秘文本：黑幕遮罩（不透明深色幕布盖住文字；与行内代码的
+        「浅底 + 边框 + 等宽」明确区分），悬停/聚焦/展开时幕布淡出显形 ---- */
+.cpd-article button.cpd-spoiler {
+  --cpd-spoiler-mask: hsl(0 0% 9%);
+  display: inline;
+  padding: 0.1em 0.4em;
+  border: none;
+  border-radius: 0.3rem;
+  background: var(--cpd-spoiler-mask);
+  color: transparent;
+  font: inherit;
+  line-height: inherit;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  cursor: pointer;
+  transition: color 200ms ease, background-color 200ms ease;
+}
+:root[data-cpd-theme='dark'] .cpd-article button.cpd-spoiler {
+  --cpd-spoiler-mask: hsl(0 0% 3%);
+}
+.cpd-article button.cpd-spoiler > * {
+  color: transparent;
+  transition: color 200ms ease;
+}
+/* 隐藏态：子元素（如行内代码）的底色/边框一并压掉，避免在黑幕上露馅 */
+.cpd-article button.cpd-spoiler:not(:hover):not(:focus-visible):not([aria-expanded='true']) > * {
+  background: transparent;
+  border-color: transparent;
+}
+.cpd-article button.cpd-spoiler:hover,
+.cpd-article button.cpd-spoiler:focus-visible,
+.cpd-article button.cpd-spoiler[aria-expanded='true'] {
+  color: inherit;
+  background: color-mix(in oklab, var(--cpd-spoiler-mask) 8%, transparent);
+}
+.cpd-article button.cpd-spoiler:hover > *,
+.cpd-article button.cpd-spoiler:focus-visible > *,
+.cpd-article button.cpd-spoiler[aria-expanded='true'] > * {
+  color: inherit;
+}
+.cpd-article button.cpd-spoiler:focus-visible {
+  outline: 2px solid var(--cpd-ring);
+  outline-offset: 1px;
+}
+
+/* ---- 缩写词：点状下划线 + CSS 气泡（悬停/键盘聚焦/触屏轻点，
+        原生 title 作为无 JS 回退，runtime 挂载后移除避免双提示） ---- */
+.cpd-article abbr.cpd-abbr {
+  position: relative;
+  text-decoration: underline dotted var(--cpd-gold);
+  text-underline-offset: 0.2em;
+  cursor: help;
+}
+.cpd-article abbr.cpd-abbr::after {
+  content: attr(data-cpd-abbr);
+  position: absolute;
+  bottom: calc(100% + 0.45rem);
+  left: 50%;
+  transform: translateX(-50%) translateY(0.25rem);
+  z-index: 70;
+  width: max-content;
+  max-width: min(16rem, 80vw);
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: 0.5rem;
+  background: var(--cpd-popover);
+  color: var(--cpd-popover-foreground);
+  font-family: var(--cpd-font-sans);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: start;
+  text-decoration: none;
+  white-space: normal;
+  pointer-events: none;
+  box-shadow: 0 6px 18px color-mix(in oklab, var(--cpd-overlay) 100%, transparent);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 150ms ease, transform 150ms ease, visibility 150ms;
+}
+.cpd-article abbr.cpd-abbr::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 0.45rem - 4px);
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  z-index: 71;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid var(--cpd-border);
+  background: var(--cpd-popover);
+  border-top: none;
+  border-inline-start: none;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 150ms ease, visibility 150ms;
+}
+.cpd-article abbr.cpd-abbr:hover::after,
+.cpd-article abbr.cpd-abbr:focus-visible::after,
+.cpd-article abbr.cpd-abbr[data-cpd-abbr-open]::after,
+.cpd-article abbr.cpd-abbr:hover::before,
+.cpd-article abbr.cpd-abbr:focus-visible::before,
+.cpd-article abbr.cpd-abbr[data-cpd-abbr-open]::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+/* 触屏长按选中文字会盖住气泡：显式禁用选中 */
+.cpd-article abbr.cpd-abbr[data-cpd-abbr-open] {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ---- 内容注释：行内徽标 + 原生 Popover 卡片 ---- */
+.cpd-article button.cpd-anno-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15em;
+  height: 1.15em;
+  margin-inline: 0.1em;
+  padding: 0;
+  border: 1px solid color-mix(in oklab, var(--cpd-gold) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--cpd-gold) 16%, transparent);
+  color: var(--cpd-foreground);
+  font-size: 0.72em;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: super;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.cpd-article button.cpd-anno-trigger:hover {
+  background: color-mix(in oklab, var(--cpd-gold) 28%, transparent);
+}
+.cpd-anno-popover {
+  position: fixed;
+  inset: auto;
+  margin: 0.4rem;
+  max-width: min(22rem, 100vw - 2rem);
+  max-height: 18rem;
+  overflow-y: auto;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: var(--cpd-radius);
+  background: var(--cpd-popover);
+  color: var(--cpd-popover-foreground);
+  box-shadow: 0 8px 24px color-mix(in oklab, var(--cpd-overlay) 100%, transparent);
+}
+/* 不支持 CSS Anchor Positioning 的浏览器：居中回退 */
+@supports not (position-area: block-end) {
+  .cpd-anno-popover {
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+  }
+}
+/* 支持 CSS Anchor Positioning：锚定徽标下方、朝行内结束侧展开，
+   被裁切时按块/行内翻转（position-anchor 由插件内联在弹层上） */
+@supports (position-area: block-end) {
+  .cpd-anno-popover {
+    position-area: block-end span-inline-end;
+    position-try-fallbacks: flip-block, flip-inline;
+    transform: none;
+  }
+}
+.cpd-anno-popover::backdrop {
+  background: transparent;
+}
+.cpd-anno-popover .cpd-anno-label {
+  margin: 0 0 0.375rem;
+  font-family: var(--cpd-font-display);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-anno-popover .cpd-anno-body {
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+.cpd-anno-popover .cpd-anno-body > :first-child {
+  margin-top: 0;
+}
+.cpd-anno-popover .cpd-anno-body > :last-child {
+  margin-bottom: 0;
+}
+.cpd-anno-popover .cpd-anno-list {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* ---- Bilibili Facade：16:9 占位 + CSS 绘制播放键，点击后才注入 iframe ---- */
+.cpd-video {
+  margin: 1rem auto;
+  width: 100%;
+  max-width: 800px;
+}
+.cpd-video-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--cpd-border);
+  border-radius: var(--cpd-radius);
+  background:
+    radial-gradient(120% 120% at 50% 0%, color-mix(in oklab, var(--cpd-gold) 10%, transparent), transparent 60%),
+    var(--cpd-card);
+  overflow: hidden;
+}
+.cpd-video-stage:has(.cpd-video-player) {
+  display: block;
+}
+.cpd-video-player {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.cpd-video-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  padding: 0;
+  border: 1px solid var(--cpd-border);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--cpd-background) 78%, transparent);
+  cursor: pointer;
+  transition: transform 200ms ease, background-color 200ms ease;
+}
+.cpd-video-play:hover:not(:disabled) {
+  transform: scale(1.06);
+  background: var(--cpd-background);
+}
+.cpd-video-play:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+.cpd-video-play-icon {
+  width: 0;
+  height: 0;
+  margin-left: 0.35rem;
+  border-style: solid;
+  border-width: 0.85rem 0 0.85rem 1.35rem;
+  border-color: transparent transparent transparent var(--cpd-gold);
+}
+.cpd-video-caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-video-title {
+  color: var(--cpd-foreground);
+  font-weight: 600;
+}
+.cpd-video-source {
+  color: var(--cpd-muted-foreground);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.cpd-video-source:hover {
+  color: var(--cpd-gold);
+  text-decoration: underline;
+}
+
+/* ---- 加密解锁门 ---- */
+.cpd-encrypted-content:not([hidden]) {
+  /* 解密后的正文恢复排版（外层 .cpd-article 已提供） */
+}
+.cpd-encrypted-gate {
+  max-width: 26rem;
+  margin: 3rem auto;
+  padding: 1.75rem 1.5rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: var(--cpd-radius);
+  background: var(--cpd-card);
+  text-align: center;
+}
+.cpd-encrypted-seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--cpd-gold) 14%, transparent);
+  border: 1px solid color-mix(in oklab, var(--cpd-gold) 40%, transparent);
+  color: var(--cpd-gold);
+}
+.cpd-encrypted-seal-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.cpd-encrypted-icon {
+  width: 1rem;
+  height: 1rem;
+}
+.cpd-encrypted-title {
+  margin: 0.875rem 0 0.25rem;
+  font-family: var(--cpd-font-display);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--cpd-foreground);
+}
+.cpd-encrypted-desc {
+  margin: 0 0 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-encrypted-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+}
+.cpd-encrypted-field {
+  position: relative;
+}
+.cpd-encrypted-input {
+  width: 100%;
+  padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: 0.5rem;
+  background: var(--cpd-background);
+  color: var(--cpd-foreground);
+  font: inherit;
+  font-size: 0.875rem;
+}
+.cpd-encrypted-input:focus-visible {
+  outline: 2px solid var(--cpd-ring);
+  outline-offset: 1px;
+}
+.cpd-encrypted-eye {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 0.375rem;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  border: none;
+  border-radius: 0.375rem;
+  background: transparent;
+  color: var(--cpd-muted-foreground);
+  cursor: pointer;
+}
+.cpd-encrypted-eye:hover {
+  color: var(--cpd-foreground);
+}
+.cpd-encrypted-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid color-mix(in oklab, var(--cpd-gold) 45%, transparent);
+  border-radius: 0.5rem;
+  background: color-mix(in oklab, var(--cpd-gold) 14%, transparent);
+  color: var(--cpd-foreground);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.cpd-encrypted-submit:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--cpd-gold) 24%, transparent);
+}
+.cpd-encrypted-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.cpd-encrypted-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.375rem;
+  margin: 0.875rem 0 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: color-mix(in oklab, var(--cpd-idea) 10%, transparent);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--cpd-foreground);
+  text-align: start;
+}
+.cpd-encrypted-hint-icon {
+  flex-shrink: 0;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: 0.15rem;
+  color: var(--cpd-idea);
+}
+.cpd-encrypted-error {
+  margin: 0.625rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--cpd-error);
+}
+
+/* ============================================================
    7. 可访问性：减少动效
    ============================================================ */
 @media (prefers-reduced-motion: reduce) {
@@ -2123,7 +2693,13 @@ a.cpd-github-card:hover {
   .cpd-toc-thumb,
   .cpd-accordion-content,
   .cpd-accordion-chevron,
-  .cpd-sidebar-chevron {
+  .cpd-sidebar-chevron,
+  .cpd-article button.cpd-spoiler,
+  .cpd-article button.cpd-spoiler > *,
+  .cpd-article button.cpd-anno-trigger,
+  .cpd-article abbr.cpd-abbr::after,
+  .cpd-article abbr.cpd-abbr::before,
+  .cpd-video-play {
     transition: none;
   }
   .cpd-loader-ring,
@@ -2278,6 +2854,7 @@ a.cpd-github-card:hover {
   cursor: grab;
   user-select: none; /* 拖动平移时防止选中图表文本 */
   touch-action: none; /* 让指针拖动接管（不做浏览器默认滚动/缩放） */
+  padding: 1.25rem 1.5rem; /* 画布留白（Shirone surface 风格） */
 }
 .cpd-mermaid-viewport.is-panning {
   cursor: grabbing;
@@ -2293,6 +2870,165 @@ a.cpd-github-card:hover {
 }
 .cpd-mermaid-viewport > svg a {
   text-decoration: none;
+}
+
+/* —— 分图类型主题修正（对齐 Shirone）：mermaid 内联样式以 !important
+   边界接管，具体值由渲染时注入的 --cpd-mmd-* scoped 变量提供 —— */
+.cpd-mermaid
+  svg:not(.mindmapDiagram):not([aria-roledescription='journey']):not([aria-roledescription='timeline']):not([aria-roledescription='gitGraph']):not([aria-roledescription='kanban']):not([aria-roledescription='classDiagram'])
+  text,
+.cpd-mermaid
+  svg:not(.mindmapDiagram):not([aria-roledescription='journey']):not([aria-roledescription='timeline']):not([aria-roledescription='gitGraph']):not([aria-roledescription='kanban']):not([aria-roledescription='classDiagram'])
+  .label,
+.cpd-mermaid
+  svg:not(.mindmapDiagram):not([aria-roledescription='journey']):not([aria-roledescription='timeline']):not([aria-roledescription='gitGraph']):not([aria-roledescription='kanban']):not([aria-roledescription='classDiagram'])
+  .nodeLabel {
+  color: var(--cpd-mmd-text) !important;
+  fill: var(--cpd-mmd-text) !important;
+}
+.cpd-mermaid
+  svg:not(.mindmapDiagram):not([aria-roledescription='journey']):not([aria-roledescription='timeline']):not([aria-roledescription='gitGraph']):not([aria-roledescription='kanban']):not([aria-roledescription='classDiagram'])
+  .node .label,
+.cpd-mermaid
+  svg:not(.mindmapDiagram):not([aria-roledescription='journey']):not([aria-roledescription='timeline']):not([aria-roledescription='gitGraph']):not([aria-roledescription='kanban']):not([aria-roledescription='classDiagram'])
+  .node .nodeLabel,
+.cpd-mermaid
+  svg:not(.mindmapDiagram):not([aria-roledescription='journey']):not([aria-roledescription='timeline']):not([aria-roledescription='gitGraph']):not([aria-roledescription='kanban']):not([aria-roledescription='classDiagram'])
+  .node foreignObject,
+.cpd-mermaid
+  svg:not(.mindmapDiagram):not([aria-roledescription='journey']):not([aria-roledescription='timeline']):not([aria-roledescription='gitGraph']):not([aria-roledescription='kanban']):not([aria-roledescription='classDiagram'])
+  .node foreignObject span,
+.cpd-mermaid
+  svg:not(.mindmapDiagram):not([aria-roledescription='journey']):not([aria-roledescription='timeline']):not([aria-roledescription='gitGraph']):not([aria-roledescription='kanban']):not([aria-roledescription='classDiagram'])
+  .node foreignObject p {
+  color: var(--cpd-mmd-node-text) !important;
+  fill: var(--cpd-mmd-node-text) !important;
+}
+.cpd-mermaid svg .flowchart-link,
+.cpd-mermaid svg .edgePath path,
+.cpd-mermaid svg .messageLine0,
+.cpd-mermaid svg .messageLine1,
+.cpd-mermaid svg .actor-line,
+.cpd-mermaid svg .loopLine,
+.cpd-mermaid svg .relation,
+.cpd-mermaid svg .transition,
+.cpd-mermaid svg .axis path,
+.cpd-mermaid svg .axis line,
+.cpd-mermaid svg .tick line,
+.cpd-mermaid svg .grid line {
+  stroke: var(--cpd-mmd-line) !important;
+}
+.cpd-mermaid svg .arrowheadPath {
+  fill: var(--cpd-mmd-line) !important;
+}
+/* 边标签底片与画布同底 */
+.cpd-mermaid svg .edgeLabel rect,
+.cpd-mermaid svg .edgeLabel .label-container,
+.cpd-mermaid svg .edgeLabel p,
+.cpd-mermaid svg .edgeLabel span {
+  background: var(--cpd-mmd-bg);
+}
+.cpd-mermaid svg .edgeLabel span,
+.cpd-mermaid svg .edgeLabel text,
+.cpd-mermaid svg .edgeLabel p {
+  color: var(--cpd-mmd-text) !important;
+  fill: var(--cpd-mmd-text) !important;
+}
+/* Mindmap：深度 HSL 填充可能失去对比，统一到节点/线条令牌 */
+.cpd-mermaid svg.mindmapDiagram .edgePaths path,
+.cpd-mermaid svg.mindmapDiagram .edge,
+.cpd-mermaid svg.mindmapDiagram [class*='section-edge'],
+.cpd-mermaid svg.mindmapDiagram .node-line- {
+  stroke: var(--cpd-mmd-line) !important;
+}
+.cpd-mermaid svg.mindmapDiagram .mindmap-node > .node-bkg,
+.cpd-mermaid svg.mindmapDiagram .mindmap-node > .label-container,
+.cpd-mermaid svg.mindmapDiagram .mindmap-node > circle,
+.cpd-mermaid svg.mindmapDiagram .mindmap-node > path,
+.cpd-mermaid svg.mindmapDiagram .mindmap-node > rect,
+.cpd-mermaid svg.mindmapDiagram .mindmap-node > polygon {
+  fill: var(--cpd-mmd-node-bg) !important;
+  stroke: var(--cpd-mmd-line) !important;
+}
+.cpd-mermaid svg.mindmapDiagram .mindmap-node .nodeLabel,
+.cpd-mermaid svg.mindmapDiagram .mindmap-node text {
+  color: var(--cpd-mmd-node-text) !important;
+  fill: var(--cpd-mmd-node-text) !important;
+}
+/* Journey：区段/任务底色与文字配对 */
+.cpd-mermaid svg[aria-roledescription='journey'] rect.journey-section,
+.cpd-mermaid svg[aria-roledescription='journey'] .journey-section > rect {
+  fill: var(--cpd-mmd-journey-section-bg) !important;
+}
+.cpd-mermaid svg[aria-roledescription='journey'] .journey-section text,
+.cpd-mermaid svg[aria-roledescription='journey'] .journey-section .label,
+.cpd-mermaid svg[aria-roledescription='journey'] .journey-section span {
+  color: var(--cpd-mmd-journey-section-text) !important;
+  fill: var(--cpd-mmd-journey-section-text) !important;
+}
+.cpd-mermaid svg[aria-roledescription='journey'] rect.task,
+.cpd-mermaid svg[aria-roledescription='journey'] .task > rect {
+  fill: var(--cpd-mmd-journey-task-bg) !important;
+}
+.cpd-mermaid svg[aria-roledescription='journey'] .task text,
+.cpd-mermaid svg[aria-roledescription='journey'] .task .label,
+.cpd-mermaid svg[aria-roledescription='journey'] .task span {
+  color: var(--cpd-mmd-journey-task-text) !important;
+  fill: var(--cpd-mmd-journey-task-text) !important;
+}
+/* Timeline */
+.cpd-mermaid svg[aria-roledescription='timeline'] .timeline-node .node-bkg {
+  fill: var(--cpd-mmd-timeline-bg) !important;
+}
+.cpd-mermaid svg[aria-roledescription='timeline'] .timeline-node text,
+.cpd-mermaid svg[aria-roledescription='timeline'] > text,
+.cpd-mermaid svg[aria-roledescription='timeline'] .timeline-node .nodeLabel,
+.cpd-mermaid svg[aria-roledescription='timeline'] .timeline-node span {
+  color: var(--cpd-mmd-timeline-text) !important;
+  fill: var(--cpd-mmd-timeline-text) !important;
+}
+.cpd-mermaid svg[aria-roledescription='timeline'] .timeline-node [class^='node-line'],
+.cpd-mermaid svg[aria-roledescription='timeline'] .lineWrapper line {
+  stroke: var(--cpd-mmd-line) !important;
+}
+/* Git Graph：分支/提交标签底色 */
+.cpd-mermaid svg[aria-roledescription='gitGraph'] .branchLabelBkg,
+.cpd-mermaid svg[aria-roledescription='gitGraph'] .commit-label-bkg {
+  background: var(--cpd-mmd-git-label-bg) !important;
+  fill: var(--cpd-mmd-git-label-bg) !important;
+}
+.cpd-mermaid svg[aria-roledescription='gitGraph'] .branchLabel text,
+.cpd-mermaid svg[aria-roledescription='gitGraph'] .branchLabel tspan,
+.cpd-mermaid svg[aria-roledescription='gitGraph'] .commit-label {
+  color: var(--cpd-mmd-git-label-text) !important;
+  fill: var(--cpd-mmd-git-label-text) !important;
+}
+/* Kanban：列与卡片底色 */
+.cpd-mermaid svg[aria-roledescription='kanban'] .cluster > rect {
+  fill: var(--cpd-mmd-kanban-col-bg) !important;
+}
+.cpd-mermaid svg[aria-roledescription='kanban'] .node rect,
+.cpd-mermaid svg[aria-roledescription='kanban'] .node polygon,
+.cpd-mermaid svg[aria-roledescription='kanban'] .node path {
+  fill: var(--cpd-mmd-kanban-card-bg) !important;
+}
+.cpd-mermaid svg[aria-roledescription='kanban'] .node .nodeLabel,
+.cpd-mermaid svg[aria-roledescription='kanban'] .node foreignObject span,
+.cpd-mermaid svg[aria-roledescription='kanban'] .node foreignObject p {
+  color: var(--cpd-mmd-kanban-card-text) !important;
+  fill: var(--cpd-mmd-kanban-card-text) !important;
+}
+/* 类图：关系标签底片与节点文字 */
+.cpd-mermaid svg[aria-roledescription='classDiagram'] .edgeLabel .labelBkg {
+  background: var(--cpd-mmd-class-edge-bg) !important;
+  fill: var(--cpd-mmd-class-edge-bg) !important;
+}
+.cpd-mermaid svg[aria-roledescription='classDiagram'] .edgeLabel .labelBkg p,
+.cpd-mermaid svg[aria-roledescription='classDiagram'] .node .nodeLabel,
+.cpd-mermaid svg[aria-roledescription='classDiagram'] .node foreignObject span,
+.cpd-mermaid svg[aria-roledescription='classDiagram'] .node foreignObject p {
+  color: var(--cpd-mmd-class-edge-text) !important;
+  fill: var(--cpd-mmd-class-edge-text) !important;
 }
 
 /* 占位符（客户端渲染完成前） */
@@ -2601,5 +3337,22 @@ a.cpd-github-card:hover {
   .expressive-code pre {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
+  }
+  /* 写作语法打印适配：隐秘文本直接显形；注释徽标保留、浮层隐藏；
+     视频占位与解锁门保留骨架但不再可交互 */
+  .cpd-article button.cpd-spoiler,
+  .cpd-article button.cpd-spoiler > * {
+    color: inherit !important;
+    background: transparent !important;
+  }
+  .cpd-anno-popover {
+    display: none !important;
+  }
+  .cpd-article abbr.cpd-abbr::after,
+  .cpd-article abbr.cpd-abbr::before {
+    display: none !important;
+  }
+  .cpd-encrypted-gate {
+    border-color: var(--cpd-border);
   }
 }
