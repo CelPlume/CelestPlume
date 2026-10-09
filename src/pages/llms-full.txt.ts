@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import { downlevelMarkdown } from '../lib/agent/downlevel';
 
 /** 文档 id → 站内路由（index 收敛为目录根、去掉扩展名），与 sitemap 一致 */
 function route(id: string): string {
@@ -8,7 +9,8 @@ function route(id: string): string {
 }
 
 /**
- * /llms-full.txt — 全站文档原文（EN + ZH）拼接，供 LLM/agent 一次性读取。
+ * /llms-full.txt — 全站文档全文（EN + ZH）拼接，供 LLM/agent 一次性读取。
+ * body 经 downlevel 降级为纯净 GFM（剥 import、剔 <Preview>、GitHubCard → 链接）。
  */
 export async function GET(context: { site: string | URL }) {
   const site = String(context.site).replace(/\/$/, '');
@@ -25,7 +27,7 @@ export async function GET(context: { site: string | URL }) {
     out.push('');
     out.push(`${site}${route(entry.id)}`);
     out.push('');
-    out.push(entry.body ?? '');
+    out.push(downlevelMarkdown(entry.body ?? ''));
     out.push('');
     out.push('---');
     out.push('');

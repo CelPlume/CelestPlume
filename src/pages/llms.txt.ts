@@ -65,7 +65,7 @@ export async function GET(context: { site: string | URL }) {
     '- `/llms.txt` is the curated overview; the full text of every page is in `/llms-full.txt`.',
   );
   out.push(
-    '- Pages are static HTML; each entry links its human-readable page plus a `[markdown]` link to the raw source at the same path ending in `.md`.',
+    '- Pages are static HTML; each entry links its human-readable page plus a `[markdown]` link to the same page as clean GitHub-flavored Markdown at the same path ending in `.md` (component imports and interactive demos are stripped; GitHub cards become plain repository links).',
   );
   out.push('');
 

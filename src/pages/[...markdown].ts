@@ -1,11 +1,13 @@
 import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
+import { downlevelMarkdown } from '../lib/agent/downlevel';
 
 /**
- * 每篇文档的原始 Markdown 端点：`/<path>.md`。
+ * 每篇文档的 Markdown 端点：`/<path>.md`。
  * 路径与内容集合 id 一一对应（保留 `index`，如 `/chronosync/index.md`），
- * 供 LLM/agent 直接取原文，绕过 HTML 渲染。
- * MDX 文档的 body 含 `import` 行与 JSX 组件标签，属原始源码的一部分。
+ * 供 LLM/agent 直接取干净的 GFM 原文，绕过 HTML 渲染。
+ * MDX 文档的 body 经 downlevel 降级：剥离 import、剔除 <Preview> 演示、
+ * <GitHubCard(s)> 转为仓库链接列表（见 src/lib/agent/downlevel.ts）。
  */
 
 /** 内容集合 id → .md 端点路径（仅去扩展名） */
@@ -20,7 +22,7 @@ export async function getStaticPaths() {
     props: {
       title: entry.data.title,
       description: entry.data.description ?? '',
-      body: entry.body ?? '',
+      body: downlevelMarkdown(entry.body ?? ''),
     },
   }));
 }
