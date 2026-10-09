@@ -95,6 +95,19 @@ const HTML_TAG_START_RE = /[A-Za-z/!]/;
 const MDX_MODULE_LINE_RE = /^(?:import|export)\b[^\n]*/gm;
 
 /**
+ * 掩码写作语法的指令构造（remark-directive / Plume 兼容语法，非散文）：
+ * - 文本/叶子指令 `:name[label]{attrs}` / `::name{attrs}`（可出现在句中）
+ * - 缩写字典行 `*[术语]: 释义`（整行）
+ * 指令名与属性是语法构造而非文案，词法与标点规则均不适用。
+ */
+const DIRECTIVE_CONSTRUCT_RE = /:{1,3}[A-Za-z][A-Za-z0-9-]*(?:\[[^\]\n]*\])?(?:\{[^}\n]*\})?/g;
+const ABBR_DEFINITION_CONSTRUCT_RE = /^\s*\*\[[^\]\n]+\]:[^\n]*$/gm;
+
+function maskDirectiveConstructs(text: string): string {
+  return blankMatches(blankMatches(text, DIRECTIVE_CONSTRUCT_RE), ABBR_DEFINITION_CONSTRUCT_RE);
+}
+
+/**
  * 掩码 HTML/JSX 标签（可跨行）：从 `<tag` 到配对 `>`；
  * 引号与 {} 表达式内的 `>` 不视为标签结尾（支持 html={[...]} 多行属性）。
  * 未闭合时放弃该起点继续扫描。注释 <!-- … --> 同样覆盖。
@@ -189,6 +202,9 @@ function maskExemptRegions(text: string, alsoHtml = false): string {
 
   // 5) 引用式链接定义行（[label]: target 整行非散文）
   masked = blankMatches(masked, REFDEF_LINE_RE);
+
+  // 5b) 写作语法指令构造（:name[..]{..} / ::name{..} / *[术语]: 释义）
+  masked = maskDirectiveConstructs(masked);
 
   // 6) MDX import/export 语句行（模块路径与代码，非散文；如 '…Preview.astro'）
   masked = blankMatches(masked, MDX_MODULE_LINE_RE);

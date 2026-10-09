@@ -339,7 +339,8 @@ function extractLinks(text: string, masked: string): RawLink[] {
   for (const m of masked.matchAll(REFDEF_RE)) {
     const label = normalizeLabel(m[1] ?? '');
     const target = (m[2] ?? m[3] ?? '').trim();
-    if (label !== '' && target !== '' && !label.startsWith('^')) {
+    if (label !== '' && target !== '' && !label.startsWith('^') && !label.startsWith('+')) {
+      // `^` 脚注定义、`+` 内容注释定义（[+tag]: …）均非链接引用
       refdefs.set(label, target);
     }
     spans.push({ start: m.index, end: m.index + m[0].length });
