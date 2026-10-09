@@ -14,7 +14,7 @@ check the conventions here first, then follow the checklist at the bottom.
 ## What the kit is
 
 `src/lib/ui/` is a **pure TypeScript** implementation of a Plumest-style
-documentation UI — the left sidebar, the ClerkTOC, document styles and the
+documentation UI — the left sidebar, the Plumest TOC, document styles and the
 common content components:
 
 - **No React.** Builders are plain functions returning HTML strings.
@@ -37,7 +37,7 @@ behavior, but keep the kit framework-free.
 
 The docs pages themselves are rendered by Starlight with the kit visible
 shell swapped in via component overrides; a live demo of the whole kit
-(sidebar + ClerkTOC + components) is available at [/demo/](/demo/).
+(sidebar + Plumest TOC + components) is available at [/demo/](/demo/).
 
 ## Directory layout
 
@@ -52,7 +52,7 @@ src/
 │   │   └── index.ts         #   Icon object aggregate
 │   ├── tokens.ts            #   design tokens (TS → CSS variables)
 │   ├── sidebar.ts           #   left sidebar builder
-│   ├── toc.ts               #   ClerkTOC builder + heading collector
+│   ├── toc.ts               #   Plumest TOC builder + heading collector
 │   ├── components.ts        #   callout, cards, steps, tabs, … builders
 │   ├── github-card.ts       #   GitHubCard builder + build-time fetch
 │   ├── runtime.ts           #   framework-free client runtime

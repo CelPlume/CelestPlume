@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../../components/kit/PropsTable.astro';
 import { heading } from '../../../../../lib/ui';
 
 `heading()` 渲染带锚点的标题：点击文本跳转到锚点，悬停/聚焦时出现 ghost
@@ -41,15 +42,18 @@ heading(2, '创建账号', { id: 'create-account', step: true });
 
 ## 参数
 
-| 参数 | 类型 | 说明 |
-| --- | --- | --- |
-| `level` | `1–6` | 标题层级（第一个参数）。 |
-| `text` | `string` | 标题文本（第二个参数）。 |
-| `id` | `string` | 锚点 id——复制链接按钮也使用它。 |
-| `step` | `boolean` | 标记为 ClerkTOC 阶数项（`data-cpd-step`）。 |
+<PropsTable
+  labels={{ prop: '参数', type: '类型' }}
+  type={{
+    level: { type: '1–6', description: '标题层级（第一个参数）。' },
+    text: { type: 'string', description: '标题文本（第二个参数）。' },
+    id: { type: 'string', description: '锚点 id——复制链接按钮也使用它。' },
+    step: { type: 'boolean', description: '标记为 Plumest TOC 阶数项（<code>data-cpd-step</code>）。' },
+  }}
+/>
 
 ## 注意
 
 - 锚点链接为 `href="#<id>"`；复制按钮复制 `location.origin + pathname + #<id>`
   绝对地址。
-- `step` 标题在文章内渲染阶数徽标，并在 ClerkTOC 栏显示阶数圆点。
+- `step` 标题在文章内渲染阶数徽标，并在 Plumest TOC 中显示编号徽章。

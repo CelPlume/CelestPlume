@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
 import { heading } from '../../../../lib/ui';
 
 `heading()` renders an anchored heading: clicking the text jumps to the
@@ -42,16 +43,19 @@ heading(2, 'Create the account', { id: 'create-account', step: true });
 
 ## Props
 
-| Option | Type | Description |
-| --- | --- | --- |
-| `level` | `1–6` | Heading level (first argument). |
-| `text` | `string` | Heading text (second argument). |
-| `id` | `string` | Anchor id — also used by the copy-link button. |
-| `step` | `boolean` | Marks the heading as a ClerkTOC step (`data-cpd-step`). |
+<PropsTable
+  labels={{ prop: 'Option', type: 'Type' }}
+  type={{
+    level: { type: '1–6', description: 'Heading level (first argument).' },
+    text: { type: 'string', description: 'Heading text (second argument).' },
+    id: { type: 'string', description: 'Anchor id — also used by the copy-link button.' },
+    step: { type: 'boolean', description: 'Marks the heading as a Plumest TOC step (<code>data-cpd-step</code>).' },
+  }}
+/>
 
 ## Notes
 
 - The anchor link is `href="#<id>"`; the copy button copies the absolute
   `location.origin + pathname + #<id>` URL.
-- `step` headings render with a step badge in the article and get step dots
-  in the ClerkTOC rail.
+- `step` headings render with a step badge in the article and get a numbered
+  badge in the Plumest TOC.

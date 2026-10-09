@@ -3,19 +3,19 @@
  *
  * 通过事件委托与 `data-cpd-*` 钩子接管构建器输出的静态 HTML：
  * - 侧边栏：折叠分组 / 桌面折叠 / 移动端抽屉 / 激活项滚动可见
- * - ClerkTOC：连接线与轨道测量（ResizeObserver）、激活检测（IntersectionObserver 可见集，指示条覆盖可见标题区间）
+ * - Plumest TOC（block 风格）：布局只在 ResizeObserver 中测量一次（positions Map），
+ *   激活检测（IntersectionObserver 可见集）后以 `clip-path: inset()` 驱动圆角
+ *   背景滑块，滚动更新零 DOM 几何读取（读写解耦）
+ * - 页面操作条：复制 Markdown / 打印
  * - Tabs / Accordions / 复制按钮 / 标题锚点复制 / 主题切换
  *
  * 用法：`initCelestialUI()` 一次性初始化；返回 dispose 函数供清理。
  */
 
-import { getLineOffset } from './toc';
 import { applyTheme, resolveInitialTheme, LANG_STORAGE_KEY, type CpdThemeMode } from './tokens';
 import { Icon } from './icons';
 import { githubLanguageColor } from './github-card';
 import { initImageZoom } from './image-zoom-runtime';
-
-const SVG_NS = 'http://www.w3.org/2000/svg';
 
 function isElement(node: EventTarget | null): node is Element {
   return node instanceof Element;
@@ -130,94 +130,8 @@ function initSidebar(root: ParentNode): void {
 }
 
 /* ============================================================
-   ClerkTOC — 轨道测量 + 激活检测
+   Plumest TOC（block 风格）— 滑块驱动 + 激活检测
    ============================================================ */
-
-interface TrackMeasure {
-  width: number;
-  height: number;
-  d: string;
-  positions: [top: number, bottom: number, x: number][];
-  stepped: boolean[];
-}
-
-/**
- * 生成连接线 path（fuma / BrushUp 风格）：深度变化处先垂直下行到拐角点，
- * 再以对角直线连到下一项顶部；对角垂直跨度与层级缩进一致（约 45°）。
- */
-function buildPath(positions: [top: number, bottom: number, x: number][]): string {
-  if (positions.length === 0) return '';
-  const DIAGONAL = 12;
-  const first = positions[0];
-  let d = `M${first[2]} 0 L${first[2]} ${first[0]}`;
-  let currentX = first[2];
-  let currentY = first[0];
-
-  for (let i = 1; i < positions.length; i++) {
-    const [top, , x] = positions[i];
-    const gapY = Math.max(0, top - currentY);
-    if (x === currentX) {
-      d += ` L${currentX} ${top}`;
-    } else {
-      const diag = Math.min(DIAGONAL, gapY / 2);
-      const cornerY = Math.max(currentY, top - diag);
-      d += ` L${currentX} ${cornerY} L${x} ${top}`;
-    }
-    currentX = x;
-    currentY = top;
-  }
-
-  const last = positions[positions.length - 1];
-  d += ` L${last[2]} ${last[1]}`;
-  return d;
-}
-
-function measureToc(items: HTMLElement[]): TrackMeasure {
-  let w = 0;
-  let h = 0;
-  const positions: [top: number, bottom: number, x: number][] = [];
-
-  for (const element of items) {
-    const depth = Number(element.getAttribute('data-depth') ?? 2);
-    const x = getLineOffset(depth) + 0.5;
-    // 整条 item 高度（含 padding），与服务端淡线（item svg 从顶部画到底部）完全对齐，
-    // 保证主色路径到达轮廓最顶部/最底部
-    const top = element.offsetTop;
-    const bottom = element.offsetTop + element.clientHeight;
-    w = Math.max(x + 8, w);
-    h = Math.max(h, bottom);
-    positions.push([top, bottom, x]);
-  }
-
-  const d = buildPath(positions);
-
-  return { width: w, height: h, d, positions, stepped: items.map((el) => el.hasAttribute('data-step')) };
-}
-
-function renderTrack(container: HTMLElement, measure: TrackMeasure): void {
-  const track = container.querySelector<HTMLElement>('[data-cpd-toc-track]');
-  if (!track) return;
-
-  const stepGroups = measure.positions
-    .map(([top, bottom, x], i) => {
-      if (!measure.stepped[i]) return '';
-      return (
-        `<g transform="translate(${x}, ${(top + bottom) / 2})">` +
-        `<circle cx="0" cy="0" r="8" class="cpd-toc-track-step-circle"/>` +
-        `<text x="0" y="0" text-anchor="middle" dominant-baseline="central" class="cpd-toc-track-step-text">` +
-        `${i + 1}</text></g>`
-      );
-    })
-    .join('');
-
-  const svg =
-    `<svg class="cpd-toc-track-svg" xmlns="${SVG_NS}" viewBox="0 0 ${measure.width} ${measure.height}" aria-hidden="true">` +
-    `<path d="${measure.d}" class="cpd-toc-track-path"/>${stepGroups}</svg>`;
-
-  track.innerHTML = svg;
-  track.style.width = `${measure.width}px`;
-  track.style.height = `${measure.height}px`;
-}
 
 function initToc(root: ParentNode): void {
   const toc = root.querySelector<HTMLElement>('[data-cpd-toc]');
@@ -227,8 +141,13 @@ function initToc(root: ParentNode): void {
   if (!container) return;
 
   const scrollArea = toc.querySelector<HTMLElement>('[data-cpd-toc-scroll]');
+  const thumb = container.querySelector<HTMLElement>('[data-cpd-toc-thumb]');
   const itemEls = () => Array.from(container.querySelectorAll<HTMLElement>('[data-cpd-toc-item]'));
-  let measure: TrackMeasure | null = null;
+
+  // 布局测量仅在 ResizeObserver 回调 / 初始化时重建（读写解耦）：
+  // 滚动触发的高亮更新只查表，绝不读取 DOM 几何属性，杜绝 Layout Thrashing。
+  let positions: [top: number, bottom: number][] = [];
+  let totalHeight = 0;
   // 与 TOC 条目一一对应的文章标题元素（无对应锚点的为 undefined）
   let headings: (HTMLElement | undefined)[] = [];
   // 标题 id → TOC 条目索引
@@ -236,6 +155,14 @@ function initToc(root: ParentNode): void {
   // 当前视口内可见（任意比例相交）的标题 id
   const visible = new Set<string>();
   let intersectionObserver: IntersectionObserver | null = null;
+
+  /** 全量测量条目几何并重建标题映射（仅在初始化 / ResizeObserver 回调中调用） */
+  const measure = (): void => {
+    const items = itemEls();
+    positions = items.map((el) => [el.offsetTop, el.offsetTop + el.offsetHeight]);
+    totalHeight = container.clientHeight;
+    measureHeadings();
+  };
 
   const measureHeadings = (): void => {
     headings = itemEls().map((el) => {
@@ -252,12 +179,11 @@ function initToc(root: ParentNode): void {
   };
 
   /**
-   * 指示条覆盖 [最上面可见标题, 最下面可见标题] 的连续区间：
+   * 滑块覆盖 [最上面可见标题, 最下面可见标题] 的连续区间：
    * 视口内任意可见的标题（含页面末尾挤在一起的多个标题）都会被覆盖，
-   * 层级变化处用对角拐角连接，与 fuma / BrushUp 一致。
+   * 父子层级同时可见时呈现为一个连续的圆角背景块。
    */
   const applyRange = (startIdx: number, endIdx: number): void => {
-    if (!measure) return;
     const items = itemEls();
     const n = items.length;
     if (n === 0) return;
@@ -266,10 +192,15 @@ function initToc(root: ParentNode): void {
 
     items.forEach((el, i) => el.setAttribute('data-cpd-active', i >= s && i <= e ? 'true' : 'false'));
 
-    const track = container.querySelector<HTMLElement>('[data-cpd-toc-track]');
-    if (track) {
-      track.style.setProperty('--cpd-track-top', `${measure.positions[s][0]}px`);
-      track.style.setProperty('--cpd-track-bottom', `${measure.positions[e][1]}px`);
+    if (thumb) {
+      // 纯查表：positions 仅在 ResizeObserver 中重建
+      const top = positions[s]?.[0] ?? 0;
+      const bottom = positions[e]?.[1] ?? 0;
+      thumb.style.clipPath = `inset(${top}px 0 ${Math.max(0, totalHeight - bottom)}px round 8px)`;
+      // 首次定位不启用过渡（data-ready 后才有滑动动画），杜绝首屏闪烁
+      if (!thumb.hasAttribute('data-ready')) {
+        requestAnimationFrame(() => thumb.setAttribute('data-ready', ''));
+      }
     }
 
     // 激活区间首项自动滚动可见（滚动真实滚动容器，避免带动窗口）
@@ -326,11 +257,8 @@ function initToc(root: ParentNode): void {
   };
 
   const onMeasure = (): void => {
-    const items = itemEls();
-    if (items.length === 0) return;
-    measure = measureToc(items);
-    renderTrack(container, measure);
-    measureHeadings();
+    if (itemEls().length === 0) return;
+    measure();
     update();
   };
 
@@ -549,6 +477,58 @@ function initLang(root: ParentNode): void {
     } catch {
       /* storage unavailable */
     }
+  });
+}
+
+/* ============================================================
+   页面操作条（复制 Markdown / 打印）
+   ============================================================ */
+
+function initPageActions(root: ParentNode): void {
+  root.addEventListener('click', (event) => {
+    const target = isElement(event.target) ? event.target : null;
+    if (!target) return;
+
+    // 复制 Markdown：拉取本页 .md 端点（与 agent 共享同一降级管线）后写入剪贴板；
+    // 本地 preview（trailingSlash: always）对无尾斜杠静态文件会 404，回退重试一次
+    const copyMd = closest<HTMLElement>(target, '[data-cpd-copy-md]');
+    if (copyMd) {
+      const url = copyMd.getAttribute('data-cpd-md-url');
+      if (!url) return;
+      const fetchMd = async (): Promise<string> => {
+        let res = await fetch(url);
+        if (!res.ok && !url.endsWith('/')) res = await fetch(`${url}/`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.text();
+      };
+      void fetchMd()
+        .then((text) => copyText(text))
+        .then((ok) => {
+          if (ok) flashCopyButton(copyMd);
+        })
+        .catch(() => {
+          /* 拉取失败：保持按钮原状 */
+        });
+      return;
+    }
+
+    if (target.closest('[data-cpd-print]')) {
+      window.print();
+    }
+  });
+
+  // 打印时强制浅色（页面配色与 EC 代码块主题都挂在 data-theme 选择器上），
+  // 打印结束恢复原值。直接写 data-cpd-theme 由 ThemeProvider 观察者镜像 data-theme，
+  // 不触碰 localStorage 的模式偏好。
+  let printRestore: string | null = null;
+  window.addEventListener('beforeprint', () => {
+    const html = document.documentElement;
+    printRestore = html.getAttribute('data-cpd-theme');
+    if (printRestore !== 'light') html.setAttribute('data-cpd-theme', 'light');
+  });
+  window.addEventListener('afterprint', () => {
+    if (printRestore) document.documentElement.setAttribute('data-cpd-theme', printRestore);
+    printRestore = null;
   });
 }
 
@@ -925,6 +905,7 @@ export function initCelestialUI(options: CelestialUiOptions = {}): () => void {
   initCodeTabs(root);
   initAccordions(root);
   initCopy(root);
+  initPageActions(root);
   initAstroCodeCopy(root);
   initImageZoom(root);
   initTheme(root);

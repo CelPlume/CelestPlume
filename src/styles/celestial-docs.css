@@ -607,7 +607,7 @@ body {
   }
 }
 /* ============================================================
-   3. ClerkTOC
+   3. Plumest TOC
    ============================================================ */
 .cpd-toc {
   grid-area: toc;
@@ -674,12 +674,29 @@ body {
   color: var(--cpd-muted-foreground);
 }
 
+/* —— 滑块（block 高亮：覆盖当前阅读区间的圆角背景，零 SVG） —— */
+.cpd-toc-thumb {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: color-mix(in srgb, var(--cpd-primary) 9%, transparent);
+  border-radius: 8px;
+  /* 初始完全裁掉；runtime 首次定位后打 data-ready 才启用滑动过渡，杜绝首屏闪烁 */
+  clip-path: inset(0 0 100% round 8px);
+  pointer-events: none;
+}
+.cpd-toc-thumb[data-ready] {
+  transition: clip-path 280ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* —— 条目 —— */
 .cpd-toc-item {
   position: relative;
+  z-index: 1;
   display: block;
   font-family: var(--cpd-font-display);
   padding-block: 0.375rem;
+  padding-inline-end: 0.625rem;
   font-size: 0.875rem;
   line-height: 1.5;
   color: var(--cpd-muted-foreground);
@@ -688,79 +705,33 @@ body {
   overflow-wrap: anywhere;
   transition: color 150ms ease;
 }
-.cpd-toc-item:first-child {
-  padding-top: 0;
-}
-.cpd-toc-item:last-child {
-  padding-bottom: 0;
-}
 .cpd-toc-item:hover {
   color: var(--cpd-accent-foreground);
 }
 .cpd-toc-item[data-cpd-active='true'] {
   color: var(--cpd-primary);
-}
-
-/* 条目左侧连接线（服务端渲染：item 内 svg 向上伸出 12px，淡色打底；
-   拐角对角画在 top-12..top，与客户端轨道 buildPath 的 45° 拐角完全对齐，
-   激活区间由轨道层的主色线 + clip-path 高亮覆盖） */
-.cpd-toc-item-line-svg {
-  position: absolute;
-  top: -12px;
-  inset-inline-start: 0;
-  bottom: 0;
-  height: calc(100% + 12px);
-  z-index: 0;
-  pointer-events: none;
-}
-.cpd-toc-line,
-.cpd-toc-elbow {
-  stroke: var(--cpd-border);
-  stroke-width: 1;
-}
-.cpd-toc-step-circle {
-  fill: var(--cpd-muted);
-}
-.cpd-toc-step-text {
-  fill: var(--cpd-muted-foreground);
-  font-size: 12px;
-  font-family: var(--cpd-font-mono);
   font-weight: 500;
 }
 
-/* —— 轨道（thumb track） —— */
-.cpd-toc-track {
-  position: absolute;
-  top: 0;
-  inset-inline-start: 0;
-  z-index: 1; /* 盖住服务端淡线（否则灰线穿过主色圆点） */
-  pointer-events: none;
-}
-.cpd-toc-track-svg {
-  position: absolute;
-  top: 0;
-  inset-inline-start: 0;
-  clip-path: polygon(
-    0 var(--cpd-track-top, 0),
-    100% var(--cpd-track-top, 0),
-    100% var(--cpd-track-bottom, 0),
-    0 var(--cpd-track-bottom, 0)
-  );
-  transition: clip-path 200ms ease;
-}
-.cpd-toc-track-path {
-  stroke: var(--cpd-primary);
-  stroke-width: 1;
-  fill: none;
-}
-.cpd-toc-track-step-circle {
-  fill: var(--cpd-primary);
-}
-.cpd-toc-track-step-text {
-  fill: var(--cpd-primary-foreground);
-  font-size: 12px;
+/* 行内编号徽章（steps 模式） */
+.cpd-toc-step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 1rem;
+  height: 1rem;
+  margin-inline-end: 0.375rem;
+  border-radius: 999px;
+  background: var(--cpd-muted);
+  color: var(--cpd-muted-foreground);
   font-family: var(--cpd-font-mono);
+  font-size: 10px;
   font-weight: 500;
+  vertical-align: baseline;
+}
+.cpd-toc-item[data-cpd-active='true'] .cpd-toc-step-badge {
+  background: var(--cpd-primary);
+  color: var(--cpd-primary-foreground);
 }
 
 /* ============================================================
@@ -2081,7 +2052,7 @@ a.cpd-github-card:hover {
   .cpd-sidebar,
   .cpd-drawer-panel,
   .cpd-drawer-overlay,
-  .cpd-toc-track-svg,
+  .cpd-toc-thumb,
   .cpd-accordion-content,
   .cpd-accordion-chevron,
   .cpd-sidebar-chevron {
@@ -2386,4 +2357,181 @@ a.cpd-github-card:hover {
 .cpd-mermaid-fs-close svg {
   width: 1.125rem;
   height: 1.125rem;
+}
+
+/* ============================================================
+   3b. TypeTable（参数契约表格，原生 details 折叠，零 JS）
+   ============================================================ */
+.cpd-type-table {
+  display: flex;
+  flex-direction: column;
+  margin-block: 1rem;
+  padding: 0.25rem;
+  border: 1px solid var(--cpd-border);
+  border-radius: calc(var(--cpd-radius) + 4px);
+  background: var(--cpd-card);
+  overflow: hidden;
+  font-size: 0.875rem;
+}
+.cpd-type-table-head {
+  display: flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  color: var(--cpd-muted-foreground);
+  font-weight: 500;
+}
+.cpd-type-table-head > span:first-child {
+  width: 40%;
+}
+.cpd-type-table-head > span:last-child {
+  flex: 1;
+}
+.cpd-type-table-item {
+  border-top: 1px solid var(--cpd-border);
+}
+.cpd-type-table-head + .cpd-type-table-item {
+  border-top: 0;
+}
+.cpd-type-table-item summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.cpd-type-table-item summary::-webkit-details-marker {
+  display: none;
+}
+.cpd-type-table-item summary:hover {
+  background: var(--cpd-muted);
+}
+.cpd-type-table-name-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: 40%;
+  min-width: 0;
+}
+.cpd-type-table-name {
+  font-family: var(--cpd-font-mono);
+  font-weight: 600;
+  color: var(--cpd-foreground);
+  overflow-wrap: anywhere;
+}
+.cpd-type-table-item[data-deprecated] .cpd-type-table-name {
+  text-decoration: line-through;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-type-table-star {
+  color: var(--cpd-gold);
+  font-weight: 700;
+}
+.cpd-type-table-deprecated {
+  font-size: 0.6875rem;
+  padding: 0.0625rem 0.375rem;
+  border-radius: 999px;
+  border: 1px solid var(--cpd-error);
+  color: var(--cpd-error);
+}
+.cpd-type-table-type {
+  flex: 1;
+  font-family: var(--cpd-font-mono);
+  font-size: 0.8125rem;
+  color: var(--cpd-muted-foreground);
+  overflow-wrap: anywhere;
+}
+.cpd-type-table-chevron {
+  flex: none;
+  width: 1rem;
+  height: 1rem;
+  color: var(--cpd-muted-foreground);
+  transition: transform 150ms ease;
+}
+.cpd-type-table-item[open] .cpd-type-table-chevron {
+  transform: rotate(180deg);
+}
+.cpd-type-table-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem 0.75rem;
+}
+.cpd-type-table-desc {
+  line-height: 1.6;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-type-table-kv {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+.cpd-type-table-key {
+  flex: none;
+  width: 4.5rem;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-type-table-value {
+  font-family: var(--cpd-font-mono);
+  font-size: 0.8125rem;
+  color: var(--cpd-foreground);
+  overflow-wrap: anywhere;
+}
+.cpd-type-table-value-link {
+  text-decoration: none;
+}
+.cpd-type-table-value-link:hover .cpd-type-table-value {
+  color: var(--cpd-accent-foreground);
+  text-decoration: underline;
+}
+
+/* ============================================================
+   9. 打印（PDF 导出：runtime beforeprint 已强制浅色主题）
+   ============================================================ */
+@media print {
+  .cp-nav,
+  .cpd-mobile-header,
+  .cpd-sidebar-shell,
+  .cpd-toc-shell,
+  .cpd-sidebar-expand,
+  .cpd-loader,
+  .cpd-page-actions,
+  .cpd-pagination,
+  .cpd-mermaid-toolbar,
+  .cpd-astro-copy,
+  .cpd-drawer,
+  footer.sl-flex {
+    display: none !important;
+  }
+  .cpd-page,
+  .cpd-main-frame,
+  .cpd-two-col,
+  .cpd-main-pane,
+  .cpd-content-panel,
+  .cpd-article {
+    display: block !important;
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  /* 代码块不因 pre 溢出截断 */
+  .cpd-md-content .expressive-code pre,
+  .cpd-md-content pre.astro-code {
+    max-height: none !important;
+    overflow: visible !important;
+    white-space: pre-wrap !important;
+    overflow-wrap: break-word !important;
+  }
+  /* 保留代码块底色与 diff 标记色 */
+  .expressive-code,
+  .expressive-code pre {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
 }

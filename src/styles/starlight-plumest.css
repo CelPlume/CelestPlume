@@ -97,7 +97,7 @@
   min-width: 0;
 }
 
-/* 内容双栏：主列 + 右侧 ClerkTOC */
+/* 内容双栏：主列 + 右侧 Plumest TOC */
 .cpd-two-col {
   display: flex;
 }
@@ -160,6 +160,61 @@
   font-size: 1.125rem;
   line-height: 1.6;
   color: var(--cpd-muted-foreground);
+}
+/* 页面操作条（Cloudflare 文档式）：左最近更新，右分裂按钮 */
+.cpd-page-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin: 0 0 1.25rem;
+}
+.cpd-page-updated {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--cpd-muted-foreground);
+}
+.cpd-page-updated time {
+  font-variant-numeric: tabular-nums;
+}
+.cpd-page-actions-group {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 0;
+}
+/* 分裂按钮：主按钮右缘直角衔接 chevron 触发器；触发器完全镜像
+   .cpd-button-outline 的边框/圆角/配色。
+   注意 .cpd-dropdown 包装层默认 inline-block，会截断 group 的 stretch 链
+   （触发器不是 group 的直接子元素），故包装层改为拉伸的 inline-flex，
+   触发器在其内 align-self: stretch 与主按钮等高。 */
+.cpd-page-actions-group .cpd-dropdown {
+  display: inline-flex;
+  align-items: stretch;
+  margin-inline-start: -1px; /* 吃掉主按钮右边框避免双线 */
+}
+.cpd-page-actions-group .cpd-button {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+/* 触发器用 (0,2,0) 优先级：site-nav.css 的 .cpd-dropdown-trigger 基础规则
+   经 Astro 打包重排后晚于本文件加载，同优先级会反压。
+   背景用 ButtonFace 与 outline 主按钮的 UA 默认底色逐像素一致
+   （Kit 从不重置 .cpd-button 的背景），深色模式随 color-scheme 同步翻转。 */
+.cpd-page-actions .cpd-page-actions-trigger {
+  align-self: stretch;
+  height: auto;
+  padding: 0 0.5rem;
+  border-radius: 0.375rem;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  border-color: color-mix(in oklab, var(--cpd-primary) 40%, transparent);
+  background-color: ButtonFace;
+  color: var(--cpd-primary);
+}
+.cpd-page-actions .cpd-page-actions-trigger:hover {
+  background-color: color-mix(in oklab, var(--cpd-primary) 10%, ButtonFace);
+  border-color: color-mix(in oklab, var(--cpd-primary) 40%, transparent);
 }
 .cpd-content-panel > .cpd-breadcrumb {
   margin: 1rem 0 0.875rem;

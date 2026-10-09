@@ -3,7 +3,7 @@
  *
  * 与 Plumest 的 page-tree / toc 模型对齐（简化版）：
  * - NavNode: 侧边栏导航树（分组 / 链接 / 分隔标签）
- * - TocItem: 目录条目（含可选的 step 编号，驱动 ClerkTOC 的时间线样式）
+ * - TocItem: 目录条目（含可选的 step 编号，驱动 Plumest TOC 的行内徽章）
  */
 /** 侧边栏链接项 */
 export interface NavLink {
@@ -85,7 +85,7 @@ export interface TocItem {
   title: string;
   /** 标题层级：2 = h2, 3 = h3, 4 = h4 */
   depth: number;
-  /** 可选编号（驱动 ClerkTOC 的 step 圆徽） */
+  /** 可选编号（驱动 Plumest TOC 的 step 徽章） */
   step?: number;
 }
 

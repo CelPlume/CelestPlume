@@ -12,7 +12,7 @@ description: 贡献分类的定位、Docs Kit 的组织方式与新增组件的�
 ## Kit 是什么
 
 `src/lib/ui/` 是用**纯 TypeScript** 实现的 Plumest 风格文档 UI ——
-左侧边栏、ClerkTOC、文档样式与常用内容组件：
+左侧边栏、Plumest TOC、文档样式与常用内容组件：
 
 - **不依赖 React。** 构建器都是返回 HTML 字符串的普通函数。
 - **零运行时依赖。** 交互只有约 350 行原生 TypeScript（`src/lib/ui/runtime.ts`）。
@@ -31,7 +31,7 @@ description: 贡献分类的定位、Docs Kit 的组织方式与新增组件的�
 | [组件文档](/zh/contribution/components/) | 组件参考——每个构建器独立一页、带实时预览 |
 
 文档页由 Starlight 渲染，Kit 可见外壳经组件覆盖接入；Kit 的完整在线演示
-（侧边栏 + ClerkTOC + 组件）见 [/zh/demo/](/zh/demo/)。
+（侧边栏 + Plumest TOC + 组件）见 [/zh/demo/](/zh/demo/)。
 
 ## 目录结构
 
@@ -46,7 +46,7 @@ src/
 │   │   └── index.ts         #   Icon 对象汇总
 │   ├── tokens.ts            #   设计令牌（TS 常量 → CSS 变量）
 │   ├── sidebar.ts           #   左侧边栏构建器
-│   ├── toc.ts               #   ClerkTOC 构建器 + 标题收集
+│   ├── toc.ts               #   Plumest TOC 构建器 + 标题收集
 │   ├── components.ts        #   callout / cards / steps / tabs 等构建器
 │   ├── github-card.ts       #   GitHubCard 构建器 + 构建期抓取
 │   ├── runtime.ts           #   无框架客户端运行时
