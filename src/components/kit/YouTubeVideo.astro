@@ -1,0 +1,25 @@
+---
+// YouTubeVideo — 零请求视频 facade 的 Astro 包装（构建器 youtubeFacade）。
+// 页面只输出占位舞台 + 播放按钮 + 题注；播放器（youtube-nocookie）在浏览器
+// 点击或 preload="auto" 视口临近时由 runtime 注入。
+// 用法：<YouTubeVideo id="5gIf0_xpFPI" title="Demo" preload="auto" />
+import { getYouTubeEmbedData, youtubeFacade } from '../../lib/markdown/video';
+
+interface Props {
+  /** YouTube 视频 ID（11 位字符） */
+  id: string;
+  /** 视频标题（题注与 iframe 无障碍描述） */
+  title: string;
+  /** 懒加载策略：none（默认，点击加载）| auto（视口临近预加载） */
+  preload?: 'none' | 'auto';
+}
+
+const { id, title, preload = 'none' } = Astro.props;
+
+const embed = getYouTubeEmbedData({ id, title, preload });
+if (!embed) {
+  throw new Error(`[YouTubeVideo] invalid props: id="${id}" title="${title}" preload="${preload}"`);
+}
+---
+
+<Fragment set:html={youtubeFacade(embed)} />

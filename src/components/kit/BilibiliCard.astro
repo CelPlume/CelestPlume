@@ -1,0 +1,24 @@
+---
+// BilibiliCard — Docs Kit bilibiliCard() 的 Astro 异步包装。
+// 构建期经 Bilibili view API 抓取标题/简介/UP主，再调用同步构建器渲染；
+// 抓取失败退化为纯链接卡片。
+// 用法：<BilibiliCard bvid="BV1fK4y1s7Qf" />
+import { bilibiliCard, fetchBilibiliVideo } from '../../lib/ui/bilibili-card';
+
+interface Props {
+  /** Bilibili 视频 BV 号 */
+  bvid: string;
+  /** 链接打开方式 */
+  target?: string;
+}
+
+const { bvid, target } = Astro.props;
+
+if (!/^BV[1-9A-HJ-NP-Za-km-z]{10}$/.test(bvid)) {
+  throw new Error(`[BilibiliCard] invalid bvid: "${bvid}"`);
+}
+
+const data = await fetchBilibiliVideo(bvid);
+---
+
+<Fragment set:html={bilibiliCard({ bvid, target }, data)} />
