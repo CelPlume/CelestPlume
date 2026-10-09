@@ -39,10 +39,8 @@ export { renderDrawer } from './drawer';
 export type { DrawerOptions } from './drawer';
 export {
   renderToc,
-  renderTocItem,
   collectHeadings,
   getItemOffset as getTocItemOffset,
-  getLineOffset,
 } from './toc';
 export {
   callout,
@@ -102,3 +100,5 @@ export { githubCard, githubCards, fetchGithubRepo } from './github-card';
 export type { GithubCardOptions, GithubCardsLayout, GithubRepoData } from './github-card';
 export { renderImageZoom } from './image-zoom';
 export type { ImageZoomOptions } from './image-zoom';
+export { typeTable } from './type-table';
+export type { TypeNode, TypeTableData, TypeTableLabels } from './type-table';

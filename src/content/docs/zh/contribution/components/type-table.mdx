@@ -1,0 +1,66 @@
+---
+title: TypeTable
+description: Props 与 API 参数的结构化契约表格。
+sidebar:
+  order: 22
+---
+
+import Preview from '../../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../../components/kit/PropsTable.astro';
+import { typeTable } from '../../../../../lib/ui';
+
+`typeTable()` 渲染 Props、REST 参数与配置项的结构化契约表格：等宽类型标签、
+必填星标、废弃标记与可折叠详情。行折叠用原生 `<details>` 元素实现，
+不依赖任何 JavaScript。
+
+## 实况预览
+
+<Preview
+  label="typeTable()"
+  html={typeTable(
+    {
+      label: { type: 'string', required: true, description: '按钮文案。' },
+      variant: { type: "'solid' | 'outline' | 'ghost'", default: "'solid'", description: '视觉变体。' },
+      size: { type: "'sm' | 'md' | 'lg'", default: "'md'", deprecated: true },
+    },
+    { prop: '参数', type: '类型', default: '默认值' },
+  )}
+/>
+
+```ts
+typeTable(
+  {
+    label: { type: 'string', required: true, description: '按钮文案。' },
+    variant: { type: "'solid' | 'outline' | 'ghost'", default: "'solid'", description: '视觉变体。' },
+    size: { type: "'sm' | 'md' | 'lg'", default: "'md'", deprecated: true },
+  },
+  { prop: '参数', type: '类型', default: '默认值' },
+);
+```
+
+## 参数
+
+构建器接收契约数据与可选标签。中文页面传入中文表头标签；
+`<PropsTable>` 包装组件将两者原样透传。
+
+<PropsTable
+  labels={{ prop: '参数', type: '类型', default: '默认值' }}
+  type={{
+    type: { type: 'Record<string, TypeNode>', required: true, description: '契约数据 —— 每个参数一项，以参数名为键。' },
+    labels: { type: 'TypeTableLabels', default: '{}', description: '表头与键值行标签（本地化页面用）。' },
+    'TypeNode.type': { type: 'string', required: true, description: '摘要行展示的短类型签名。' },
+    'TypeNode.description': { type: 'string', description: '字段说明（允许行内 HTML）。' },
+    'TypeNode.typeDescription': { type: 'string', description: '展开后显示的完整类型签名。' },
+    'TypeNode.typeDescriptionLink': { type: 'string', description: '附着在完整类型签名上的可选链接。' },
+    'TypeNode.default': { type: 'string', description: '展开后显示的默认值。' },
+    'TypeNode.required': { type: 'boolean', default: 'false', description: '在名字后渲染必填星标。' },
+    'TypeNode.deprecated': { type: 'boolean', default: 'false', description: '名字加删除线并渲染废弃徽标。' },
+  }}
+/>
+
+## 注意
+
+- `typeTable()` 是纯构建器：可用 `set:html` 注入、包在 `<Preview>` 里做实况
+  演示，或在 MDX 中直接使用 `<PropsTable>` 包装组件。
+- 行折叠由原生 `<details>` 完成 —— 无 `data-cpd-*` 钩子，无运行时开销。
+- 颜色继承 `--cpd-*` 令牌，深浅色自动适配。

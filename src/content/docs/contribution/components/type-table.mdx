@@ -1,0 +1,61 @@
+---
+title: TypeTable
+description: Structured contract tables for props and API parameters.
+sidebar:
+  order: 22
+---
+
+import Preview from '../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
+import { typeTable } from '../../../../lib/ui';
+
+`typeTable()` renders structured contract tables for props, REST parameters and
+config options: monospace type badges, required stars, deprecated marks and
+collapsible details. Rows expand through the native `<details>` element — no
+JavaScript involved.
+
+## Preview
+
+<Preview
+  label="typeTable()"
+  html={typeTable({
+    label: { type: 'string', required: true, description: 'Button label.' },
+    variant: { type: "'solid' | 'outline' | 'ghost'", default: "'solid'", description: 'Visual variant.' },
+    size: { type: "'sm' | 'md' | 'lg'", default: "'md'", deprecated: true },
+  })}
+/>
+
+```ts
+typeTable({
+  label: { type: 'string', required: true, description: 'Button label.' },
+  variant: { type: "'solid' | 'outline' | 'ghost'", default: "'solid'", description: 'Visual variant.' },
+  size: { type: "'sm' | 'md' | 'lg'", default: "'md'", deprecated: true },
+});
+```
+
+## Props
+
+The builder takes the contract data and optional labels. Localized pages pass
+Chinese labels; the `<PropsTable>` wrapper forwards both.
+
+<PropsTable
+  labels={{ prop: 'Option', type: 'Type', default: 'Default' }}
+  type={{
+    type: { type: 'Record<string, TypeNode>', required: true, description: 'Contract data — one entry per parameter, keyed by name.' },
+    labels: { type: 'TypeTableLabels', default: '{}', description: 'Header and keyword labels for localized pages.' },
+    'TypeNode.type': { type: 'string', required: true, description: 'Short type signature shown on the summary row.' },
+    'TypeNode.description': { type: 'string', description: 'Field description (inline HTML allowed).' },
+    'TypeNode.typeDescription': { type: 'string', description: 'Full type signature, shown when expanded.' },
+    'TypeNode.typeDescriptionLink': { type: 'string', description: 'Optional link attached to the full type signature.' },
+    'TypeNode.default': { type: 'string', description: 'Default value, shown when expanded.' },
+    'TypeNode.required': { type: 'boolean', default: 'false', description: 'Render a required star after the name.' },
+    'TypeNode.deprecated': { type: 'boolean', default: 'false', description: 'Strike the name and render a deprecated badge.' },
+  }}
+/>
+
+## Notes
+
+- `typeTable()` is a pure builder: inject with `set:html`, wrap in `<Preview>`
+  for live demos, or use the `<PropsTable>` wrapper directly in MDX.
+- Rows expand/collapse natively — no `data-cpd-*` hooks, no runtime cost.
+- Colors inherit the `--cpd-*` tokens; light/dark is automatic.

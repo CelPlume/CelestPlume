@@ -1,0 +1,18 @@
+---
+// PropsTable：mdx 内直接使用的 TypeTable 薄包装（数据透传给 Kit 构建器）。
+// 用法：
+// import PropsTable from '../../../../components/kit/PropsTable.astro';
+// <PropsTable type={{ title: { type: 'string', required: true, description: '标题。' } }} />
+import { typeTable } from '../../lib/ui';
+import type { TypeNode, TypeTableLabels } from '../../lib/ui';
+
+interface Props {
+  type: Record<string, TypeNode>;
+  /** 表头/键值行标签（中文页传 `{ prop: '参数', type: '类型', default: '默认值' }`） */
+  labels?: TypeTableLabels;
+}
+
+const { type, labels } = Astro.props;
+---
+
+<Fragment set:html={typeTable(type, labels)} />
