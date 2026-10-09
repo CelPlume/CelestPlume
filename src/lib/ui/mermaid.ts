@@ -45,6 +45,261 @@ const isDark = (): boolean =>
 const isZh = (): boolean =>
   document.documentElement.lang.toLowerCase().startsWith('zh');
 
+/* ---------------- 配色（对齐 Shirone：令牌驱动 + 对比度校验） ---------------- */
+
+/** 解析 hex/rgb/rgba/CSS Color4（color(srgb …)）为 [r,g,b]，失败返回 null */
+function parseColor(color: string): [number, number, number] | null {
+  const value = color.trim().toLowerCase();
+  const hex = value.match(/^#([\da-f]{3}|[\da-f]{6})$/)?.[1];
+  if (hex) {
+    const expanded = hex.length === 3 ? hex.split('').map((c) => c + c).join('') : hex;
+    return [
+      Number.parseInt(expanded.slice(0, 2), 16),
+      Number.parseInt(expanded.slice(2, 4), 16),
+      Number.parseInt(expanded.slice(4, 6), 16),
+    ];
+  }
+  const rgb = value.match(/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/);
+  if (rgb) return [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])];
+  // 现代浏览器把 color-mix(...) 解析为 color(srgb r g b)（0–1 分量）
+  const srgb = value.match(/^color\(\s*srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/);
+  if (srgb) {
+    return [Math.round(Number(srgb[1]) * 255), Math.round(Number(srgb[2]) * 255), Math.round(Number(srgb[3]) * 255)];
+  }
+  // oklch(l c h)（Plumest 语义令牌的原生格式）→ OKLab → 线性 sRGB → sRGB
+  const oklch = value.match(/^oklch\(\s*([\d.]+)%?\s+([\d.]+)\s+([\d.]+)(?:deg)?/);
+  if (oklch) {
+    const l = Number(oklch[1]) > 1 ? Number(oklch[1]) / 100 : Number(oklch[1]);
+    const c = Number(oklch[2]);
+    const hDeg = (Number(oklch[3]) * Math.PI) / 180;
+    const a = c * Math.cos(hDeg);
+    const b = c * Math.sin(hDeg);
+    const l_ = l + 0.3963377774 * a + 0.2158037573 * b;
+    const m_ = l - 0.1055613458 * a - 0.0638541728 * b;
+    const s_ = l - 0.0894841775 * a - 1.291485548 * b;
+    const toLinear = (t: number): number => t * t * t;
+    const lin = [toLinear(l_), toLinear(m_), toLinear(s_)].map((t) => Math.max(0, Math.min(1, t)));
+    const toSrgb = (t: number): number =>
+      t <= 0.0031308 ? t * 12.92 : 1.055 * Math.pow(t, 1 / 2.4) - 0.055;
+    return lin.map((t) => Math.round(toSrgb(t) * 255)) as [number, number, number];
+  }
+  return null;
+}
+
+function relativeLuminance(color: string): number | null {
+  const channels = parseColor(color);
+  if (!channels) return null;
+  const linear = channels.map((channel) => {
+    const normalized = channel / 255;
+    return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
+}
+
+function contrastRatio(foreground: string, background: string): number {
+  const fgLuminance = relativeLuminance(foreground);
+  const bgLuminance = relativeLuminance(background);
+  if (fgLuminance === null || bgLuminance === null) return 0;
+  const lighter = Math.max(fgLuminance, bgLuminance);
+  const darker = Math.min(fgLuminance, bgLuminance);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+/** 依对比度从候选色中取第一个达标色（文本 4.5:1、线条 3:1，对齐 Shirone） */
+function readableColor(background: string, candidates: string[], minRatio: number): string {
+  for (const candidate of candidates) {
+    if (contrastRatio(candidate, background) >= minRatio) return candidate;
+  }
+  return candidates[candidates.length - 1] ?? '#000000';
+}
+
+const MERMAID_TEXT_CONTRAST = 4.5;
+const MERMAID_LINE_CONTRAST = 3;
+
+/**
+ * 解析 CSS 变量/表达式为 mermaid 可用的 rgb() 颜色串：
+ * 未注册自定义属性不解析 color-mix，且现代浏览器给出 color(srgb …) 格式
+ * （mermaid 解析器不认），故经探针取 resolved 值后统一归一化。
+ */
+function resolveColor(probe: HTMLElement, expression: string): string {
+  probe.style.backgroundColor = '';
+  probe.style.backgroundColor = expression;
+  const resolved = getComputedStyle(probe).backgroundColor;
+  probe.style.backgroundColor = '';
+  const parsed = parseColor(resolved);
+  if (!parsed) return '#808080';
+  return `rgb(${parsed[0]}, ${parsed[1]}, ${parsed[2]})`;
+}
+
+function resolveCssVar(probe: HTMLElement, name: string): string {
+  return resolveColor(probe, `var(${name})`);
+}
+
+interface MermaidTheme {
+  [key: string]: string | boolean;
+}
+
+/** 由 Plumest 令牌构建 mermaid base 主题变量（每次渲染时解析，深浅自适应） */
+function createThemeVariables(): MermaidTheme {
+  const probe = document.createElement('div');
+  probe.style.display = 'none';
+  document.body.appendChild(probe);
+  try {
+    const background = resolveCssVar(probe, '--cpd-background');
+    const card = resolveCssVar(probe, '--cpd-card');
+    const muted = resolveCssVar(probe, '--cpd-muted');
+    const foreground = resolveCssVar(probe, '--cpd-foreground');
+    const mutedForeground = resolveCssVar(probe, '--cpd-muted-foreground');
+    const primary = resolveCssVar(probe, '--cpd-primary');
+    const gold = resolveCssVar(probe, '--cpd-gold');
+    const border = resolveCssVar(probe, '--cpd-border');
+    const info = resolveCssVar(probe, '--cpd-info');
+    const success = resolveCssVar(probe, '--cpd-success');
+
+    // 节点底 = 淡金 16% 混卡片底；边框 = 淡金 45% 混边框（与 badge-gold 同构）
+    const nodeFill = resolveColor(probe, `color-mix(in srgb, ${gold} 16%, ${card})`);
+    const nodeBorder = resolveColor(probe, `color-mix(in srgb, ${gold} 45%, ${border})`);
+    const noteFill = resolveColor(probe, `color-mix(in srgb, ${info} 14%, ${card})`);
+    const stateFill = resolveColor(probe, `color-mix(in srgb, ${success} 14%, ${card})`);
+
+    const canvasText = readableColor(background, [foreground, mutedForeground], MERMAID_TEXT_CONTRAST);
+    const canvasLine = readableColor(background, [mutedForeground, foreground], MERMAID_LINE_CONTRAST);
+    const nodeText = readableColor(nodeFill, [foreground, background], MERMAID_TEXT_CONTRAST);
+    const noteText = readableColor(noteFill, [foreground, background], MERMAID_TEXT_CONTRAST);
+    const stateText = readableColor(stateFill, [foreground, background], MERMAID_TEXT_CONTRAST);
+
+    return {
+      darkMode: isDark(),
+      background,
+      textColor: canvasText,
+      fontFamily: getComputedStyle(document.body).fontFamily,
+      // 主/节点：淡金容器
+      primaryColor: nodeFill,
+      primaryTextColor: nodeText,
+      primaryBorderColor: nodeBorder,
+      nodeBkg: nodeFill,
+      nodeTextColor: nodeText,
+      nodeBorder,
+      // 次级：中性 muted
+      secondaryColor: muted,
+      secondaryTextColor: canvasText,
+      secondaryBorderColor: border,
+      tertiaryColor: muted,
+      tertiaryTextColor: canvasText,
+      tertiaryBorderColor: border,
+      // 线与箭头
+      lineColor: canvasLine,
+      arrowheadColor: canvasLine,
+      defaultLinkColor: canvasLine,
+      // 簇与子图
+      clusterBkg: muted,
+      clusterBorder: canvasLine,
+      titleColor: canvasText,
+      // 边标签（须与画布底对比）
+      edgeLabelBackground: background,
+      labelBackground: background,
+      labelTextColor: canvasText,
+      // 时序图
+      actorBkg: nodeFill,
+      actorBorder: nodeBorder,
+      actorTextColor: nodeText,
+      actorLineColor: canvasLine,
+      signalColor: canvasLine,
+      signalTextColor: canvasText,
+      noteBkgColor: noteFill,
+      noteBorderColor: nodeBorder,
+      noteTextColor: noteText,
+      // 状态/类/ER
+      labelBoxBkgColor: nodeFill,
+      labelBoxBorderColor: nodeBorder,
+      classText: canvasText,
+      relationColor: canvasLine,
+      attributeBackgroundColorOdd: muted,
+      attributeBackgroundColorEven: card,
+      // 甘特/状态
+      sectionBkgColor: muted,
+      sectionBkgColor2: card,
+      altSectionBkgColor: background,
+      taskBkgColor: nodeFill,
+      taskBorderColor: nodeBorder,
+      taskTextDarkColor: nodeText,
+      taskTextLightColor: nodeText,
+      activeTaskBkgColor: stateFill,
+      activeTaskBorderColor: nodeBorder,
+      doneTaskBkgColor: muted,
+      doneTaskBorderColor: border,
+      critBkgColor: nodeFill,
+      critBorderColor: nodeBorder,
+      todayLineColor: gold,
+      // 饼图/ journey / timeline / git / kanban
+      pie1: nodeFill,
+      pie2: muted,
+      pie3: stateFill,
+      pieTitleTextSize: '1rem',
+      pieTitleTextColor: canvasText,
+      pieSectionTextColor: nodeText,
+      journeySectionBackground: muted,
+      journeySectionTextColor: canvasText,
+      journeyTaskBackground: card,
+      journeyTaskTextColor: canvasText,
+      timelineNodeBackground: muted,
+      timelineNodeTextColor: canvasText,
+      gitBranchLabel: canvasText,
+      gitLabelBackground: muted,
+      gitLabelTextColor: canvasText,
+      commitLabelBackground: muted,
+      commitLabelColor: canvasText,
+      kanbanColumnBackground: muted,
+      kanbanColumnTextColor: canvasText,
+      kanbanCardBackground: card,
+      kanbanCardTextColor: canvasText,
+      classEdgeLabelBackground: nodeFill,
+      classEdgeLabelTextColor: nodeText,
+      // 文本尺寸（Plumest 正文尺度）
+      fontSize: '0.875rem',
+    };
+  } finally {
+    probe.remove();
+  }
+}
+
+/** 渲染后的分图类型修正依赖的 scoped 自定义属性（注入到容器上） */
+function applyDiagramThemeProps(target: HTMLElement): void {
+  // 配对项全部为字符串键（darkMode 布尔值不参与注入）
+  const vars = createThemeVariables() as Record<string, string>;
+  const pairs: [string, string][] = [
+    ['--cpd-mmd-text', vars.textColor],
+    ['--cpd-mmd-line', vars.lineColor],
+    ['--cpd-mmd-bg', vars.background],
+    ['--cpd-mmd-node-text', vars.primaryTextColor],
+    ['--cpd-mmd-node-bg', vars.primaryColor],
+    ['--cpd-mmd-journey-section-bg', vars.journeySectionBackground],
+    ['--cpd-mmd-journey-section-text', vars.journeySectionTextColor],
+    ['--cpd-mmd-journey-task-bg', vars.journeyTaskBackground],
+    ['--cpd-mmd-journey-task-text', vars.journeyTaskTextColor],
+    ['--cpd-mmd-timeline-bg', vars.timelineNodeBackground],
+    ['--cpd-mmd-timeline-text', vars.timelineNodeTextColor],
+    ['--cpd-mmd-git-label-bg', vars.gitLabelBackground],
+    ['--cpd-mmd-git-label-text', vars.gitLabelTextColor],
+    ['--cpd-mmd-kanban-col-bg', vars.kanbanColumnBackground],
+    ['--cpd-mmd-kanban-card-bg', vars.kanbanCardBackground],
+    ['--cpd-mmd-kanban-card-text', vars.kanbanCardTextColor],
+    ['--cpd-mmd-class-edge-bg', vars.classEdgeLabelBackground],
+    ['--cpd-mmd-class-edge-text', vars.classEdgeLabelTextColor],
+  ];
+  for (const [name, value] of pairs) target.style.setProperty(name, String(value));
+}
+
+const mermaidConfig = (): MermaidConfig => ({
+  startOnLoad: false,
+  securityLevel: 'strict',
+  suppressErrorRendering: true,
+  theme: 'base',
+  themeVariables: createThemeVariables(),
+  fontFamily: 'inherit',
+  flowchart: { htmlLabels: true, curve: 'basis' },
+});
+
 const copyText = async (text: string): Promise<boolean> => {
   try {
     await navigator.clipboard.writeText(text);
@@ -65,14 +320,6 @@ const copyText = async (text: string): Promise<boolean> => {
     }
   }
 };
-
-const mermaidConfig = (): MermaidConfig => ({
-  startOnLoad: false,
-  securityLevel: 'strict',
-  theme: isDark() ? 'dark' : 'default',
-  fontFamily: 'inherit',
-  flowchart: { htmlLabels: true, curve: 'basis' },
-});
 
 /* ---------------- 工具栏（Dropdown 菜单） ---------------- */
 
@@ -268,6 +515,7 @@ async function openFullscreen(
     const { svg, bindFunctions } = await mermaid.render(`cpd-mermaid-fs-${renderCounter++}`, source);
     viewport.innerHTML = svg;
     bindFunctions?.(viewport);
+    applyDiagramThemeProps(viewport);
     const svgEl = viewport.querySelector<SVGSVGElement>('svg');
     if (svgEl) {
       // 覆盖 mermaid 内联的 max-width（自然宽度封顶），全屏下铺满视口宽度
@@ -339,6 +587,8 @@ async function renderDiagram(
 
   const svgEl = viewport.querySelector<SVGSVGElement>('svg');
   if (!svgEl) return;
+
+  applyDiagramThemeProps(container);
 
   const panzoom = createMermaidPanZoom(viewport, svgEl, {});
   state.set(container, { source, viewport, panzoom });
