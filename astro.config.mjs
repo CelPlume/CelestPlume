@@ -231,6 +231,11 @@ export default defineConfig({
               link: '/contribution/styles/',
             },
             {
+              label: 'Code Diffs',
+              translations: { 'zh-CN': '代码差异' },
+              link: '/contribution/diffs/',
+            },
+            {
               label: 'Components',
               translations: { 'zh-CN': '组件文档' },
               autogenerate: { directory: 'contribution/components' },
@@ -242,8 +247,30 @@ export default defineConfig({
         { icon: 'github', label: 'GitHub', href: 'https://github.com/CelPlume/CelestPlume' },
       ],
       // 关闭 expressive-code 的 frame（macOS 红绿灯终端条等外壳）
-      expressiveCode: { frames: false },
-      // Plumest TOC 层级：h2–h4
+      expressiveCode: {
+        frames: false,
+      // Diff 文本标记（ins/del/mark）对齐 Plumest 三色系：ins=成功绿（hue 150）、
+      // del=错误红（hue 25）。mark 的淡金与 hue 必须走 customizeTheme：
+      // Starlight 会经 applyStarlightUiThemeColors 在主题级把 mark 覆盖为中性色，
+      // 主题级 styleOverrides 优先于用户级，只有 customizeTheme 在其后执行才能胜出；
+      // 金色读 --cpd-gold 令牌，深浅自适应。
+      customizeTheme: (theme) => {
+        theme.styleOverrides.textMarkers = {
+          ...theme.styleOverrides.textMarkers,
+          insHue: '150',
+          delHue: '25',
+          markBackground: 'color-mix(in srgb, var(--cpd-gold) 14%, transparent)',
+          markBorderColor: 'color-mix(in srgb, var(--cpd-gold) 40%, transparent)',
+        };
+        return theme;
+      },
+      styleOverrides: {
+        textMarkers: {
+          lineDiffIndicatorMarginLeft: '0.25rem',
+        },
+      },
+      },
+      // ClerkTOC 层级：h2–h4
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
       // 官方 lastUpdated：页脚显示最近更新日期（取自 Git 提交历史，可用 frontmatter 覆盖）
       lastUpdated: true,
@@ -256,6 +283,7 @@ export default defineConfig({
         PageSidebar: './src/components/starlight/PageSidebar.astro',
         ContentPanel: './src/components/starlight/ContentPanel.astro',
         PageTitle: './src/components/starlight/PageTitle.astro',
+        Footer: './src/components/starlight/Footer.astro',
         MarkdownContent: './src/components/starlight/MarkdownContent.astro',
         Pagination: './src/components/starlight/Pagination.astro',
         ThemeProvider: './src/components/starlight/ThemeProvider.astro',
