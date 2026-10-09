@@ -33,6 +33,8 @@ bun run build      # 构建生产版本到 dist/
 bun run preview    # 预览生产构建
 bun run typecheck  # TypeScript 类型检查
 bun run lint       # ESLint 代码检查
+bun run lint:docs  # 文档内容规范检查（专有名词大小写 / 标点 / CJK 残留）
+bun run check:links  # 站内死链与标题跳级检查
 ```
 
 ## 提交信息规范（重要）
@@ -85,7 +87,9 @@ bun run lint       # ESLint 代码检查
 2. `bun run lint` — ESLint 检查必须通过
 3. `bun run build` — 生产构建必须通过
 
-若仅修改文档内容（`.md` / `.mdx` 文档文件）或静态资源，只需执行 `bun run build` 验证构建通过即可。
+若仅修改文档内容（`.md` / `.mdx` 文档文件）或静态资源，需执行 `bun run build` 验证
+构建通过，并保证 `bun run lint:docs` 与 `bun run check:links` 无违规
+（两者均为硬门禁：违规即 exit 1；存量内容不达标时一并修复）。
 
 **禁止**在 typecheck / lint / build 报错时交付代码。
 
@@ -293,6 +297,11 @@ data-cpd-theme → 写 data-theme"，**绝不回写 data-cpd-theme**（历史死
 - **少用有序列表**：步骤用带含义的标题分段（`## 三步`），不用 "1. 2. 3."
 - **首次出现缩写/术语要拼全**；相关名词附超链接
 - **标题即摘要**：更多标题 = 更好的锚点与扫读体验；用 **加粗** 标出关键信息
+- **正文图片一律用 markdown `![alt](src)` 语法**：禁止改写为裸 `<img>` HTML——
+  `rehypeImageZoom` 会把链接内的裸 `<img>` 拖出锚点、包成块级缩放容器，
+  导致徽章等行内图逐行断开、空链接残留外链箭头（已实证回归）。
+  `lint:docs` 对 `![` 前缀已豁免（`!` 是语法前缀不是感叹号），**不要为绕过检查改写语法**。
+  已有带 `style` 的历史 `<img>`（nanny 教程等 Halo 导出内容）维持现状，新内容一律 markdown
 - 构建器文本内的行内代码见 Docs Kit 段（必须用 `code()`，禁止 markdown 反引号）
 - 组件文档结构（每个组件 EN+ZH 一致）：frontmatter（title/description/sidebar.order）→
   一句话用途 → `<Preview>` 实况示例（配代码块）→ Props 表格 → Notes 列表
