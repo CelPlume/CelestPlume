@@ -16,6 +16,13 @@ import { applyTheme, resolveInitialTheme, LANG_STORAGE_KEY, type CpdThemeMode } 
 import { Icon } from './icons';
 import { githubLanguageColor } from './github-card';
 import { initImageZoom } from './image-zoom-runtime';
+import { getVideoPlayerUrl } from '../markdown/video';
+import {
+  decryptProtectedContent,
+  parseProtectedPayload,
+  ProtectedContentError,
+  type ProtectedPayload,
+} from '../crypto/protected-content';
 
 function isElement(node: EventTarget | null): node is Element {
   return node instanceof Element;
@@ -885,6 +892,268 @@ function initGithubCards(root: ParentNode): void {
 }
 
 /* ============================================================
+   Spoiler（隐秘文本：CSS 悬停/聚焦显形 + 点击保持展开）
+   ============================================================ */
+
+function initSpoilers(root: ParentNode): void {
+  root.addEventListener('click', (event) => {
+    const target = isElement(event.target) ? event.target : null;
+    if (!target) return;
+    const spoiler = closest<HTMLElement>(target, '[data-cpd-spoiler]');
+    if (!spoiler || !root.contains(spoiler)) return;
+    const expanded = spoiler.getAttribute('aria-expanded') === 'true';
+    spoiler.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+  });
+}
+
+/* ============================================================
+   Bilibili Facade（点击或视口临近才创建 player.bilibili.com iframe；
+   构建产物零请求零 iframe，见 src/lib/markdown/bilibili.ts）
+   ============================================================ */
+
+function activateVideoFacade(facade: HTMLElement): void {
+  if (facade.getAttribute('data-cpd-video-state') === 'active') return;
+
+  const stage = facade.querySelector<HTMLElement>('.cpd-video-stage');
+  const button = facade.querySelector<HTMLButtonElement>('[data-cpd-video-activate]');
+  const playerUrl = getVideoPlayerUrl(facade.getAttribute('data-cpd-video-provider'), {
+    bvid: facade.getAttribute('data-cpd-video-bvid'),
+    part: facade.getAttribute('data-cpd-video-part'),
+    id: facade.getAttribute('data-cpd-video-id'),
+  });
+  if (!stage || !button || !playerUrl) return;
+
+  const player = document.createElement('iframe');
+  player.className = 'cpd-video-player';
+  player.src = playerUrl;
+  player.title = facade.getAttribute('data-cpd-video-title') ?? 'Bilibili';
+  player.loading = 'lazy';
+  player.referrerPolicy = 'strict-origin-when-cross-origin';
+  player.allow = 'fullscreen; picture-in-picture';
+  player.allowFullscreen = true;
+  player.addEventListener(
+    'error',
+    () => {
+      player.remove();
+      button.disabled = false;
+      facade.setAttribute('data-cpd-video-state', 'error');
+    },
+    { once: true },
+  );
+
+  button.disabled = true;
+  stage.append(player);
+  facade.setAttribute('data-cpd-video-state', 'active');
+}
+
+function initVideoFacades(root: ParentNode): void {
+  const facades = Array.from(root.querySelectorAll<HTMLElement>('[data-cpd-video]'));
+  for (const facade of facades) {
+    if (facade.getAttribute('data-cpd-video-bound') === 'true') continue;
+    const button = facade.querySelector<HTMLButtonElement>('[data-cpd-video-activate]');
+    if (!button) continue;
+    facade.setAttribute('data-cpd-video-bound', 'true');
+    button.addEventListener('click', () => activateVideoFacade(facade));
+  }
+
+  // preload="auto"：视口临近（240px）时提前创建播放器，点击即播
+  for (const facade of facades) {
+    if (facade.getAttribute('data-video-preload') !== 'auto') continue;
+    if (facade.getAttribute('data-cpd-video-preload-bound') === 'true') continue;
+    facade.setAttribute('data-cpd-video-preload-bound', 'true');
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (!entries.some((entry) => entry.isIntersecting)) return;
+          observer.disconnect();
+          activateVideoFacade(facade);
+        },
+        { rootMargin: '240px 0px' },
+      );
+      observer.observe(facade);
+    } else {
+      activateVideoFacade(facade);
+    }
+  }
+}
+
+/* ============================================================
+   Encrypted（页面级加密：密码派生密钥 → AES-GCM 解密 → 注入正文；
+   构建期产物零明文，见 src/lib/crypto/protected-content.ts。
+   会话内缓存已解密正文（sessionStorage，30 分钟 TTL），不落盘密码）
+   ============================================================ */
+
+const ENCRYPTED_SESSION_PREFIX = 'celplume-protected:v1:';
+const ENCRYPTED_SESSION_TTL = 30 * 60 * 1000;
+
+interface EncryptedSessionEntry {
+  content: string;
+  expiresAt: number;
+}
+
+function readEncryptedSession(scope: string): string | null {
+  try {
+    const raw = window.sessionStorage.getItem(ENCRYPTED_SESSION_PREFIX + scope);
+    if (!raw) return null;
+    const entry = JSON.parse(raw) as EncryptedSessionEntry;
+    if (typeof entry.content !== 'string' || typeof entry.expiresAt !== 'number') return null;
+    if (entry.expiresAt <= Date.now()) {
+      window.sessionStorage.removeItem(ENCRYPTED_SESSION_PREFIX + scope);
+      return null;
+    }
+    return entry.content;
+  } catch {
+    return null;
+  }
+}
+
+function writeEncryptedSession(scope: string, content: string): void {
+  try {
+    window.sessionStorage.setItem(
+      ENCRYPTED_SESSION_PREFIX + scope,
+      JSON.stringify({ content, expiresAt: Date.now() + ENCRYPTED_SESSION_TTL } satisfies EncryptedSessionEntry),
+    );
+  } catch {
+    // 存储不可用（隐私模式等）时忽略：仅失去会话记忆
+  }
+}
+
+function initEncrypted(root: ParentNode): void {
+  root.querySelectorAll<HTMLElement>('[data-cpd-encrypted]').forEach((box) => {
+    if (box.getAttribute('data-cpd-encrypted-bound') === 'true') return;
+    box.setAttribute('data-cpd-encrypted-bound', 'true');
+
+    const scope = box.getAttribute('data-cpd-encrypted-scope') ?? '';
+    const payloadScript = box.querySelector<HTMLScriptElement>('script[data-cpd-encrypted-payload]');
+    const gate = box.querySelector<HTMLElement>('[data-cpd-encrypted-gate]');
+    const contentEl = box.querySelector<HTMLElement>('[data-cpd-encrypted-content]');
+    const form = gate?.querySelector<HTMLFormElement>('[data-cpd-encrypted-form]');
+    const input = gate?.querySelector<HTMLInputElement>('[data-cpd-encrypted-input]');
+    const toggle = gate?.querySelector<HTMLButtonElement>('[data-cpd-encrypted-toggle]');
+    const errorEl = gate?.querySelector<HTMLElement>('[data-cpd-encrypted-error]');
+    if (!scope || !payloadScript || !gate || !contentEl || !form || !input || !toggle || !errorEl) return;
+
+    let payload: ProtectedPayload;
+    try {
+      payload = parseProtectedPayload(JSON.parse(payloadScript.textContent ?? ''));
+    } catch {
+      // 载荷缺失/损坏：保留错误文案，禁用表单
+      form.querySelector('button[type="submit"]')?.setAttribute('disabled', 'true');
+      errorEl.hidden = false;
+      return;
+    }
+
+    const showContent = (content: string): void => {
+      gate.hidden = true;
+      contentEl.innerHTML = content;
+      contentEl.hidden = false;
+      // 解密正文里的 kit 组件 / EC 复制按钮需要重挂交互
+      initCelestialUI({ root: contentEl });
+    };
+
+    // 会话解锁记忆：同一会话返回本页无需重复输入
+    const cached = readEncryptedSession(scope);
+    if (cached) {
+      showContent(cached);
+      return;
+    }
+
+    // 密码显隐切换
+    const eyeIcon = Icon.eye({ class: 'cpd-encrypted-icon' });
+    const eyeOffIcon = Icon.eyeOff({ class: 'cpd-encrypted-icon' });
+    toggle.addEventListener('click', () => {
+      const hidden = input.type === 'password';
+      input.type = hidden ? 'text' : 'password';
+      toggle.innerHTML = hidden ? eyeOffIcon : eyeIcon;
+      toggle.setAttribute(
+        'aria-label',
+        hidden
+          ? (toggle.getAttribute('data-cpd-encrypted-label-hide') ?? 'Hide password')
+          : (toggle.getAttribute('data-cpd-encrypted-label-show') ?? 'Show password'),
+      );
+      input.focus();
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      errorEl.hidden = true;
+      const password = input.value;
+      if (!password) {
+        input.focus();
+        return;
+      }
+      const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      submit?.setAttribute('disabled', 'true');
+      void decryptProtectedContent(payload, password, scope)
+        .then((content) => {
+          writeEncryptedSession(scope, content);
+          showContent(content);
+        })
+        .catch((err: unknown) => {
+          errorEl.hidden = false;
+          if (!(err instanceof ProtectedContentError)) throw err;
+        })
+        .finally(() => {
+          submit?.removeAttribute('disabled');
+          input.value = '';
+          input.focus();
+        });
+    });
+  });
+}
+
+/* ============================================================
+   Abbreviations（触屏轻点 / 键盘 Enter-Space 切换 CSS 气泡；
+   桌面悬停由纯 CSS 处理。挂载后移除原生 title 避免双提示，
+   无 JS 时 title 仍是回退）
+   ============================================================ */
+
+function initAbbrs(root: ParentNode): void {
+  root.querySelectorAll<HTMLElement>('abbr.cpd-abbr[data-cpd-abbr]').forEach((abbr) => {
+    abbr.removeAttribute('title');
+  });
+
+  const closeAll = (except?: Element): void => {
+    root.querySelectorAll<HTMLElement>('abbr.cpd-abbr[data-cpd-abbr-open]').forEach((abbr) => {
+      if (abbr !== except) abbr.removeAttribute('data-cpd-abbr-open');
+    });
+  };
+
+  root.addEventListener('pointerdown', (event) => {
+    const e = event as PointerEvent;
+    const target = isElement(e.target) ? e.target : null;
+    if (!target) return;
+    const abbr = closest<HTMLElement>(target, 'abbr.cpd-abbr[data-cpd-abbr]');
+    if (!abbr || !root.contains(abbr)) {
+      closeAll();
+      return;
+    }
+    // 桌面鼠标悬停已有 CSS 气泡，这里只接管触屏/触笔
+    if (e.pointerType !== 'touch' && e.pointerType !== 'pen') return;
+    event.preventDefault();
+    const open = abbr.hasAttribute('data-cpd-abbr-open');
+    closeAll();
+    if (!open) abbr.setAttribute('data-cpd-abbr-open', '');
+  });
+
+  root.addEventListener('keydown', (event) => {
+    const e = event as KeyboardEvent;
+    const target = isElement(e.target) ? e.target : null;
+    if (!target) return;
+    const abbr = closest<HTMLElement>(target, 'abbr.cpd-abbr[data-cpd-abbr]');
+    if (!abbr) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      const open = abbr.hasAttribute('data-cpd-abbr-open');
+      closeAll();
+      if (!open) abbr.setAttribute('data-cpd-abbr-open', '');
+    } else if (e.key === 'Escape') {
+      closeAll();
+    }
+  });
+}
+
+/* ============================================================
    入口
    ============================================================ */
 
@@ -916,6 +1185,10 @@ export function initCelestialUI(options: CelestialUiOptions = {}): () => void {
   initTheme(root);
   initLang(root);
   initGithubCards(root);
+  initSpoilers(root);
+  initVideoFacades(root);
+  initAbbrs(root);
+  initEncrypted(root);
 
   return () => {
     // 清理由事件委托挂在 root 上的监听（由调用方决定是否真正移除）
