@@ -56,6 +56,9 @@ import { maximize } from './maximize';
 import { maximize2 } from './maximize2';
 import { rotateCcw } from './rotateCcw';
 import { printer } from './printer';
+import { lock } from './lock';
+import { eye } from './eye';
+import { eyeOff } from './eye-off';
 
 export const Icon = {
   chevronDown: chevronDown,
@@ -109,6 +112,9 @@ export const Icon = {
   maximize2: maximize2,
   rotateCcw: rotateCcw,
   printer: printer,
+  lock: lock,
+  eye: eye,
+  eyeOff: eyeOff,
 } as const;
 
 export type IconName = keyof typeof Icon;

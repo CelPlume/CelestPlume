@@ -1,5 +1,51 @@
 ---
 // MarkdownContent 覆盖：正文套用 kit 的 Plumest 排版（.cpd-article）。
+// 页面级加密：frontmatter 声明 `encrypted: true` + `password`（+ 可选
+// `passwordHint`，schema 见 src/content.config.ts 的 docsSchema extend）时，
+// 正文（含 EC 代码块高亮等全部渲染结果）在构建期被整体加密为 WebCrypto
+// 载荷，页面只输出解锁门；解密由客户端 runtime 完成。
+// 注意：Starlight 不向 MarkdownContent 传 props（仅 slot），加密配置必须
+// 从 Astro.locals.starlightRoute.entry.data 读取。
+import EncryptedContent from '../kit/EncryptedContent.astro';
+
+const route = Astro.locals.starlightRoute;
+const data = route.entry.data as Record<string, unknown>;
+
+const encrypted = data.encrypted === true;
+const password = typeof data.password === 'string' ? data.password : '';
+const hint = typeof data.passwordHint === 'string' ? data.passwordHint : undefined;
+
+const scope = `page:${route.entry.id}`;
+const isZh = route.locale === 'zh' || Astro.url.pathname.includes('/zh/');
+const labels = isZh
+  ? {
+      title: '受保护的内容',
+      description: '此页面已加密。输入密码后即可在本地解密查看，内容不会发送到任何服务器。',
+      placeholder: '输入密码',
+      unlock: '解锁',
+      showPassword: '显示密码',
+      hidePassword: '隐藏密码',
+      errorMessage: '密码错误或内容无法解密，请重试。',
+    }
+  : {
+      title: 'Protected content',
+      description: 'This page is encrypted. Enter the password to decrypt it locally — nothing is sent to any server.',
+      placeholder: 'Enter password',
+      unlock: 'Unlock',
+      showPassword: 'Show password',
+      hidePassword: 'Hide password',
+      errorMessage: 'Wrong password, or the content could not be decrypted. Please try again.',
+    };
 ---
 
-<div class="cpd-article cpd-md-content sl-markdown-content"><slot /></div>
+<div class="cpd-article cpd-md-content sl-markdown-content">
+  {
+    encrypted ? (
+      <EncryptedContent password={password} scope={scope} hint={hint} labels={labels}>
+        <slot />
+      </EncryptedContent>
+    ) : (
+      <slot />
+    )
+  }
+</div>

@@ -1,0 +1,47 @@
+---
+// EncryptedContent — 构建期把默认插槽（已渲染正文 HTML）加密为 AES-256-GCM 载荷，
+// 输出「解锁门 + 密文脚本」。客户端由 runtime.ts 的 initEncrypted 接管：
+// 密码派生密钥 → GCM 校验解密（AAD 绑定 scope 防跨页重放）→ 注入正文并重挂 kit 运行时。
+// 静态产物零明文：正文只以密文存在，密码不落盘。
+// 用法（MarkdownContent 覆盖组件）：<EncryptedContent password hint scope labels><slot /></EncryptedContent>
+import { encryptProtectedContent } from '../../lib/crypto/protected-content';
+import { encryptedGate, type EncryptedGateLabels } from '../../lib/ui/encrypted';
+
+interface Props {
+  /** 页面解锁密码（构建期使用，绝不输出到 HTML） */
+  password: string;
+  /** AAD 作用域（如 `page:<entry-id>`），绑定密文防跨页重放 */
+  scope: string;
+  /** 密码提示（可选） */
+  hint?: string;
+  /** 门内文案 */
+  labels: EncryptedGateLabels;
+}
+
+const { password, scope, hint, labels } = Astro.props;
+
+if (!password || password.trim().length === 0) {
+  // Fail-closed：声明了加密却没给密码，构建立即失败，杜绝明文意外发布
+  throw new Error('Encrypted pages require a non-empty password');
+}
+
+const rawHtml = await Astro.slots.render('default');
+const payload = await encryptProtectedContent(rawHtml, password, scope, 'text/html');
+
+// `<` 转义防 `</script>` 提前闭合（与 remark-mermaid 同款处理）
+const payloadJson = JSON.stringify(payload).replaceAll('<', '\\u003c');
+---
+
+<div
+  class="cpd-encrypted"
+  data-cpd-encrypted
+  data-cpd-encrypted-scope={scope}
+>
+  <script
+    type="application/json"
+    data-cpd-encrypted-payload
+    set:html={payloadJson}
+  />
+  <Fragment set:html={encryptedGate({ hint, labels })} />
+  <div class="cpd-encrypted-content" data-cpd-encrypted-content hidden></div>
+</div>
