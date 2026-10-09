@@ -183,13 +183,16 @@
   align-items: stretch;
   gap: 0;
 }
-/* 窄屏：压缩操作条各部件尺寸，保住「最近更新 + 复制」单行（极端窄屏回退换行） */
+/* 窄屏：压缩尺寸并改为左对齐紧排——space-between 会把「最近更新」与按钮
+   拉到两端留下大空隙（竖屏比例失衡），紧排后单行贴合一并消除中缝 */
 @media (max-width: 640px) {
   .cpd-page-actions {
-    gap: 0.75rem;
+    justify-content: flex-start;
+    gap: 0.5rem;
   }
   .cpd-page-updated {
     font-size: 0.75rem;
+    white-space: nowrap;
   }
   .cpd-page-actions-group .cpd-button-sm {
     height: 1.75rem;

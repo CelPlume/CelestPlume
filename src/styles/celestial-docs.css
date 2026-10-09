@@ -811,6 +811,9 @@ body {
   font-size: 1rem;
   line-height: 1.75;
   color: var(--cpd-foreground);
+  /* 长英文标识符/URL（如 TransferTeamModal/DissolveTeamModal）无断行机会，
+     窄屏会把列表与整页撑出横向溢出（已实测 637/360） */
+  overflow-wrap: anywhere;
 }
 .cpd-article > :first-child {
   margin-top: 0;
