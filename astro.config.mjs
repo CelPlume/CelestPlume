@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import mdx from '@astrojs/mdx';
 import icon from 'astro-icon';
+import { unified } from '@astrojs/markdown-remark';
 import rehypeImageZoom from './src/lib/markdown/rehype-image-zoom.ts';
 import remarkMermaid from './src/lib/markdown/remark-mermaid.ts';
 import { readFile, writeFile, rm } from 'node:fs/promises';
@@ -81,10 +82,12 @@ export default defineConfig({
   // cleanURL：Astro 默认输出无 .html 的目录型路由（/page/），配合 trailingSlash 保持内部链接稳定
   trailingSlash: 'always',
   markdown: {
-    // 把 ```mermaid 代码块替换为客户端渲染容器（remark 阶段，早于 expressive-code）
-    remarkPlugins: [remarkMermaid],
-    // 把正文 `<img>` 重写为可点击放大的 ImageZoom 组件（含 zoom 缩放修复）
-    rehypePlugins: [rehypeImageZoom],
+    // Astro 7 默认处理器为 Sätteri；本项目依赖 remark/rehype 插件（mermaid 图表、
+    // 图片缩放），按 v7 升级指南显式使用 unified 管线（插件直接传给处理器）
+    processor: unified({
+      remarkPlugins: [remarkMermaid],
+      rehypePlugins: [rehypeImageZoom],
+    }),
   },
   integrations: [
     celestialUiRuntime(),
@@ -133,17 +136,17 @@ export default defineConfig({
             {
               label: 'Tutorials',
               translations: { 'zh-CN': '用户教程' },
-              autogenerate: { directory: 'chronosync/tutorials' },
+              items: [{ autogenerate: { directory: 'chronosync/tutorials' } }],
             },
             {
               label: 'Development',
               translations: { 'zh-CN': '开发部署' },
-              autogenerate: { directory: 'chronosync/dev' },
+              items: [{ autogenerate: { directory: 'chronosync/dev' } }],
             },
             {
               label: 'Legal',
               translations: { 'zh-CN': '法律条款' },
-              autogenerate: { directory: 'chronosync/legal' },
+              items: [{ autogenerate: { directory: 'chronosync/legal' } }],
             },
           ],
         },
@@ -165,12 +168,12 @@ export default defineConfig({
             {
               label: 'Development',
               translations: { 'zh-CN': '开发部署' },
-              autogenerate: { directory: 'bookmark-harbor/dev' },
+              items: [{ autogenerate: { directory: 'bookmark-harbor/dev' } }],
             },
             {
               label: 'Frontend',
               translations: { 'zh-CN': '前端指南' },
-              autogenerate: { directory: 'bookmark-harbor/ui' },
+              items: [{ autogenerate: { directory: 'bookmark-harbor/ui' } }],
             },
           ],
         },
@@ -197,17 +200,17 @@ export default defineConfig({
             {
               label: 'Development',
               translations: { 'zh-CN': '开发部署' },
-              autogenerate: { directory: 'picumet/dev' },
+              items: [{ autogenerate: { directory: 'picumet/dev' } }],
             },
             {
               label: 'API Reference',
               translations: { 'zh-CN': 'API 参考' },
-              autogenerate: { directory: 'picumet/api' },
+              items: [{ autogenerate: { directory: 'picumet/api' } }],
             },
             {
               label: 'Frontend',
               translations: { 'zh-CN': '前端指南' },
-              autogenerate: { directory: 'picumet/ui' },
+              items: [{ autogenerate: { directory: 'picumet/ui' } }],
             },
           ],
         },
@@ -238,7 +241,7 @@ export default defineConfig({
             {
               label: 'Components',
               translations: { 'zh-CN': '组件文档' },
-              autogenerate: { directory: 'contribution/components' },
+              items: [{ autogenerate: { directory: 'contribution/components' } }],
             },
           ],
         },

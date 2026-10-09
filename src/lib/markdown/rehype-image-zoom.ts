@@ -50,6 +50,12 @@ function isStandaloneImg(
   return true;
 }
 
+/** 判别 mdast→hast 管线产出的原生 HTML raw 节点（与 'raw' 判别符直接交叉会 never 化，收缩到带 value 的宽交叉） */
+function isRawNode(node: RootContent): node is RootContent & { value?: string } {
+  const shape = node as unknown as { type?: string };
+  return shape.type === 'raw';
+}
+
 /** 判断图片是否有水平 auto 外边距（居中意图） */
 function hasCenterIntent(style: string | undefined): boolean {
   if (!style) return false;
@@ -69,8 +75,9 @@ function transformChildren(
   for (let i = 0; i < children.length; i++) {
     const node = children[i];
 
-    // 原生 HTML（rehype-raw 尚未解析）：解析后逐图转换，再序列化回 raw
-    if (node.type === 'raw') {
+    // 原生 HTML（rehype-raw 尚未解析）：解析后逐图转换，再序列化回 raw。
+    // @types/hast v11 移除了 'raw' 节点类型（与 mdast→hast 运行时不一致），走守卫分支。
+    if (isRawNode(node)) {
       const parsed = fromHtml(node.value ?? '', { fragment: true }) as Root;
       transformChildren(parsed.children as RootContent[]);
       node.value = toHtml(parsed, { allowDangerousHtml: true });
