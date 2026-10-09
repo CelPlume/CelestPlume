@@ -23,8 +23,10 @@ import {
   pagination,
   heading,
   typeTable,
+  encryptedGate,
   Icon,
 } from '../lib/ui';
+import { bilibiliFacade } from '../lib/markdown/video';
 
 interface Props {
   locale: Locale;
@@ -93,6 +95,35 @@ const copy = {
   sectionTypeTableDesc: EN
     ? 'Structured contract tables for props and API parameters — required stars, monospace type badges and collapsible details, zero JS.'
     : 'Props 与 API 参数的结构化契约表格 —— 必填星标、等宽类型标签、可折叠详情，零 JS。',
+  sectionVideo: 'Video Facade',
+  sectionVideoDesc: EN
+    ? 'Bilibili embeds ship as a zero-request facade (the <BilibiliVideo> component — see Embed Media). The player loads on click or viewport proximity.'
+    : 'Bilibili 嵌入以零请求 facade 输出（<BilibiliVideo> 组件——见「嵌入媒体」）。播放器在点击或视口临近时加载。',
+  sectionEncrypted: 'Encrypted Gate',
+  sectionEncryptedDesc: EN
+    ? 'The unlock gate for page-level encryption (frontmatter <code>encrypted</code>). This is the visual demo — the live flow lives on <a href="/contribution/pages/encrypted-demo/">the encrypted demo page</a>.'
+    : '页面级加密（frontmatter <code>encrypted</code>）的解锁门。此处为外观演示——完整流程见<a href="/zh/contribution/pages/encrypted-demo/">加密演示页</a>。',
+  gate: EN
+    ? {
+        title: 'Protected content',
+        description: 'This page is encrypted. Enter the password to decrypt it locally — nothing is sent to any server.',
+        placeholder: 'Enter password',
+        unlock: 'Unlock',
+        showPassword: 'Show password',
+        hidePassword: 'Hide password',
+        errorMessage: 'Wrong password, or the content could not be decrypted. Please try again.',
+        hint: 'This is a static demo gate — try the live demo page for the real decryption flow.',
+      }
+    : {
+        title: '受保护的内容',
+        description: '此页面已加密。输入密码后即可在本地解密查看，内容不会发送到任何服务器。',
+        placeholder: '输入密码',
+        unlock: '解锁',
+        showPassword: '显示密码',
+        hidePassword: '隐藏密码',
+        errorMessage: '密码错误或内容无法解密，请重试。',
+        hint: '这是一个静态外观演示——完整解密流程请访问加密演示页。',
+      },
   sectionExtras: 'Extras',
   sectionExtrasDesc: EN
     ? 'Badges, key caps, quotes and tables.'
@@ -360,6 +391,14 @@ const article = [
     EN ? {} : { prop: '参数', type: '类型', default: '默认值' },
   ),
 
+  heading(2, copy.sectionVideo, { id: 'video' }),
+  `<p>${copy.sectionVideoDesc}</p>`,
+  bilibiliFacade({ bvid: 'BV1fK4y1s7Qf', title: EN ? 'Demo video' : '演示视频', part: 1, preload: 'none' }),
+
+  heading(2, copy.sectionEncrypted, { id: 'encrypted' }),
+  `<p>${copy.sectionEncryptedDesc}</p>`,
+  encryptedGate({ hint: copy.gate.hint, labels: copy.gate }),
+
   heading(2, copy.sectionExtras, { id: 'extras' }),
   `<p>${copy.sectionExtrasDesc} Press ${kbd(copy.kbdCopy)} + ${kbd(copy.kbdPaste)} to copy. ${badge('Badge', 'info')} ${badge('Warn', 'warning')} ${badge('Danger', 'error')}</p>`,
   `<blockquote>${copy.quote}</blockquote>`,
@@ -383,6 +422,8 @@ const tocItems = [
   { url: '#files', title: copy.sectionFiles, depth: 2, step: 3 },
   { url: '#tokens', title: copy.sectionTokens, depth: 2 },
   { url: '#typetable', title: copy.sectionTypeTable, depth: 2 },
+  { url: '#video', title: copy.sectionVideo, depth: 2 },
+  { url: '#encrypted', title: copy.sectionEncrypted, depth: 2 },
   { url: '#extras', title: copy.sectionExtras, depth: 2 },
 ];
 
