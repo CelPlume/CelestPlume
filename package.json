@@ -19,7 +19,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "typecheck": "astro check",
-    "lint": "eslint . --ext .js,.mjs,.ts,.astro"
+    "lint": "eslint . --ext .js,.mjs,.ts,.astro",
+    "check:links": "bun run scripts/check-links.ts",
+    "lint:docs": "bun run scripts/lint-docs.ts"
   },
   "type": "module",
   "devDependencies": {
