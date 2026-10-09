@@ -360,7 +360,7 @@ export function pagination(
   const prevLabel = labels.previous ?? 'Previous Page';
   const nextLabel = labels.next ?? 'Next Page';
   const renderItem = (item: PaginationItem, isNext: boolean) =>
-    el('a', { class: `cpd-pagination-item${isNext ? ' cpd-pagination-next' : ''}`, href: item.href }, [
+    el('a', { class: `cpd-pagination-item${isNext ? ' cpd-pagination-next' : ''}`, href: item.href, rel: isNext ? 'next' : 'prev' }, [
       el('div', { class: 'cpd-pagination-label' }, [
         isNext ? '' : Icon.chevronLeft({ class: 'cpd-pagination-icon' }),
         `<span>${isNext ? nextLabel : prevLabel}</span>`,
@@ -510,6 +510,8 @@ export interface DropdownOptions {
   hover?: boolean;
   /** 触发按钮附加类（自定义样式，如导航链接样式） */
   triggerClass?: string;
+  /** 触发按钮可访问名（纯图标触发器必填，如 "更多操作"） */
+  triggerLabel?: string;
 }
 
 export function dropdown(options: DropdownOptions): string {
@@ -531,6 +533,7 @@ export function dropdown(options: DropdownOptions): string {
           'data-cpd-dropdown-trigger': '',
           'aria-haspopup': 'menu',
           'aria-expanded': open ? 'true' : 'false',
+          ...(options.triggerLabel ? { 'aria-label': options.triggerLabel } : {}),
         },
         options.trigger,
       ),
@@ -756,7 +759,7 @@ export type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
 export interface HeadingOptions {
   id: string;
-  /** 是否标记为 TOC 阶数项（配合 ClerkTOC steps） */
+  /** 是否标记为 TOC 阶数项（配合 Plumest TOC steps 徽章） */
   step?: boolean;
 }
 
