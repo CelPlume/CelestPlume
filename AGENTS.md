@@ -306,6 +306,60 @@ data-cpd-theme → 写 data-theme"，**绝不回写 data-cpd-theme**（历史死
 - 组件文档结构（每个组件 EN+ZH 一致）：frontmatter（title/description/sidebar.order）→
   一句话用途 → `<Preview>` 实况示例（配代码块）→ Props 表格 → Notes 列表
 
+## 写作语法扩展
+
+文档正文支持一组 Plume 兼容写作语法（实现在 `src/lib/markdown/`）。文档分布：
+五项行内语法（马克笔/隐秘文本/缩写词/内容注释 + 总览）合并在
+`src/content/docs/{,zh/}contribution/syntax.mdx`（侧栏「设计系统」下方）；
+文件片段导入、Expressive Code 围栏与代码差异并入 `components/code-block.mdx`；
+`<BilibiliVideo>` / `<YouTubeVideo>` 组件文档在 `components/embed-media.mdx`，
+`<BilibiliCard>` 并入 `components/cards.mdx`；
+页面加密及实机演示在 `src/content/docs/{,zh/}contribution/pages/encrypted{,-demo}.mdx|md`
+（侧栏「组件文档」下方「页面文档」分组）。
+
+- **马克笔** `==文本=={.primary|.secondary|.tertiary|.error|.tip}` →
+  `<mark class="cpd-marker--*">`（`remark-marker.ts` 解析前重写为指令）
+- **隐秘文本** `:spoiler[文本]` → `<button class="cpd-spoiler">`（不透明黑幕
+  遮罩，与行内代码样式明确区分；纯 CSS 显形 + 点击切换）
+- **缩写词** `*[术语]: 释义` 字典 → 正文自动 `<abbr class="cpd-abbr">`（CSS
+  气泡：悬停/键盘聚焦/触屏轻点均可触发，runtime `initAbbrs` 接管触摸与
+  Enter/Space，无 JS 回退原生 title）
+- **内容注释** `[+tag]` + `[+tag]:` 定义块 → 原生 Popover API 旁注（零 JS；
+  弹层内联 `position-anchor` 锚定徽标，`@supports` 居中回退）
+- **文件导入** `<!-- @include: 路径 -->`（`{10-25}` 行切片 / `{5-}` / `{-4}` /
+  `#region` 命名区块；仅 `.md` 页，MDX 不支持 HTML 注释；非 Markdown 目标
+  自动包代码围栏；路径相对包含方文件）
+- **视频嵌入**（Plumest MDX 组件，不用 `::` 指令）：
+  `<BilibiliVideo bvid title p preload>` / `<YouTubeVideo id title preload>`
+  → 零请求 facade（点击/视口预加载加载 player.bilibili.com /
+  youtube-nocookie.com 播放器；实现见 `src/lib/markdown/video.ts`，包装在
+  `src/components/kit/`，非法 props 构建报错）
+- **Bilibili 链接卡片** `<BilibiliCard bvid>`：构建期经 view API 抓取
+  标题/简介/UP主（`src/lib/ui/bilibili-card.ts`），失败退化纯链接卡片；
+  文档并入 `components/cards.mdx`（与 GitHubCard 同页）
+- **页面加密** frontmatter `encrypted: true` + `password`（+ `passwordHint`）：
+  构建期 AES-256-GCM（PBKDF2-SHA-256 31 万次迭代、AAD 绑定 `page:<id>`）加密
+  整页正文，客户端解锁（`src/lib/crypto/protected-content.ts` +
+  `src/components/kit/EncryptedContent.astro`）；**password 为空必须让构建失败**；
+  `/<id>.md` 与 `llms-full.txt` 端点对加密页整篇脱敏；live 演示页
+  `contribution/pages/encrypted-demo`（密码 `celplume`），两页位于侧栏
+  「组件文档」下方的「页面文档」（`contribution/pages/`）分组。
+
+维护规则：
+
+- **downlevel.ts 必须与写作语法同步**（AGENTS.md 既有硬规则的新增面）：
+  marker→加粗、spoiler→显形、注释→GFM 脚注、abbr 字典剥离、
+  `<BilibiliCard>`/`<BilibiliVideo>`/`<YouTubeVideo>`→视频页链接、
+  `@include` 按 `basePath` 展开；新增语法时先改 `downlevelMarkdown` 再写文档。
+- **内容型组件一律走 Plumest MDX 组件规范（`<X />`），不新增 `::` 指令**；
+  `::` 家族已移除，残留叶子指令在 remark-cpd-directives 回退为字面量文本。
+- 解析前重写类插件（include/marker/abbr/annotations）通过包装 `this.parser`
+  实现；**包装链必须透传第二个参数（VFile）**，否则 `@include` 拿不到文件路径。
+- Expressive Code 经 Starlight `expressiveCode.plugins` 注册
+  `plugin-line-numbers` / `plugin-collapsible-sections`，frames 开启
+  （复制按钮仍为 kit 版）；EC 主题色改动必须走 `customizeTheme`（见配置注释）。
+- 新增构建器图标仍走「一个图标一个文件 + icons/index.ts 聚合」规则。
+
 ## 目录结构
 
 - `astro.config.mjs` —— Starlight 与 i18n（locales）配置
