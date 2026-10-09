@@ -49,6 +49,8 @@ src/
 │   ├── toc.ts               #   Plumest TOC 构建器 + 标题收集
 │   ├── components.ts        #   callout / cards / steps / tabs 等构建器
 │   ├── github-card.ts       #   GitHubCard 构建器 + 构建期抓取
+│   ├── bilibili-card.ts     #   BilibiliCard 构建器 + view API 抓取
+│   ├── encrypted.ts         #   加密页解锁门构建器
 │   ├── runtime.ts           #   无框架客户端运行时
 │   └── index.ts             #   公共 API 出口
 ├── styles/

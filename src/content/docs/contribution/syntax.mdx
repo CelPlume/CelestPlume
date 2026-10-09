@@ -1,0 +1,135 @@
+---
+title: Writing Syntax
+description: Markdown extensions for prose — marker highlights, spoiler text, abbreviations and content annotations.
+---
+
+import PropsTable from '../../../components/kit/PropsTable.astro';
+
+CelestPlume extends plain Markdown with authoring syntaxes ported from the
+Shirone theme's Plume-compatible syntax. Everything renders at build time;
+client JavaScript only enhances hover, tap and click interactions. All
+syntaxes work in `.md` and `.mdx`, in both locales, and never trigger inside
+fenced or inline code.
+
+## Marker highlights
+
+Wrap text with paired double equals for a highlighter-underline effect; a
+curly-brace suffix selects a semantic color role.
+
+Writing docs, use ==a marker highlight== to mark key takeaways. Variants:
+==secondary emphasis=={.secondary}, ==something that needs fixing=={.error},
+==a helpful suggestion=={.tip} and ==tertiary emphasis=={.tertiary}. Nested
+formatting survives: ==bold **and** `code`==.
+
+```markdown
+Writing docs, use ==a marker highlight== to mark key takeaways.
+==secondary emphasis=={.secondary}
+==something that needs fixing=={.error}
+```
+
+<PropsTable
+  labels={{ prop: 'Variant', type: 'Token', default: 'Default' }}
+  type={{
+    primary: { type: "'--cpd-gold'", default: 'yes', description: 'Default — the Plumest gold accent.' },
+    secondary: { type: "'--cpd-accent-foreground'", description: 'Secondary emphasis.' },
+    tertiary: { type: "'--cpd-info'", description: 'Tertiary emphasis.' },
+    error: { type: "'--cpd-error'", description: 'Warnings and things to fix.' },
+    tip: { type: "'--cpd-success'", description: 'Suggestions and helpful hints.' },
+  }}
+/>
+
+Notes:
+
+- Renders a native `<mark>` element — screen readers see plain emphasized text.
+- Unknown variants fall back to `primary`; escaped `\==x==` stays literal.
+- Print keeps the highlight as a thinner, opaque underline.
+
+## Spoiler text
+
+`:spoiler[text]` hides content behind an opaque black curtain. Readers reveal
+it by hovering (desktop), tapping (touch), focusing (keyboard) — or clicking
+to keep it open.
+
+The final episode reveals :spoiler[the detective was the culprit all along].
+Formatting works too: :spoiler[**bold** and `code`].
+
+````markdown
+The final episode reveals :spoiler[the detective was the culprit all along].
+````
+
+Notes:
+
+- The curtain is an opaque dark mask — visually distinct from inline code
+  (light background, border, monospace).
+- Hover and focus reveal via pure CSS; clicking toggles `aria-expanded` for a
+  persistent reveal.
+- The element is a native `<button>`; printing reveals everything.
+
+## Abbreviations
+
+Declare a `*[TERM]: expansion` dictionary once per page; every occurrence of
+the term in prose renders as a dotted-underline `<abbr>` with a tooltip. This
+page declares two terms right below — they are consumed at build time and
+removed from the rendered output:
+
+*[SSR]: Server-Side Rendering
+*[AST]: Abstract Syntax Tree
+
+```markdown
+*[SSR]: Server-Side Rendering
+*[AST]: Abstract Syntax Tree
+```
+
+With the definitions above, the paragraph below demonstrates live matching:
+SSR improves initial load, and the AST is transformed before that — SSR and
+AST keep working anywhere in a sentence.
+
+Notes:
+
+- The tooltip shows on hover, keyboard focus, and touch taps (tap again or
+  elsewhere to dismiss; `Enter`/`Space` toggles too).
+- Without JavaScript the native `title` tooltip still works.
+- Matching is word-boundary aware, case-sensitive, longest term first; inline
+  code, links, images and fences are skipped. Invalid or duplicate
+  definitions stay visible as plain text.
+
+## Content annotations
+
+Insert `[+tag]` where the reference belongs and define it anywhere in the
+page (below the paragraph or at the end). The note opens in a pop-over card
+anchored to the badge.
+
+Astro's islands [+islands] keep pages fast. The renderer also supports
+[+directive] syntax — repeated labels accumulate into a numbered list.
+
+[+islands]:
+  Islands architecture wraps static HTML with isolated interactive
+  components; only the interactive regions ship JavaScript.
+
+[+directive]:
+  A container directive written as `:::name{attrs}`.
+
+[+directive]:
+  Directives are parsed by remark-directive and mapped to HTML at build time.
+
+Inline definitions work too: [+inline] on a single line.
+
+[+inline]: This definition lives on the same line as the label.
+
+````markdown
+Astro's islands [+islands] keep pages fast.
+
+[+islands]:
+  Islands architecture wraps static HTML with isolated interactive
+  components; only the interactive regions ship JavaScript.
+````
+
+Notes:
+
+- Zero JavaScript: the badge is a native `<button>` wired through the
+  declarative `popovertarget` attribute; positioning uses CSS Anchor
+  Positioning with a centered fallback.
+- Undefined labels stay literal — `[+unknown]` renders as-is. References are
+  not rewritten inside inline code, links, images or fences.
+- The definition block is removed from the visible flow; printing hides the
+  pop-overs and keeps the badges.

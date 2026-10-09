@@ -1,0 +1,71 @@
+---
+title: Embed Media
+description: Zero-request video facades for Bilibili and YouTube, with viewport preloading.
+sidebar:
+  order: 21
+---
+
+import BilibiliVideo from '../../../../components/kit/BilibiliVideo.astro';
+import YouTubeVideo from '../../../../components/kit/YouTubeVideo.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
+
+`BilibiliVideo` and `YouTubeVideo` embed videos as a zero-request facade —
+placeholder stage, play button, caption — with **no requests and no iframe**
+at build time. The player loads after an explicit click, or when the facade
+approaches the viewport with `preload="auto"`.
+
+## Bilibili
+
+<BilibiliVideo bvid="BV1fK4y1s7Qf" title="Demo video" p={1} />
+
+```astro
+---
+import BilibiliVideo from '../../../../components/kit/BilibiliVideo.astro';
+---
+
+<BilibiliVideo bvid="BV1fK4y1s7Qf" title="Demo video" p={1} />
+```
+
+## YouTube
+
+<YouTubeVideo id="5gIf0_xpFPI" title="Demo video" preload="auto" />
+
+```astro
+---
+import YouTubeVideo from '../../../../components/kit/YouTubeVideo.astro';
+---
+
+<YouTubeVideo id="5gIf0_xpFPI" title="Demo video" preload="auto" />
+```
+
+## Props
+
+Shared props: `title` labels the caption and the iframe for accessibility;
+`preload` controls lazy loading — `none` keeps the facade static until
+clicked, `auto` initializes the player 240px before the facade enters the
+viewport (IntersectionObserver, one-shot).
+
+<PropsTable
+  labels={{ prop: 'Prop', type: 'Type', default: 'Default' }}
+  type={{
+    bvid: { type: 'string', required: true, description: 'Bilibili video ID (<code>BV…</code>, 10 suffix chars) — <code>BilibiliVideo</code> only.' },
+    p: { type: 'number', default: '1', description: 'Bilibili part number.' },
+    id: { type: 'string', required: true, description: 'YouTube video ID (11 characters) — <code>YouTubeVideo</code> only.' },
+    title: { type: 'string', required: true, description: 'Video title — used for the caption and the iframe accessibility label.' },
+    preload: { type: "'none' | 'auto'", default: "'none'", description: 'Lazy-loading strategy for the player.' },
+  }}
+/>
+
+## Notes
+
+- The stage keeps a strict 16:9 ratio and never breaks the article layout.
+- Player URLs are created only in the browser after activation:
+  `player.bilibili.com` (high quality, danmaku off) and
+  `youtube-nocookie.com` (rel 0, modest branding).
+- The caption links to the watch page (Bilibili / YouTube) and opens in a new
+  tab.
+- Invalid props fail the build with a clear error instead of shipping a broken
+  embed.
+- For a link card with cover, title, description and uploader, use
+  [BilibiliCard](/contribution/components/cards/) instead of the
+  playable facade.

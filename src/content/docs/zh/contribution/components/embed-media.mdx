@@ -1,0 +1,65 @@
+---
+title: 嵌入媒体
+description: 零请求的 Bilibili 与 YouTube 视频 facade，支持视口预加载。
+sidebar:
+  order: 21
+---
+
+import BilibiliVideo from '../../../../../components/kit/BilibiliVideo.astro';
+import YouTubeVideo from '../../../../../components/kit/YouTubeVideo.astro';
+import PropsTable from '../../../../../components/kit/PropsTable.astro';
+
+`BilibiliVideo` 与 `YouTubeVideo` 把视频嵌入为零请求 facade——占位舞台、
+播放按钮、题注——构建期**零请求、零 iframe**。播放器在读者显式点击后加载；
+配置 `preload="auto"` 时，卡片临近视口即提前初始化。
+
+## Bilibili
+
+<BilibiliVideo bvid="BV1fK4y1s7Qf" title="演示视频" p={1} />
+
+```astro
+---
+import BilibiliVideo from '../../../../../components/kit/BilibiliVideo.astro';
+---
+
+<BilibiliVideo bvid="BV1fK4y1s7Qf" title="演示视频" p={1} />
+```
+
+## YouTube
+
+<YouTubeVideo id="5gIf0_xpFPI" title="演示视频" preload="auto" />
+
+```astro
+---
+import YouTubeVideo from '../../../../../components/kit/YouTubeVideo.astro';
+---
+
+<YouTubeVideo id="5gIf0_xpFPI" title="演示视频" preload="auto" />
+```
+
+## 参数
+
+公共参数：`title` 用于题注与 iframe 的无障碍描述；`preload` 控制懒加载——
+`none` 保持纯占位直到点击；`auto` 在卡片进入视口前 240px 时经
+IntersectionObserver 一次性初始化播放器。
+
+<PropsTable
+  labels={{ prop: '参数', type: '类型', default: '默认值' }}
+  type={{
+    bvid: { type: 'string', required: true, description: 'Bilibili 视频 BV 号（共 10 位后缀）——仅 <code>BilibiliVideo</code>。' },
+    p: { type: 'number', default: '1', description: 'Bilibili 分 P 编号。' },
+    id: { type: 'string', required: true, description: 'YouTube 视频 ID（11 位字符）——仅 <code>YouTubeVideo</code>。' },
+    title: { type: 'string', required: true, description: '视频标题，用于题注与 iframe 的无障碍描述。' },
+    preload: { type: "'none' | 'auto'", default: "'none'", description: '播放器懒加载策略。' },
+  }}
+/>
+
+## 说明
+
+- 舞台锁定 16:9 比例，绝不撑破文章排版。
+- 播放器地址仅在浏览器激活后创建：`player.bilibili.com`（高画质、关弹幕）
+  与 `youtube-nocookie.com`（rel 0、modest branding）。
+- 题注外链指向 Bilibili / YouTube 观看页，新标签打开。
+- 非法参数会让构建直接报错，而不是发布损坏的嵌入。
+- 需要带封面、标题、简介与 UP主 的链接卡片时，请使用
+  [BilibiliCard](/zh/contribution/components/cards/)。

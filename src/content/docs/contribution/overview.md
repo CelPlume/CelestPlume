@@ -55,6 +55,8 @@ src/
 │   ├── toc.ts               #   Plumest TOC builder + heading collector
 │   ├── components.ts        #   callout, cards, steps, tabs, … builders
 │   ├── github-card.ts       #   GitHubCard builder + build-time fetch
+│   ├── bilibili-card.ts     #   BilibiliCard builder + view-API fetch
+│   ├── encrypted.ts         #   encrypted-page gate builder
 │   ├── runtime.ts           #   framework-free client runtime
 │   └── index.ts             #   public API barrel
 ├── styles/
