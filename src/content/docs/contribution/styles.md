@@ -44,7 +44,7 @@ each variable's **light** and **dark** value; the CSS injects them under
 | `--cpd-sidebar-accent-foreground` | `hsl(0 0% 9%)` | `hsl(0 0% 90%)` |
 
 `--cpd-primary` is Plumest's neutral near-black (light `#171717` / dark
-`#fafafa`); it drives active links, sidebar active items, the ClerkTOC track
+`#fafafa`); it drives active links, sidebar active items, the TOC slider
 and emphasis. The home page keeps its own celestial palette untouched.
 
 ### Semantic colors
@@ -99,7 +99,7 @@ incidental Chinese renders in the system CJK font instead of downloading the
 Body copy is `1rem / 1.75` line-height; article headings scale from
 `2rem` (h1) down to `1.05rem` (h4), weight 600, with negative
 letter-spacing on large sizes. Inline code uses a bordered `--cpd-secondary`
-chip; code blocks (astro-expressive-code on the docs pages) render as a
+chip; code blocks (`astro-expressive-code` on the docs pages) render as a
 single `--cpd-card` layer with `13px` mono text, a `1px` border and a ghost
 copy button — matching Plumest.
 

@@ -319,4 +319,4 @@ Use this list when reviewing a UI change:
 - [Development guide](/picumet/dev/development/) for local setup, tests, and conventions.
 - [Deployment guide](/picumet/dev/deployment/) for shipping to Cloudflare.
 - [Progress report](/picumet/about/progress/) for the implementation status and roadmap.
-- [Project overview](../README.md)
+- [Project overview](https://github.com/CelPlume/Picumet/blob/main/README.md)

@@ -319,4 +319,4 @@ flowchart LR
 - [开发指南](/zh/picumet/dev/development/)：本地环境、测试与规范。
 - [部署指南](/zh/picumet/dev/deployment/)：发布到 Cloudflare。
 - [进度报告](/picumet/about/progress/)：实现状态与路线图。
-- [项目概览](../README_CN.md)
+- [项目概览](https://github.com/CelPlume/Picumet/blob/main/README_CN.md)

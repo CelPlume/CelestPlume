@@ -14,7 +14,7 @@ Welcome to **ChronoSync (SDNUChronoSync)**. Please read these Terms of Service (
 ## 1. About the Service
 
 1. ChronoSync is a multi-user timetable and schedule management web application that provides personal multi-schedule management, calendar events, schedule adjustments, team collaboration, schedule sharing, and empty-classroom lookup.
-2. The Service is operated by **CelPlume (Celest Plume)** and is available online at <https://sxtj.hxcn.space>. The project source code is licensed under the MIT License and hosted at <https://github.com/CelPlume/SDNUChronoSync>.
+2. The Service is operated by **CelPlume (Celest Plume)** and is available online at <https://sxtj.hxcn.space>. The project source code is licensed under the MIT License and hosted at <https://GitHub.com/CelPlume/SDNUChronoSync>.
 3. The Service may also run as self-hosted instances (e.g., via Docker). These Terms apply equally to your use of self-hosted instances.
 
 ## 2. Account Terms
@@ -38,7 +38,7 @@ You agree that when using the Service you will not:
 
 1. Content you upload or create on the Service — schedules, calendar events, team profiles, and so on — belongs to you, and you are responsible for its truthfulness and lawfulness.
 2. To operate the Service, you grant the operator a non-exclusive license to store, process, and display such content within the scope of the Service. This license terminates when you delete the content, except where retention is required by law.
-3. The Service's software is open source under the MIT License; you may use, modify, and redistribute it in accordance with that license. The names and marks "ChronoSync", "Celest Plume" (天空之翼), and "CelPlume" may only be used as separately instructed by the operator.
+3. The Service's software is open source under the MIT License; you may use, modify, and redistribute it in accordance with that license. The names and marks "ChronoSync", "Celest Plume", and "CelPlume" may only be used as separately instructed by the operator.
 
 ## 5. Third-Party Services
 
@@ -78,5 +78,5 @@ These Terms are governed by the laws of the People's Republic of China. Disputes
 ## 12. Contact Us
 
 - Email: <excnies@yeah.net>
-- Project homepage: <https://github.com/CelPlume/SDNUChronoSync>
+- Project homepage: <https://GitHub.com/CelPlume/SDNUChronoSync>
 - Feedback: [Issues](https://github.com/CelPlume/SDNUChronoSync/issues)

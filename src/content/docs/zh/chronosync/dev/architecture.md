@@ -373,7 +373,7 @@ SDNUChronoSync/
 - `POST /api/admin/users` - 创建用户
 - `PUT /api/admin/users/{id}` - 更新用户
 - `DELETE /api/admin/users/{id}` - 删除用户
-- `POST /api/admin/users/{id}/ban` - 封禁用户账户（支持ban_type: ban/ipban/emailban）
+- `POST /api/admin/users/{id}/ban` - 封禁用户账户（支持 `ban_type: ban/ipban/emailban`）
 - `POST /api/admin/users/{id}/restore` - 恢复用户账户（重置status为normal）
 
 **批量导入导出：**

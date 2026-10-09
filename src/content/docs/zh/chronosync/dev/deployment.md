@@ -29,15 +29,15 @@ sidebar:
 ### Docker 部署
 - Docker 20.0+ 
 - Docker Compose 2.0+
-- 可用内存: 1GB+
-- 可用磁盘: 2GB+
+- 可用内存： 1GB+
+- 可用磁盘： 2GB+
 
 ### 源码部署
 - Python 3.10+
 - uv 0.4+
 - Bun 1.0+（前端仅支持 Bun，不要使用 npm/yarn）
-- 可用内存: 512MB+
-- 可用磁盘: 1GB+
+- 可用内存： 512MB+
+- 可用磁盘： 1GB+
 
 ## 🚀 部署方式
 
@@ -103,9 +103,9 @@ environment:
 
 #### 服务访问
 
-- **应用地址**: https://localhost:1145
-- **API文档**: https://localhost:1145/docs
-- **健康检查**: https://localhost:1145/health
+- **应用地址**：`https://localhost:1145`
+- **API文档**：`https://localhost:1145/docs`
+- **健康检查**：`https://localhost:1145/health`
 
 > Docker 镜像内置 Nginx 已启用 **HTTPS + HTTP/2**（单连接多路复用）。默认会自动生成自签证书，浏览器首次访问可能提示“不安全”；生产环境请挂载你的正式证书到 `/etc/nginx/certs/tls.crt` 和 `/etc/nginx/certs/tls.key`。
 
@@ -802,4 +802,4 @@ DB_POOL_RECYCLE=1800
 
 ---
 
-🎉 **部署完成后，访问 https://localhost:1145 开始使用！**
+🎉 **部署完成后，访问 `https://localhost:1145` 开始使用！**

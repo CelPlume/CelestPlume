@@ -72,17 +72,17 @@ Admin panel, deployment, and development topics are out of scope for this guide.
 You'll need to register the first time you use ChronoSync.
 
 1. Open the ChronoSync website at [`https://sxtj.hxcn.space`](https://sxtj.hxcn.space) in your browser.
-2. Click the "注册" (Register) button in the top-right corner or anywhere on the page that shows the registration entry.
+2. Click the "Register" button in the top-right corner or anywhere on the page that shows the registration entry.
 3. Fill in your student ID, name, class, and password as prompted, then enter your email and the verification code. Binding your email now makes password recovery easier later.
-4. Click the **"注册" (Register)** button to finish.
+4. Click the **"Register"** button to finish.
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309185737407_1773482780601_79.webp" alt="Registration page showing the student ID, name, class, password, email, and verification code fields" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
 
 ### 2. Log in to the platform
 
 1. Enter your student ID and password.
-2. Click "登录" (Log in) to enter the dashboard.
-3. After logging in, the most-used pages are typically "我的课表" (My Schedule), "团队视图" (Team view), "找空教室" (Empty classrooms), and "个人中心" (Profile).
+2. Click "Log in" to enter the dashboard.
+3. After logging in, the most-used pages are typically "My Schedule", "Team view", "Empty classrooms", and "Profile".
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309185950451_1773482782341_18.webp" alt="Login page with student ID and password fields, and the login button" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
 
@@ -90,10 +90,10 @@ You'll need to register the first time you use ChronoSync.
 
 Once you've logged in, here are the main entry points:
 
-- `我的课表` (My Schedule) — your personal schedule, imports, holiday adjustments, sharing, and personalization all live here.
-- `团队视图` (Team view) — see aggregated schedules for team members.
-- `找空教室` (Empty classrooms) — log into the academic system independently to look up free classrooms.
-- `个人中心` (Profile) — your profile info, email, password, and login history.
+- `My Schedule` — your personal schedule, imports, holiday adjustments, sharing, and personalization all live here.
+- `Team view` — see aggregated schedules for team members.
+- `Empty classrooms` — log into the academic system independently to look up free classrooms.
+- `Profile` — your profile info, email, password, and login history.
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309202525305_1773482782925_60.webp" alt="Dashboard navigation highlighting the four main entry points: My Schedule, Team view, Empty classrooms, and Profile" style="zoom: 80%; display: block; margin-left: auto; margin-right: auto;" />
 
@@ -103,63 +103,63 @@ Once you've logged in, here are the main entry points:
 
 ### 1. Create or switch schedules
 
-When you open "我的课表" (My Schedule), the current schedule name appears at the top. From there you can switch to another existing schedule or create a new one.
+When you open "My Schedule", the current schedule name appears at the top. From there you can switch to another existing schedule or create a new one.
 
 To create a new schedule:
 
-1. Select "新建课表" (New schedule).
+1. Select "New schedule".
    <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309203603701_1773482784195_96.webp" alt="Dropdown showing the New schedule option" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
 
 2. Fill in the following:
    - Schedule name
-   - Status: 进行中 (Active) / 已结束 (Ended) / 已隐藏 (Hidden)
+   - Status: Active / Ended / Hidden
    - Start date **— the Monday of the first week of classes (e.g., for the 2026 spring semester, set this to 2026-03-09)**
    - Total weeks
    - Class period settings (supports periods 1–11)
 
    <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309203738038_1773482785907_95.webp" alt="Schedule creation form with fields for name, status, start date, total weeks, and class periods" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
 
-3. Click "创建课表" (Create schedule).
+3. Click "Create schedule".
 
 A few notes:
 
-- Schedules marked `已隐藏` (Hidden) or `已结束` (Ended) are not visible to team members, so they don't work well as an active team schedule.
-- To edit a schedule's name, semester info, or class times later, use the "课表设置" (Schedule settings) option under "课表操作" (Schedule operations).
+- Schedules marked `Hidden` or `Ended` are not visible to team members, so they don't work well as an active team schedule.
+- To edit a schedule's name, semester info, or class times later, use the "Schedule settings" option under "Schedule operations".
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210636882_1773482788819_0.webp" alt="Schedule settings page showing editable schedule details" style="zoom: 33%; display: block; margin-left: auto; margin-right: auto;" />
 
 ### 2. Switch between the four views
 
-The view menu at the top center of "我的课表" (My Schedule) offers four ways to look at your schedule:
+The view menu at the top center of "My Schedule" offers four ways to look at your schedule:
 
-- `课表` (Schedule) — the classic weekly schedule view, best for seeing your full week at a glance.
-- `日历` (Calendar) — monthly calendar with day selection linked to that day's events, best for browsing by date.
-- `甘特` (Gantt) — full-week timeline view, best for seeing how the day's classes are distributed.
-- `周列表` (Weekly list) — day-by-day list view, best for a quick scan of today and upcoming classes.
+- `Schedule` — the classic weekly schedule view, best for seeing your full week at a glance.
+- `Calendar` — monthly calendar with day selection linked to that day's events, best for browsing by date.
+- `Gantt` — full-week timeline view, best for seeing how the day's classes are distributed.
+- `Weekly list` — day-by-day list view, best for a quick scan of today and upcoming classes.
 
 Common controls:
 
 - Left/right arrows — move to the previous/next week or month.
-- `开学` (Start of term) — jump back to the beginning of the semester.
-- `今天` (Today) — jump straight to today.
+- `Start of term` — jump back to the beginning of the semester.
+- `Today` — jump straight to today.
 - Date button — open a date picker to jump to any date directly.
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309210919064_1773482792002_62.webp" alt="Schedule view switcher showing the four view options and navigation controls" style="zoom: 50%; display: block; margin-left: auto; margin-right: auto;" />
 
 ### 3. Import a schedule
 
-Import, holiday adjustments, and sharing features now live under the **"课表操作" (Schedule operations)** menu at the top — the old "更多" (More) button from previous versions is gone.
+Import, holiday adjustments, and sharing features now live under the **"Schedule operations"** menu at the top — the old "More" button from previous versions is gone.
 
 To get to the import options:
 
-1. Open "我的课表" (My Schedule).
-2. Click "课表操作" (Schedule operations) at the top.
-3. Select "导入课表" (Import schedule).
+1. Open "My Schedule".
+2. Click "Schedule operations" at the top.
+3. Select "Import schedule".
 4. Choose your import method.
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211004749_1773482793129_38.webp" alt="Schedule operations dropdown showing the Import schedule option" style="zoom: 50%; display: block; margin-left: auto; margin-right: auto;" />
 
-<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211122500_1773482795058_20.webp" alt="Import options showing 从教务系统导入 (Import from academic system) and 从 ICS 文件导入 (Import from ICS file)" style="zoom: 60%; display: block; margin-left: auto; margin-right: auto;" />
+<img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211122500_1773482795058_20.webp" alt="Import options showing Import from academic system and Import from ICS file" style="zoom: 60%; display: block; margin-left: auto; margin-right: auto;" />
 
 #### 3.1 Import from the academic system
 
@@ -167,16 +167,16 @@ This is the method most people will want.
 
 Steps:
 
-1. Click "课表操作" (Schedule operations) → "导入课表" (Import schedule) → "从教务系统导入" (Import from academic system).
+1. Click "Schedule operations" → "Import schedule" → "Import from academic system".
 2. Enter your academic system student ID, password, and verification code.
 3. Choose the import target:
    - Import into the current schedule
    - Create a new schedule
    - Import into another existing schedule
-4. If you choose "创建新课表" (Create new schedule), you'll also need to fill in:
+4. If you choose "Create new schedule", you'll also need to fill in:
    - New schedule name
    - Start date (the Monday of the first week)
-5. Click "立即导入" (Import now).
+5. Click "Import now".
 6. After a successful import, the page displays the parsed name, class, grade, and major, and writes the courses into the target schedule.
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260309211231136_1773482797607_28.webp" alt="Academic system import form with student ID, password, verification code, and import target options" style="zoom: 45%; display: block; margin-left: auto; margin-right: auto;" />
@@ -193,8 +193,8 @@ If you already have a schedule or events in another calendar app, you can import
 
 Steps:
 
-1. Click "课表操作" (Schedule operations) → "导入课表" (Import schedule).
-2. Select "从 ICS 文件导入" (Import from ICS file).
+1. Click "Schedule operations" → "Import schedule".
+2. Select "Import from ICS file".
 3. Choose a local `.ics` file.
 4. The system parses it automatically and writes the events into the current schedule.
 
@@ -204,7 +204,7 @@ Steps:
 
 There are two common ways to add an event:
 
-- Click "课表操作" (Schedule operations) → "添加日程" (Add event)
+- Click "Schedule operations" → "Add event"
 - Click directly on a blank date or blank time slot in the schedule area
 
 Fill in:
@@ -233,8 +233,8 @@ Dealing with a public holiday or a last-minute schedule change from the school? 
 
 To get started:
 
-1. Click "课表操作" (Schedule operations).
-2. Select "放假调休" (Holiday adjustments).
+1. Click "Schedule operations".
+2. Select "Holiday adjustments".
 
 Two modes are available:
 
@@ -242,9 +242,9 @@ Two modes are available:
 
 Use this when you need to move all courses from one day to another.
 
-1. Select "对调工作日" (Swap workdays).
-2. Under "将此日期的课程" (Courses on this date), pick the original date.
-3. Under "移动到此日期" (Move to this date), pick the target date.
+1. Select "Swap workdays".
+2. Under "Courses on this date", pick the original date.
+3. Under "Move to this date", pick the target date.
 4. Click to confirm.
 
 For example: move all of next Thursday's courses to this Saturday.
@@ -255,7 +255,7 @@ For example: move all of next Thursday's courses to this Saturday.
 
 When a day is a holiday, all courses on that day are hidden automatically. Before setting a holiday, make sure you've **already done any course swaps** you need.
 
-1. Select "设置假期" (Set holiday).
+1. Select "Set holiday".
 2. Choose the start date.
 3. Optionally fill in an end date.
 4. Leaving the end date blank means classes are canceled for that one day only; filling it in means classes are canceled for the whole date range.
@@ -269,8 +269,8 @@ For example: set October 1 through October 8 as the National Day holiday.
 
 Want to share your schedule with a friend or view it on another device?
 
-1. Click "课表操作" (Schedule operations).
-2. Select "分享课表" (Share schedule).
+1. Click "Schedule operations".
+2. Select "Share schedule".
 
 You'll see three options:
 
@@ -282,7 +282,7 @@ You'll see three options:
 
 #### 6.1 Export as a PNG image
 
-1. Select **"导出到图片(PNG)" (Export to image (PNG))**.
+1. Select **"Export to image (PNG)"**.
 2. The system generates an image of your current schedule.
 3. Handy for sending to classmates who don't use the platform, printing, or posting in a group chat.
 
@@ -290,7 +290,7 @@ You'll see three options:
 
 #### 6.2 Export as an ICS file
 
-1. In the "分享课表" (Share schedule) dialog, click "导出到 ICS" (Export to ICS).
+1. In the "Share schedule" dialog, click "Export to ICS".
 2. The system downloads a standard `.ics` file.
 3. You can import it into your phone's calendar, Apple Calendar, Google Calendar, and other apps.
 
@@ -300,31 +300,31 @@ You can now generate a share link directly — no need to rely on images and ICS
 
 Steps:
 
-1. In the "分享课表" (Share schedule) dialog, click "链接分享" (Share via link).
-2. The "课表分享管理" (Schedule share management) panel opens.
+1. In the "Share schedule" dialog, click "Share via link".
+2. The "Schedule share management" panel opens.
 3. Configure the share parameters:
    - Validity: 1 day, 7 days, 30 days, permanent, expires when the schedule ends, custom number of days, or custom date
    - Access permission:
-     - `仅查看` (View only) — visitors can only view the schedule
-     - `需登录` (Login required) — visitors must log in to view
-     - `可导入` (Importable) — logged-in visitors can import the schedule into their own account
-4. Click "创建新分享" (Create new share).
+     - `View only` — visitors can only view the schedule
+     - `Login required` — visitors must log in to view
+     - `Importable` — logged-in visitors can import the schedule into their own account
+4. Click "Create new share".
 5. Once created, the right side shows:
    - QR code
    - Share link
    - Validity period
    - Current visit count
-6. To disable an existing share, click "撤销" (Revoke) in the history list.
+6. To disable an existing share, click "Revoke" in the history list.
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312151345420_1773482826729_28.webp" alt="Share management panel showing share parameters, QR code, and share link" style="zoom: 50%; display: block; margin-left: auto; margin-right: auto;" />
 
 #### 6.4 Import someone else's shared schedule
 
-When someone shares a link with "可导入" (Importable) permission, you can:
+When someone shares a link with "Importable" permission, you can:
 
 1. Open the share link.
 2. If the link requires login, log into your own account first.
-3. On the share page, click "导入到我的课表" (Import to my schedule).
+3. On the share page, click "Import to my schedule".
 4. Enter a name for the imported schedule.
 5. Click import.
 
@@ -334,7 +334,7 @@ The share page currently supports weekly and monthly browsing views.
 
 ### 7. Schedule settings
 
-Entry point: `课表操作` (Schedule operations) → `课表设置` (Schedule settings)
+Entry point: `Schedule operations` → `Schedule settings`
 
 You can edit:
 
@@ -348,7 +348,7 @@ You can edit:
 
 ### 8. Personalization
 
-Entry point: `课表操作` (Schedule operations) → `个性化` (Personalization)
+Entry point: `Schedule operations` → `Personalization`
 
 If you want your schedule to look and feel the way you like it, personalization is where you do that.
 
@@ -373,7 +373,7 @@ Whether it's a student club, a project group, or a whole class, the team feature
 
 ### 1. Team cards at a glance
 
-When you open "我的团队" (My Teams), the first thing you see are the team cards. Each card typically shows:
+When you open "My Teams", the first thing you see are the team cards. Each card typically shows:
 
 - Team icon
 - Team name
@@ -391,23 +391,23 @@ If you've joined a team to view schedules and find free time, this section is al
 #### 2.1 Join a team
 
 1. Get the 8-character team code from the team owner or an admin.
-2. Open "我的团队" (My Teams).
-3. Click "加入团队" (Join team).
+2. Open "My Teams".
+3. Click "Join team".
 4. Enter the team code and confirm.
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152049492_1773482836148_35.webp" alt="Join team dialog with a field for the 8-character team code" style="zoom: 50%; display: block; margin-left: auto; margin-right: auto;" />
 
 #### 2.2 View the team schedule
 
-1. On the team card, click "查看课表" (View schedule).
+1. On the team card, click "View schedule".
 2. The team schedule page shows an aggregated view of all members' schedules.
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152230894_1773482839109_54.webp" alt="Team card with the View schedule button highlighted" style="zoom: 67%; display: block; margin-left: auto; margin-right: auto;" />
 
 On the team schedule page you have:
 
-- `周视图` (Weekly view)
-- `月视图` (Monthly view)
+- `Weekly view`
+- `Monthly view`
 - Filter sidebar
 - Mobile filter drawer
 
@@ -446,8 +446,8 @@ Both regular members and team admins can leave a team voluntarily.
 
 Steps:
 
-1. Find the team in "我的团队" (My Teams).
-2. Click "退出团队" (Leave team).
+1. Find the team in "My Teams".
+2. Click "Leave team".
 3. Confirm in the dialog.
 
 Things to note:
@@ -463,20 +463,20 @@ This section is for the people who keep things running day to day — club leade
 
 #### 3.1 Create a team
 
-1. Open "我的团队" (My Teams).
-2. Click "创建团队" (Create team).
+1. Open "My Teams".
+2. Click "Create team".
 3. Fill in:
    - Team name
    - Team description
    - Team icon (upload your own or pick a preset)
-4. Click "创建团队" (Create team).
+4. Click "Create team".
 5. Once created, the system generates an 8-character team code.
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312152823954_1773482846917_25.webp" alt="Create team form with fields for name, description, and icon" style="zoom: 50%; display: block; margin-left: auto; margin-right: auto;" />
 
 #### 3.2 Manage team details and team code
 
-On the team card, click "管理团队" (Manage team).
+On the team card, click "Manage team".
 
 From here you can:
 
@@ -494,9 +494,9 @@ The team code is what you send to people you want to invite — just share it wi
 
 Adding a member:
 
-1. Open "管理团队" (Manage team).
+1. Open "Manage team".
 2. Enter the person's student ID in the member management area.
-3. Click "添加成员" (Add member).
+3. Click "Add member".
 
 Removing a member:
 
@@ -535,7 +535,7 @@ If you're the team owner, you have three additional powers on top of the admin c
 
 #### 4.1 Assign or revoke team admin status
 
-1. Open "管理团队" (Manage team) from the team card.
+1. Open "Manage team" from the team card.
 2. Find the target member in the member list.
 3. Assign admin status, or revoke it.
 
@@ -546,7 +546,7 @@ Notes:
 
 #### 4.2 Transfer team ownership
 
-1. Enter the transfer flow from "高级管理" (Advanced management) or the team management interface.
+1. Enter the transfer flow from "Advanced management" or the team management interface.
 2. Select the new owner from the team members.
 3. Enter the team name to confirm the transfer.
 
@@ -567,7 +567,7 @@ Notes:
 
 ## Part 4: Empty classrooms
 
-Entry point: `找空教室` (Empty classrooms) in the sidebar.
+Entry point: `Empty classrooms` in the sidebar.
 
 <img src="https://gastigado.cnies.org/d/halo20251012csguide/image-20260312153118138_1773482854645_8.webp" alt="Sidebar showing the Empty classrooms entry point" style="zoom: 67%; display: block; margin-left: auto; margin-right: auto;" />
 
@@ -575,9 +575,9 @@ Entry point: `找空教室` (Empty classrooms) in the sidebar.
 
 Empty classroom lookup uses an **independent academic system session** — it does not affect your platform login.
 
-1. Open "找空教室" (Empty classrooms).
+1. Open "Empty classrooms".
 2. Enter your academic system student ID, password, and verification code.
-3. Click "登录" (Log in).
+3. Click "Log in".
 
 Notes:
 
@@ -604,7 +604,7 @@ For week and period, you can:
 - Select all / clear
 - Enter a range manually, e.g. `1-5,7,9-11`
 
-After clicking "查询空教室" (Search empty classrooms), you can:
+After clicking "Search empty classrooms", you can:
 
 - View results in table view
 - View results in card view
@@ -620,7 +620,7 @@ After clicking "查询空教室" (Search empty classrooms), you can:
 
 ## Part 5: Profile settings
 
-Entry point: `个人中心` (Profile) in the sidebar.
+Entry point: `Profile` in the sidebar.
 
 Profile settings now brings together your profile, security info, and login history in one place.
 
@@ -628,7 +628,7 @@ Profile settings now brings together your profile, security info, and login hist
 
 ### 1. Edit your profile
 
-Under the "个人资料" (Profile) tab in "账户设置" (Account settings), you can edit:
+Under the "Profile" tab in "Account settings", you can edit:
 
 - Name
 - Class
@@ -636,7 +636,7 @@ Under the "个人资料" (Profile) tab in "账户设置" (Account settings), you
 - Department
 - Bio
 
-Click "保存更改" (Save changes) when you're done.
+Click "Save changes" when you're done.
 
 ### 2. Change your avatar
 
@@ -656,11 +656,11 @@ It's a good idea to bind your email early — you'll need it for password recove
 
 Steps:
 
-1. Go to the email tab in "账户设置" (Account settings).
+1. Go to the email tab in "Account settings".
 2. Enter the new email address.
 3. Click send verification code.
 4. Enter the code you receive.
-5. Click "确认绑定" (Confirm binding) or "确认更换" (Confirm change).
+5. Click "Confirm binding" or "Confirm change".
 
 Once your email is bound, it can be used for:
 
@@ -670,14 +670,14 @@ Once your email is bound, it can be used for:
 
 ### 4. Change your password
 
-Go to the "修改密码" (Change password) tab in "账户设置" (Account settings).
+Go to the "Change password" tab in "Account settings".
 
 The current flow:
 
 1. Enter your current password.
 2. Enter your new password and confirm it.
 3. If you've already bound an email, you'll also need to enter the email verification code.
-4. Click "修改密码" (Change password).
+4. Click "Change password".
 
 Notes:
 
@@ -686,11 +686,11 @@ Notes:
 
 ### 5. View login history
 
-The "安全概览" (Security overview) panel on the right side of the profile page shows your most recent login at a glance.
+The "Security overview" panel on the right side of the profile page shows your most recent login at a glance.
 
 To see the full history:
 
-1. Click "查看全部登录记录" (View all login records).
+1. Click "View all login records".
 2. In the popup you can see:
    - Login time
    - IP address

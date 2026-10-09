@@ -291,5 +291,5 @@ Each phase ends when its acceptance criteria pass. Use this ordering as a guide 
 - [API reference](/picumet/api/api/)
 - [Frontend design](/picumet/ui/ui/)
 - [Deployment guide](/picumet/dev/deployment/)
-- [Project readme](../README.md)
+- [Project readme](https://github.com/CelPlume/Picumet/blob/main/README.md)
 - [Progress notes](/picumet/about/progress/)

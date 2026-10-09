@@ -101,5 +101,5 @@ We may revise this Policy from time to time. Material changes will be announced 
 ## 10. Contact Us
 
 - Email: <excnies@yeah.net>
-- Project homepage: <https://github.com/CelPlume/SDNUChronoSync>
+- Project homepage: <https://GitHub.com/CelPlume/SDNUChronoSync>
 - Feedback: [Issues](https://github.com/CelPlume/SDNUChronoSync/issues)

@@ -11,7 +11,7 @@ sidebar:
 
 ## 🌐 在线访问
 
-**线上地址：[https://sxtj.hxcn.space](https://sxtj.hxcn.space)**
+**线上地址：[`https://sxtj.hxcn.space`](https://sxtj.hxcn.space)**
 
 **使用教程：[时序同笺保姆级用户教程](https://celplume.hxcn.space/zh/chronosync/tutorials/nanny-user-tutorial/)**
 
@@ -50,7 +50,7 @@ sidebar:
 
 ### 团队协作系统
 
-- **智能邀请机制**：8位随机邀请码（大写字母+数字，避免易混淆字符0,O,1,I）
+- **智能邀请机制**：8位随机邀请码（大写字母+数字，避免易混淆字符0，O，1，I）
 - **灵活团队管理**：团队创建者自动成为管理员，支持添加/移除成员、编辑团队介绍和团队图标
 - **团队管理员角色**：支持指定团队管理员，分担团队管理工作
   - 创建者可以提升成员为团队管理员
@@ -123,9 +123,9 @@ sidebar:
   - `link`：仅允许 `rel="stylesheet"` 且必须使用 `href`
   - `meta`：仅允许 `name/property + content`（禁止 `http-equiv` / `charset`）
 - **允许的属性**
-  - `script`：`src`, `async`, `defer`, `type`, `integrity`, `crossorigin`, `referrerpolicy`, 以及 `data-*`
-  - `link`：`rel`, `href`, `media`, `integrity`, `crossorigin`, `referrerpolicy`
-  - `meta`：`name`, `property`, `content`
+  - `script`：`src`， `async`， `defer`， `type`， `integrity`， `crossorigin`， `referrerpolicy`， 以及 `data-*`
+  - `link`：`rel`， `href`， `media`， `integrity`， `crossorigin`， `referrerpolicy`
+  - `meta`：`name`， `property`， `content`
 - **URL 规则**
   - 同源脚本只允许 `/assets/*.js`
   - 同源样式只允许 `/assets/*.css`
@@ -688,19 +688,19 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 
 #### API端点
 
-- **端点**: `POST /api/schedules/import-ics`
-- **描述**: 解析ICS文件并导入事件到指定课表
-- **请求格式**: `multipart/form-data`
-- **参数**:
-  - `file`: ICS文件（必需，只接受.ics格式）
-  - `schedule_id`: 目标课表ID（必需）
+- **端点**： `POST /api/schedules/import-ics`
+- **描述**： 解析ICS文件并导入事件到指定课表
+- **请求格式**： `multipart/form-data`
+- **参数**：
+  - `file`： ICS文件（必需，只接受.ics格式）
+  - `schedule_id`： 目标课表ID（必需）
 
 #### 导入逻辑
 
-1. **时间计算**: 根据课表的开始日期，自动计算每个事件的周数和星期几
-2. **日期验证**: 自动跳过早于课表开始日期的事件
-3. **事件创建**: 提取事件的标题、描述、地点、开始/结束时间等信息
-4. **错误处理**: 记录导入失败的事件及原因
+1. **时间计算**： 根据课表的开始日期，自动计算每个事件的周数和星期几
+2. **日期验证**： 自动跳过早于课表开始日期的事件
+3. **事件创建**： 提取事件的标题、描述、地点、开始/结束时间等信息
+4. **错误处理**： 记录导入失败的事件及原因
 
 #### 响应示例
 
@@ -762,9 +762,9 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 
 ## 📞 联系我们
 
-- 🌐 **项目主页**：[https://github.com/CelPlume/SDNUChronoSync](https://github.com/CelPlume/SDNUChronoSync)
-- 📖 **使用教程**：[https://celplume.hxcn.space/zh/chronosync/tutorials/chronosync-user-guide/](https://celplume.hxcn.space/zh/chronosync/tutorials/chronosync-user-guide/)
-- ℹ️ **关于本项目**：[https://celplume.hxcn.space/zh/chronosync/](https://celplume.hxcn.space/zh/chronosync/)
+- 🌐 **项目主页**：[`https://github.com/CelPlume/SDNUChronoSync`](https://github.com/CelPlume/SDNUChronoSync)
+- 📖 **使用教程**：[`https://celplume.hxcn.space/zh/chronosync/tutorials/chronosync-user-guide/`](https://celplume.hxcn.space/zh/chronosync/tutorials/chronosync-user-guide/)
+- ℹ️ **关于本项目**：[`https://celplume.hxcn.space/zh/chronosync/`](https://celplume.hxcn.space/zh/chronosync/)
 - 💬 **问题反馈**：通过项目 [Issues](https://github.com/CelPlume/SDNUChronoSync/issues) 提出
 - 📧 **邮箱联系**：[hxcn@cnies.org](mailto:hxcn@cnies.org)
 
@@ -892,7 +892,7 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 
 - 品牌更名为**天空之翼（CelPlume）**，链接指向项目主页
 - 移除"由 Astro 和 Vue.js 强力驱动"技术栈行
-- 新增 Meet课程表（https://meetschedule.top）入口，使用日历图标
+- 新增 Meet课程表（`https://meetschedule.top`）入口，使用日历图标
 - Footer「关于项目」指向站内索引页；移除「项目主页」入口，新增「服务条款」「隐私条款」站内法律链接
 
 **条款合规**
@@ -1154,7 +1154,7 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 
 - `POST /api/teams/{id}/batch-events/preview`：冲突预览，返回每用户的冲突详情（day_of_week + 时间重叠检测）
 - `POST /api/teams/{id}/batch-events/execute`：批量创建课程事件，支持跳过（skip）和强制（force）两种冲突策略
-- 冲突去重：按 (user_id, week, day_of_week) 去重，避免同一课程多 Event 行产生重复冲突
+- 冲突去重：按 `(user_id, week, day_of_week)` 去重，避免同一课程多 Event 行产生重复冲突
 - 自动为无课表成员创建「{团队名} 团队日程」Schedule，周一对齐 semester_start
 - `GET /api/teams/{id}/batch-operations/{id}`：详情按用户合并（merged weeks/days/title），每用户仅一行
 - 支持 `schedule_target` 参数：`default`（使用活跃课表）或 `new`（新建团队日程）
@@ -1164,7 +1164,7 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 - `POST /api/teams/{id}/schedule-tasks/preview`：预览时运行贪心算法，返回成员分配统计、失败 slot、用户名称映射
 - `POST /api/teams/{id}/schedule-tasks`：创建排班任务，自动写入批量操作日志
 - 支持两种模式：周次模式（selected_weeks + shifts）和按日期模式（specific_dates，每日期支持 required_count）
-- 稳定贪心算法：按 (name, day_of_week) 分组，取所有周次可用人员交集（稳定集合），选恰好 needed 人作为 primary，每周分配相同 primary，仅在冲突时替换
+- 稳定贪心算法：按 `(name, day_of_week)` 分组，取所有周次可用人员交集（稳定集合），选恰好 needed 人作为 primary，每周分配相同 primary，仅在冲突时替换
 - 替换候选排除已分配人员，max_per_member 全局生效
 - 自动推断 semester_start（从 selected_weeks 或 specific_dates）
 - FK 安全：失败记录使用 member_ids[0] 而非 user_id=0
@@ -1273,7 +1273,7 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 
 - 移除基础输入框/按钮/下拉组件的默认阴影，仅保留浮层与模态框阴影，界面更加简洁清爽
 - 圆角体系统一：输入框统一为 rounded-lg(8px)、列表卡统一为 rounded-xl(12px)，移除 22px/28px/32px 大圆角
-- 删除 BaseLayout 中全局强制 border-radius: 1rem 规则，恢复组件自主控制圆角
+- 删除 BaseLayout 中全局强制 `border-radius: 1rem` 规则，恢复组件自主控制圆角
 - 标题字重从 font-black/font-bold 统一降为 font-semibold，正文对比度从 gray-500 提升至 slate-600，提升可读性
 - 移除全大写标签与高 tracking（Day Agenda 改为当日安排），恢复中文界面正常词形
 - PageHeaderCard 移除渐变背景/阴影/ring，改为纯边线容器，视觉更轻量
@@ -1293,7 +1293,7 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 **移动端底部标签栏**
 
 - 新增 MobileBottomTabBar 移动端底部快速导航栏，包含课表、团队、空教室、个人四个高频功能入口
-- 标签栏固定在视口底部，仅在 lg 断点以下显示（lg:hidden）
+- 标签栏固定在视口底部，仅在 lg 断点以下显示（`lg:hidden`）
 - 支持 iPhone 安全区域适配（env(safe-area-inset-bottom)），避免遮挡 Home 指示器
 - 主内容区域自动添加 pb-20 底部间距，防止标签栏遮挡内容
 - 现有移动端顶部栏、抽屉、侧边栏和桌面端布局保持不变

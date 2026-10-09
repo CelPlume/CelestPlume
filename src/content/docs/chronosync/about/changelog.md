@@ -101,7 +101,7 @@ All versions are archived here; the homepage only displays the last three months
 **Avatars & Docs**
 
 - 17 DiceBear preset accent variants consolidated to primary/neutral single-anchor tone
-- Added [Frontend Design Guide](docs/DESIGN.md) (700+ lines): tokens, palette, unified components, two-tab conventions, component inventory, lessons learned, verification methodology, commit conventions; established cross-references in AGENTS.md / README
+- Added [Frontend Design Guide](/chronosync/dev/design/) (700+ lines): tokens, palette, unified components, two-tab conventions, component inventory, lessons learned, verification methodology, commit conventions; established cross-references in AGENTS.md / README
 
 **Verification**
 
@@ -118,15 +118,15 @@ All versions are archived here; the homepage only displays the last three months
 
 **In-site link migration**
 
-- Tutorial URLs in the README, [full changelog](/zh/chronosync/about/changelog/), and llms.txt/llms-full.txt are moved from `hs.cnies.org` to in-site pages: [保姆级用户教程](/zh/chronosync/tutorials/nanny-user-tutorial/), [使用教程导航](/zh/chronosync/tutorials/chronosync-user-guide/), and [更新日志](/zh/chronosync/about/changelog/). Frontend navigation components (Navigation, MobileDrawer, landing page) and their tutorial entry constants point to the same targets, with section anchors adjusted to match the new site structure ("Part 2 我的课表", "3-导入课表", "5-放假调休", "Part 3 团队协作").
+- Tutorial URLs in the README, [full changelog](/zh/chronosync/about/changelog/), and llms.txt/llms-full.txt are moved from `hs.cnies.org` to in-site pages: [Nanny User Tutorial](/zh/chronosync/tutorials/nanny-user-tutorial/), [Tutorial navigation](/zh/chronosync/tutorials/chronosync-user-guide/), and [Changelog](/zh/chronosync/about/changelog/). Frontend navigation components (Navigation, MobileDrawer, landing page) and their tutorial entry constants point to the same targets, with section anchors adjusted to match the new site structure ("Part 2 My Schedule", "3-Import schedule", "5-Holiday adjustments", "Part 3 Team collaboration").
 - The external project homepage link (`hevspecu.hxcn.space`) is replaced by the [in-site index page](/zh/chronosync/).
-- Landing page navigation is trimmed to **About / Tutorials / Meet课程表**, dropping the Changelog and Project homepage entries. The hero section drops the "Features" and "Tutorials" buttons, leaving only **Sign up / Log in**.
+- Landing page navigation is trimmed to **About / Tutorials / Meet Schedule**, dropping the Changelog and Project homepage entries. The hero section drops the "Features" and "Tutorials" buttons, leaving only **Sign up / Log in**.
 
 **Footer revamp**
 
-- Brand name updated to **天空之翼 (CelPlume)**, linking to the project homepage.
+- Brand name updated to **CelPlume**, linking to the project homepage.
 - Removed the "Powered by Astro and Vue.js" line.
-- Added a Meet课程表 entry (`https://meetschedule.top`) with a calendar icon.
+- Added a Meet Schedule entry (`https://meetschedule.top`) with a calendar icon.
 - The "About" link now points to the in-site index page; the "Project homepage" entry is gone, replaced with on-site **Terms of Service** and **Privacy Policy** links.
 
 **Terms compliance**

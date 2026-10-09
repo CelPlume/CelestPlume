@@ -2790,7 +2790,7 @@ The API serves files directly from their public virtual path, for example `GET h
 
 Files on a public mount serve with no authentication. Files on a private mount require a logged-in session with download permission. Password-protected files return `403 PASSWORD_REQUIRED`. Paths that are not mounted, or that contain `..`, return `404`.
 
-#### Example
+### Example
 
 ```sh
 curl "https://{domain}/drive/photos/photo.jpg" -o photo.jpg
@@ -2802,4 +2802,4 @@ curl "https://{domain}/drive/photos/photo.jpg" -o photo.jpg
 - [Development guide](/picumet/dev/development/) for running and testing the Workers codebase.
 - [Deployment guide](/picumet/dev/deployment/) for configuring bindings, secrets, and domains.
 - [Frontend guide](/picumet/ui/ui/) for the pages that consume this API.
-- [Project overview](../README.md) and [progress tracking](/picumet/about/progress/).
+- [Project overview](https://github.com/CelPlume/Picumet/blob/main/README.md) and [progress tracking](/picumet/about/progress/).

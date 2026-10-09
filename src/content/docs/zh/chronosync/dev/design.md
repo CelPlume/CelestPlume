@@ -536,7 +536,7 @@ const lum = (c) => { const m = c.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/); return
 
 ### 17.4 dev server 排障
 
-- 确认只有一个 astro dev 进程占 4322：`ss -tlnp | grep :4322`。
+- 确认只有一个 `astro dev` 进程占 4322：`ss -tlnp | grep :4322`。
 - 模块是否最新：`curl http://localhost:4322/src/components/<File>.vue`。
 - 样式是否进产物：`astro build` 后 grep `dist/` 里的 CSS/JS（`<style>` 单独注入，不在 `.vue` 模块里）。
 

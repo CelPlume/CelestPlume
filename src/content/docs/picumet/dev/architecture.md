@@ -464,5 +464,5 @@ The security model applies defense in depth across the request lifecycle:
 - [UI design](/picumet/ui/ui/) for the frontend pages and components.
 - [Development guide](/picumet/dev/development/) for local setup and testing.
 - [Deployment guide](/picumet/dev/deployment/) for Workers and Pages deployment.
-- [Project overview](../README.md) for the feature set and roadmap.
+- [Project overview](https://github.com/CelPlume/Picumet/blob/main/README.md) for the feature set and roadmap.
 - [Progress tracker](/picumet/about/progress/) for the current implementation status.

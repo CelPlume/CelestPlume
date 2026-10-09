@@ -1,6 +1,6 @@
 ---
 title: ChronoSync
-description: ChronoSync (时序同笺) is a multi-user schedule and timetable management web application for Shandong Normal University. It covers personal multi-schedule management, advanced schedule adjustments, team collaboration, and admin controls.
+description: ChronoSync is a multi-user schedule and timetable management web application for Shandong Normal University. It covers personal multi-schedule management, advanced schedule adjustments, team collaboration, and admin controls.
 sidebar:
   order: 1
 ---
@@ -19,7 +19,7 @@ Visit the live version to experience the full schedule and timetable management 
 
 ## Project Overview
 
-ChronoSync (时序同笺) is a multi-user schedule and timetable management web application for Shandong Normal University, covering personal multi-schedule management, advanced schedule adjustments, team collaboration, and admin controls.
+ChronoSync is a multi-user schedule and timetable management web application for Shandong Normal University, covering personal multi-schedule management, advanced schedule adjustments, team collaboration, and admin controls.
 
 ## Features
 
@@ -46,7 +46,7 @@ ChronoSync (时序同笺) is a multi-user schedule and timetable management web 
 - **Smart swap (SWAP)**: moves courses from a source date to a target date
 - **Server-side logic**: adjustment calculations happen on the backend, ensuring data consistency and integrity
 - **Adjustment history tracking**: full history of all adjustments and affected events
-- **Real-time生效**: adjustments take effect in schedule views instantly, no refresh needed
+- **Real-time effect**: adjustments take effect in schedule views instantly, no refresh needed
 
 ### Team Collaboration
 
@@ -98,7 +98,7 @@ ChronoSync (时序同笺) is a multi-user schedule and timetable management web 
   - Intuitive results display
 - **Home landing & demo system**:
   - Home upgraded to a full landing page (navbar, hero, feature area, CTA)
-  - Hero title "井然有序" with bold continuous wavy underline; tutorial button sits next to Sign up, Log in, and Features
+  - Hero title "Orderly" with bold continuous wavy underline; tutorial button sits next to Sign up, Log in, and Features
   - Interactive demo cards for team scheduling, empty-classroom lookup, schedule sharing (image/link/ICS), academic import, team management
   - `PerspectiveSchedule` uses real demo course data for three schedule views, with auto-playing course-detail modal animation and current-time tag
   - In-flow tutorial entries (import, adjustment, team collaboration, etc.)
@@ -705,9 +705,9 @@ This project is licensed under the MIT License.
 
 ## Contact
 
-- **Project home**: [https://github.com/CelPlume/SDNUChronoSync](https://github.com/CelPlume/SDNUChronoSync)
-- **User guide**: [https://celplume.hxcn.space/chronosync/tutorials/chronosync-user-guide/](https://celplume.hxcn.space/chronosync/tutorials/chronosync-user-guide/)
-- **About this project**: [https://celplume.hxcn.space/chronosync/](https://celplume.hxcn.space/chronosync/)
+- **Project home**: [`https://github.com/CelPlume/SDNUChronoSync`](https://github.com/CelPlume/SDNUChronoSync)
+- **User guide**: [`https://celplume.hxcn.space/chronosync/tutorials/chronosync-user-guide/`](https://celplume.hxcn.space/chronosync/tutorials/chronosync-user-guide/)
+- **About this project**: [`https://celplume.hxcn.space/chronosync/`](https://celplume.hxcn.space/chronosync/)
 - **Bug reports**: via project [Issues](https://github.com/CelPlume/SDNUChronoSync/issues)
 - **Email**: [hxcn@cnies.org](mailto:hxcn@cnies.org)
 
@@ -808,7 +808,7 @@ Full version history in the [Full Changelog](/chronosync/about/changelog/).
 **Avatars & Docs**
 
 - 17 DiceBear preset accent variants consolidated to primary/neutral single-anchor tone
-- Added [Frontend Design Guide](docs/DESIGN.md) (700+ lines): tokens, palette, unified components, two-tab conventions, component inventory, lessons learned, verification methodology, commit conventions; established cross-references in AGENTS.md / README
+- Added [Frontend Design Guide](/chronosync/dev/design/) (700+ lines): tokens, palette, unified components, two-tab conventions, component inventory, lessons learned, verification methodology, commit conventions; established cross-references in AGENTS.md / README
 
 **Verification**
 
@@ -825,15 +825,15 @@ Full version history in the [Full Changelog](/chronosync/about/changelog/).
 
 **In-site link migration**
 
-- Tutorial URLs in the README, [full changelog](/zh/chronosync/about/changelog/), and llms.txt/llms-full.txt are moved from `hs.cnies.org` to in-site pages: [保姆级用户教程](/zh/chronosync/tutorials/nanny-user-tutorial/), [使用教程导航](/zh/chronosync/tutorials/chronosync-user-guide/), and [更新日志](/zh/chronosync/about/changelog/). Frontend navigation components (Navigation, MobileDrawer, landing page) and their tutorial entry constants point to the same targets, with section anchors adjusted to match the new site structure ("Part 2 我的课表", "3-导入课表", "5-放假调休", "Part 3 团队协作").
+- Tutorial URLs in the README, [full changelog](/zh/chronosync/about/changelog/), and llms.txt/llms-full.txt are moved from `hs.cnies.org` to in-site pages: [Nanny User Tutorial](/zh/chronosync/tutorials/nanny-user-tutorial/), [Tutorial navigation](/zh/chronosync/tutorials/chronosync-user-guide/), and [Changelog](/zh/chronosync/about/changelog/). Frontend navigation components (Navigation, MobileDrawer, landing page) and their tutorial entry constants point to the same targets, with section anchors adjusted to match the new site structure ("Part 2 My Schedule", "3-Import schedule", "5-Holiday adjustments", "Part 3 Team collaboration").
 - The external project homepage link (`hevspecu.hxcn.space`) is replaced by the [in-site index page](/zh/chronosync/).
-- Landing page navigation is trimmed to **About / Tutorials / Meet课程表**, dropping the Changelog and Project homepage entries. The hero section drops the "Features" and "Tutorials" buttons, leaving only **Sign up / Log in**.
+- Landing page navigation is trimmed to **About / Tutorials / Meet Schedule**, dropping the Changelog and Project homepage entries. The hero section drops the "Features" and "Tutorials" buttons, leaving only **Sign up / Log in**.
 
 **Footer revamp**
 
-- Brand name updated to **天空之翼 (CelPlume)**, linking to the project homepage.
+- Brand name updated to **CelPlume**, linking to the project homepage.
 - Removed the "Powered by Astro and Vue.js" line.
-- Added a Meet课程表 entry (`https://meetschedule.top`) with a calendar icon.
+- Added a Meet Schedule entry (`https://meetschedule.top`) with a calendar icon.
 - The "About" link now points to the in-site index page; the "Project homepage" entry is gone, replaced with on-site **Terms of Service** and **Privacy Policy** links.
 
 **Terms compliance**

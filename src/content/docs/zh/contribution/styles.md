@@ -42,7 +42,7 @@ Docs Kit 的样式位于 `src/styles/celestial-docs.css`，由
 | `--cpd-sidebar-accent-foreground` | `hsl(0 0% 9%)` | `hsl(0 0% 90%)` |
 
 `--cpd-primary` 为 Plumest 的中性近黑主色（浅色 `#171717` / 深色
-`#fafafa`）：驱动激活链接、侧边栏激活项、ClerkTOC 轨道与强调。主页保留
+`#fafafa`）：驱动激活链接、侧边栏激活项、TOC 滑块与强调。主页保留
 自己的天琴色系，互不干扰。
 
 ### 语义色
@@ -95,7 +95,7 @@ CJK 字体，不触发 3.07 MiB 的 LxgwNeoXiHei 下载；中文页保持上表�
 
 正文 `1rem / 1.75` 行高；文章标题从 `2rem`（h1）到 `1.05rem`（h4），
 字重 600，大标题带轻微负字距。行内代码为带边框的 `--cpd-secondary`
-小片；代码块（文档页为 astro-expressive-code）渲染为单层 `--cpd-card`：
+小片；代码块（文档页为 `astro-expressive-code`）渲染为单层 `--cpd-card`：
 `13px` 等宽、`1px` 边框、ghost 复制按钮——与 Plumest 一致。
 
 ## 布局

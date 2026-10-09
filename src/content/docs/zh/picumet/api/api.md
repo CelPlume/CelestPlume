@@ -2790,7 +2790,7 @@ API 会直接从文件的公开虚拟路径返回文件，例如 `GET https://{d
 
 公开挂载上的文件无需认证即可访问。私有挂载上的文件需要登录且具备下载权限。受密码保护的文件返回 `403 PASSWORD_REQUIRED`。未挂载的路径或包含 `..` 的路径返回 `404`。
 
-#### 示例
+### 示例
 
 ```sh
 curl "https://{domain}/drive/photos/photo.jpg" -o photo.jpg
@@ -2802,4 +2802,4 @@ curl "https://{domain}/drive/photos/photo.jpg" -o photo.jpg
 - [开发指南](/zh/picumet/dev/development/)：运行和测试 Workers 代码库。
 - [部署指南](/zh/picumet/dev/deployment/)：配置绑定、密钥和域名。
 - [前端指南](/zh/picumet/ui/ui/)：消费这些 API 的页面。
-- [项目概览](../README_CN.md) 与 [进度追踪](/picumet/about/progress/)。
+- [项目概览](https://github.com/CelPlume/Picumet/blob/main/README_CN.md) 与 [进度追踪](/picumet/about/progress/)。

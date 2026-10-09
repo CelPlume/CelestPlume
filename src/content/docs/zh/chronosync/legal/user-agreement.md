@@ -14,7 +14,7 @@ sidebar:
 ## 一、服务说明
 
 1. 时序同笺是一款多用户课表与日程管理 Web 应用，提供个人多课表管理、日程事件、调休安排、团队协作、课表分享、空教室查询等功能。
-2. 本服务由 **CelPlume（天空之翼）** 运营，线上地址为 <https://sxtj.hxcn.space>。项目代码以 MIT 许可证开源，托管于 <https://github.com/CelPlume/SDNUChronoSync>。
+2. 本服务由 **CelPlume（天空之翼）** 运营，线上地址为 <https://sxtj.hxcn.space>。项目代码以 MIT 许可证开源，托管于 <https://GitHub.com/CelPlume/SDNUChronoSync>。
 3. 本服务可能同时以自部署实例（Docker 等）形式运行，本协议同样适用于您使用自部署实例的行为。
 
 ## 二、账户条款
@@ -78,5 +78,5 @@ sidebar:
 ## 十二、联系我们
 
 - 邮箱：<excnies@yeah.net>
-- 项目主页：<https://github.com/CelPlume/SDNUChronoSync>
+- 项目主页：<https://GitHub.com/CelPlume/SDNUChronoSync>
 - 问题反馈：[Issues](https://github.com/CelPlume/SDNUChronoSync/issues)

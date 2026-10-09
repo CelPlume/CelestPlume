@@ -101,5 +101,5 @@ sidebar:
 ## 十、联系我们
 
 - 邮箱：<excnies@yeah.net>
-- 项目主页：<https://github.com/CelPlume/SDNUChronoSync>
+- 项目主页：<https://GitHub.com/CelPlume/SDNUChronoSync>
 - 问题反馈：[Issues](https://github.com/CelPlume/SDNUChronoSync/issues)

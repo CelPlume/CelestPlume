@@ -335,7 +335,7 @@ WHERE user_id = '<user_id>';
 
 ## What's next
 
-- [README](../README.md)
+- [README](https://github.com/CelPlume/Picumet/blob/main/README.md)
 - [System architecture](/picumet/dev/architecture/)
 - [API reference](/picumet/api/api/)
 - [Frontend guide](/picumet/ui/ui/)

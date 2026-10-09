@@ -595,7 +595,7 @@ Fix each occurrence in order of area.
 
 ### 17.4 Dev Server Troubleshooting
 
-- Confirm only one astro dev process holds 4322: `ss -tlnp | grep :4322`.
+- Confirm only one `astro dev` process holds 4322: `ss -tlnp | grep :4322`.
 - Is the module current: `curl http://localhost:4322/src/components/<File>.vue`.
 - Is the style in the build: after `astro build`, grep the CSS/JS in `dist/` (`<style>` is injected separately, not
   in the `.vue` module).

@@ -464,5 +464,5 @@ D1 里存以下核心表：
 - [页面设计](/zh/picumet/ui/ui/) 查看前端页面和组件。
 - [开发指南](/zh/picumet/dev/development/) 查看本地环境和测试。
 - [部署指南](/zh/picumet/dev/deployment/) 查看 Workers 和 Pages 部署。
-- [项目概览](../README_CN.md) 查看功能清单和路线图。
+- [项目概览](https://github.com/CelPlume/Picumet/blob/main/README_CN.md) 查看功能清单和路线图。
 - [进度跟踪](/picumet/about/progress/) 查看当前实现状态。

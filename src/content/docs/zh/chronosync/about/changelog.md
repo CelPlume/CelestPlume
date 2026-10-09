@@ -128,7 +128,7 @@ sidebar:
 
 - 品牌更名为**天空之翼（CelPlume）**，链接指向项目主页
 - 移除"由 Astro 和 Vue.js 强力驱动"技术栈行
-- 新增 Meet课程表（https://meetschedule.top）入口，使用日历图标
+- 新增 Meet课程表（`https://meetschedule.top`）入口，使用日历图标
 - Footer「关于项目」指向站内索引页；移除「项目主页」入口，新增「服务条款」「隐私条款」站内法律链接
 
 **条款合规**
@@ -390,7 +390,7 @@ sidebar:
 
 - `POST /api/teams/{id}/batch-events/preview`：冲突预览，返回每用户的冲突详情（day_of_week + 时间重叠检测）
 - `POST /api/teams/{id}/batch-events/execute`：批量创建课程事件，支持跳过（skip）和强制（force）两种冲突策略
-- 冲突去重：按 (user_id, week, day_of_week) 去重，避免同一课程多 Event 行产生重复冲突
+- 冲突去重：按 `(user_id, week, day_of_week)` 去重，避免同一课程多 Event 行产生重复冲突
 - 自动为无课表成员创建「{团队名} 团队日程」Schedule，周一对齐 semester_start
 - `GET /api/teams/{id}/batch-operations/{id}`：详情按用户合并（merged weeks/days/title），每用户仅一行
 - 支持 `schedule_target` 参数：`default`（使用活跃课表）或 `new`（新建团队日程）
@@ -400,7 +400,7 @@ sidebar:
 - `POST /api/teams/{id}/schedule-tasks/preview`：预览时运行贪心算法，返回成员分配统计、失败 slot、用户名称映射
 - `POST /api/teams/{id}/schedule-tasks`：创建排班任务，自动写入批量操作日志
 - 支持两种模式：周次模式（selected_weeks + shifts）和按日期模式（specific_dates，每日期支持 required_count）
-- 稳定贪心算法：按 (name, day_of_week) 分组，取所有周次可用人员交集（稳定集合），选恰好 needed 人作为 primary，每周分配相同 primary，仅在冲突时替换
+- 稳定贪心算法：按 `(name, day_of_week)` 分组，取所有周次可用人员交集（稳定集合），选恰好 needed 人作为 primary，每周分配相同 primary，仅在冲突时替换
 - 替换候选排除已分配人员，max_per_member 全局生效
 - 自动推断 semester_start（从 selected_weeks 或 specific_dates）
 - FK 安全：失败记录使用 member_ids[0] 而非 user_id=0
@@ -509,7 +509,7 @@ sidebar:
 
 - 移除基础输入框/按钮/下拉组件的默认阴影，仅保留浮层与模态框阴影，界面更加简洁清爽
 - 圆角体系统一：输入框统一为 rounded-lg(8px)、列表卡统一为 rounded-xl(12px)，移除 22px/28px/32px 大圆角
-- 删除 BaseLayout 中全局强制 border-radius: 1rem 规则，恢复组件自主控制圆角
+- 删除 BaseLayout 中全局强制 `border-radius: 1rem` 规则，恢复组件自主控制圆角
 - 标题字重从 font-black/font-bold 统一降为 font-semibold，正文对比度从 gray-500 提升至 slate-600，提升可读性
 - 移除全大写标签与高 tracking（Day Agenda 改为当日安排），恢复中文界面正常词形
 - PageHeaderCard 移除渐变背景/阴影/ring，改为纯边线容器，视觉更轻量
@@ -529,7 +529,7 @@ sidebar:
 **移动端底部标签栏**
 
 - 新增 MobileBottomTabBar 移动端底部快速导航栏，包含课表、团队、空教室、个人四个高频功能入口
-- 标签栏固定在视口底部，仅在 lg 断点以下显示（lg:hidden）
+- 标签栏固定在视口底部，仅在 lg 断点以下显示（`lg:hidden`）
 - 支持 iPhone 安全区域适配（env(safe-area-inset-bottom)），避免遮挡 Home 指示器
 - 主内容区域自动添加 pb-20 底部间距，防止标签栏遮挡内容
 - 现有移动端顶部栏、抽屉、侧边栏和桌面端布局保持不变
@@ -982,7 +982,7 @@ sidebar:
 - 🎨 **侧边栏折叠功能**
   - 新增可折叠侧边栏，支持展开/收起状态持久化（localStorage）。
   - 折叠状态下显示图标和展开按钮，节省屏幕空间。
-  - 主内容区域和页脚自动适应侧边栏宽度（lg:pl-72 ↔ lg:pl-20）。
+  - 主内容区域和页脚自动适应侧边栏宽度（`lg:pl-72` ↔ `lg:pl-20`）。
   - 使用 UI Store 管理折叠状态，支持跨组件同步。
   - 轮询机制确保同标签页内状态实时更新。
 
@@ -1536,8 +1536,8 @@ sidebar:
 - ✅ **界面更新**：导航栏、登录页、注册页全面使用新名称
 - ✅ **文档完善**：README 更新品牌信息
 - ✅ **导航增强**：新增"使用教程"和"关于"外部链接
-  - 使用教程：https://celplume.hxcn.space/zh/chronosync/tutorials/chronosync-user-guide/
-  - 关于本项目：https://celplume.hxcn.space/zh/chronosync/about/changelog/
+  - 使用教程：`https://celplume.hxcn.space/zh/chronosync/tutorials/chronosync-user-guide/`
+  - 关于本项目：`https://celplume.hxcn.space/zh/chronosync/about/changelog/`
 - ✅ **用户体验**：所有页面统一品牌形象
 
 ### v2.1.0 (2025-09-30) - 团队管理系统完整升级
