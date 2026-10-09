@@ -1,0 +1,63 @@
+---
+title: Encrypted Pages
+description: Client-side page encryption with Web Crypto — AES-256-GCM, PBKDF2-SHA-256, zero plaintext in the static output.
+sidebar:
+  order: 8
+---
+
+Any docs page can be password-protected. The rendered page (text, code blocks,
+images — everything after Markdown and Expressive Code processing) is encrypted
+at build time and decrypted in the browser with the Web Crypto API. The static
+output contains ciphertext only — never the password, never the plaintext body.
+
+## Cryptography
+
+| Property | Value |
+| --- | --- |
+| Cipher | AES-256-GCM (authenticated — tamper-proof, integrity-checked) |
+| Key derivation | PBKDF2-SHA-256, 310,000 iterations (OWASP recommendation) |
+| Salt / IV | Random 16-byte salt, random 12-byte IV per build |
+| Scope binding | AAD `celplume-protected-content:1:page:<id>` — ciphertext cannot be replayed on another page |
+| Plaintext leaks | None — RSS carries no bodies; `/&lt;id&gt;.md` and `llms-full.txt` replace encrypted pages with a notice |
+
+## Usage
+
+```mdx
+---
+title: Private notes
+encrypted: true
+password: 'a-strong-password'
+passwordHint: 'My favorite editor'
+---
+
+# This content ships encrypted
+
+Everything below the frontmatter is encrypted at build time.
+```
+
+| Field | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `encrypted` | `boolean` | no | `false` | Marks the page as encrypted |
+| `password` | `string` | **yes** | — | Unlock password; an empty password fails the build (fail-closed) |
+| `passwordHint` | `string` | no | — | Hint shown under the password field |
+
+## Unlock flow
+
+1. The visitor opens the page and sees the unlock gate.
+2. The password derives the AES key locally (PBKDF2, 310k iterations) and
+   decrypts the payload; GCM authentication rejects wrong passwords and
+   ciphertext copied from other pages.
+3. The decrypted HTML replaces the gate, and the Docs Kit runtime re-binds
+   interactive components inside it.
+4. The unlocked content is remembered in `sessionStorage` for 30 minutes —
+   navigating away and back does not ask again. Passwords are never stored.
+
+## Notes
+
+- The table of contents of an encrypted page is empty until unlock (there are
+  no headings to index).
+- Pagefind indexes only the gate, not the encrypted body.
+- Keep secrets out of `description` frontmatter — it stays plaintext for
+  search engines and feeds.
+- Forgetting the password is unrecoverable: the key exists only while the
+  visitor types it.

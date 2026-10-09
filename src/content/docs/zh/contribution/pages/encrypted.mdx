@@ -1,0 +1,58 @@
+---
+title: 页面加密
+description: 基于 Web Crypto 的客户端页面加密——AES-256-GCM、PBKDF2-SHA-256，静态产物零明文。
+sidebar:
+  order: 8
+---
+
+任意文档页都可以设置密码保护。渲染后的页面（文本、代码块、图片——
+Markdown 与 Expressive Code 处理后的一切）在构建期整体加密，在浏览器端
+经 Web Crypto API 解密。静态产物只含密文——没有密码，也没有明文正文。
+
+## 密码学标准
+
+| 属性 | 值 |
+| --- | --- |
+| 认证加密 | AES-256-GCM（防篡改 + 完整性校验） |
+| 密钥派生 | PBKDF2-SHA-256，310,000 次迭代（OWASP 建议） |
+| 盐 / IV | 每次构建随机 16 字节盐、随机 12 字节 IV |
+| 作用域绑定 | AAD `celplume-protected-content:1:page:<id>`——密文无法跨页重放 |
+| 明文泄露 | 无——RSS 不含正文；`/<id>.md` 与 `llms-full.txt` 以提示行替代整篇正文 |
+
+## 用法
+
+```mdx
+---
+title: 私密手记
+encrypted: true
+password: '一串足够强的密码'
+passwordHint: '我最喜欢的编辑器'
+---
+
+# 这段内容将加密发布
+
+frontmatter 之下的一切都会在构建期加密。
+```
+
+| 字段 | 类型 | 必填 | 默认值 | 说明 |
+| --- | --- | --- | --- | --- |
+| `encrypted` | `boolean` | 可选 | `false` | 标记页面为加密页 |
+| `password` | `string` | **必填** | — | 解锁密码；为空时构建直接失败（fail-closed） |
+| `passwordHint` | `string` | 可选 | — | 展示在密码框下方的提示 |
+
+## 解锁流程
+
+1. 访客打开页面，看到解锁门。
+2. 密码在本地派生 AES 密钥（PBKDF2，31 万次迭代）并解密载荷；GCM 校验
+   会拒绝错误密码与从其他页面复制的密文。
+3. 解密后的 HTML 替换解锁门，Docs Kit 运行时对其中的交互组件重新挂钩。
+4. 已解锁内容在 `sessionStorage` 中保持 30 分钟——切页后返回无需重复输入。
+   密码本身绝不落盘。
+
+## 说明
+
+- 加密页的目录在解锁前为空（没有可索引的标题）。
+- Pagefind 只索引解锁门，不索引加密正文。
+- `description` frontmatter 仍为明文（供搜索引擎与订阅源使用），请勿
+  放入敏感信息。
+- 忘记密码不可恢复：密钥仅在访客输入的那一刻存在。
