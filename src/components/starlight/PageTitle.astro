@@ -1,8 +1,11 @@
 ---
-// PageTitle 覆盖：Plumest 风格面包屑 + 标题 + 描述。
-import { breadcrumb } from '../../lib/ui/components';
+// PageTitle 覆盖：Plumest 风格面包屑 + 标题 + 描述 + 页面操作条（Cloudflare 文档式）。
+// 操作条位于简介下方：左侧「最近更新」（自页脚上移，Footer 覆盖不再重复显示），
+// 右侧分裂按钮 —— 主按钮「复制 Markdown」（拉取与 agent 共享的 .md 降级管线），
+// 下拉菜单含「查看 .md」「PDF 打印」。
+import { breadcrumb, button, dropdown, dropdownItem, el, Icon } from '../../lib/ui';
 
-const { entry, sidebar } = Astro.locals.starlightRoute;
+const { entry, sidebar, lang, lastUpdated } = Astro.locals.starlightRoute;
 
 /**
  * 在侧边栏树中查找当前页所在分组链（Plumest 面包屑：首页 / 分组 / 当前页）。
@@ -30,8 +33,66 @@ const crumbHtml = breadcrumb([
   ...crumbs.map((name) => ({ name })),
   { name: entry.data.title },
 ]);
+
+/** 内容集合 id → .md 端点路径（保留 `index`，与 [...markdown].ts 的 mdPath 一致） */
+function mdPath(id: string): string {
+  return `${id.replace(/\.(md|mdx)$/i, '')}.md`;
+}
+const mdUrl = `/${mdPath(entry.id)}`;
+// 端点形态随构建目标：dev 服务器（trailingSlash: always）对无尾斜杠的 .md 路由 404，
+// 需带尾斜杠；生产为静态文件托管，无尾斜杠才是真实文件（带斜杠反而 404）。
+const mdHref = import.meta.env.DEV ? `${mdUrl}/` : mdUrl;
+
+// 「PDF 打印」菜单项：无 href 的 div + data-cpd-print 钩子（runtime 调 window.print()）
+const printItem = el(
+  'div',
+  {
+    class: 'cpd-dropdown-item',
+    role: 'menuitem',
+    'data-cpd-dropdown-item': '',
+    'data-cpd-print': '',
+  },
+  [
+    el('span', { class: 'cpd-dropdown-item-icon' }, Icon.printer()),
+    el('span', { class: 'cpd-dropdown-item-label' }, zh ? 'PDF 打印' : 'Print as PDF'),
+  ],
+);
+
+const actionsHtml = [
+  button({
+    label: zh ? '复制 Markdown' : 'Copy Markdown',
+    icon: Icon.copy(),
+    variant: 'outline',
+    size: 'sm',
+    attrs: { 'data-cpd-copy-md': '', 'data-cpd-md-url': mdHref },
+  }),
+  dropdown({
+    trigger: Icon.chevronDown({ class: 'cpd-page-actions-chevron' }),
+    triggerLabel: zh ? '更多操作' : 'More actions',
+    content:
+      dropdownItem({
+        label: zh ? '查看 .md' : 'View as Markdown',
+        href: mdHref,
+        icon: Icon.file(),
+      }) + printItem,
+    triggerClass: 'cpd-page-actions-trigger',
+  }),
+].join('');
+
+const updatedText = lastUpdated
+  ? lastUpdated.toLocaleDateString(lang, { dateStyle: 'medium', timeZone: 'UTC' })
+  : undefined;
 ---
 
 <Fragment set:html={crumbHtml} />
 <h1 class="cpd-docs-title">{entry.data.title}</h1>
 {entry.data.description && <p class="cpd-docs-description">{entry.data.description}</p>}
+<div class="cpd-page-actions">
+  {updatedText && lastUpdated && (
+    <p class="cpd-page-updated">
+      {zh ? '最近更新' : 'Last updated'}:{' '}
+      <time datetime={lastUpdated.toISOString()}>{updatedText}</time>
+    </p>
+  )}
+  <div class="cpd-page-actions-group" set:html={actionsHtml} />
+</div>

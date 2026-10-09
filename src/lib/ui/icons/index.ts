@@ -55,6 +55,7 @@ import { zoomOut } from './zoomOut';
 import { maximize } from './maximize';
 import { maximize2 } from './maximize2';
 import { rotateCcw } from './rotateCcw';
+import { printer } from './printer';
 
 export const Icon = {
   chevronDown: chevronDown,
@@ -107,6 +108,7 @@ export const Icon = {
   maximize: maximize,
   maximize2: maximize2,
   rotateCcw: rotateCcw,
+  printer: printer,
 } as const;
 
 export type IconName = keyof typeof Icon;
