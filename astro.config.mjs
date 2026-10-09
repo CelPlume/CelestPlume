@@ -4,8 +4,16 @@ import starlight from '@astrojs/starlight';
 import mdx from '@astrojs/mdx';
 import icon from 'astro-icon';
 import { unified } from '@astrojs/markdown-remark';
+import remarkDirective from 'remark-directive';
+import { pluginLineNumbers } from '@expressive-code/plugin-line-numbers';
+import { pluginCollapsibleSections } from '@expressive-code/plugin-collapsible-sections';
 import rehypeImageZoom from './src/lib/markdown/rehype-image-zoom.ts';
 import remarkMermaid from './src/lib/markdown/remark-mermaid.ts';
+import remarkIncludes from './src/lib/markdown/remark-includes.ts';
+import remarkMarker from './src/lib/markdown/remark-marker.ts';
+import remarkAbbreviations from './src/lib/markdown/remark-abbreviations.ts';
+import remarkContentAnnotations from './src/lib/markdown/remark-content-annotations.ts';
+import remarkCpdDirectives from './src/lib/markdown/remark-cpd-directives.ts';
 import { readFile, writeFile, rm } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
@@ -82,10 +90,28 @@ export default defineConfig({
   // cleanURL：Astro 默认输出无 .html 的目录型路由（/page/），配合 trailingSlash 保持内部链接稳定
   trailingSlash: 'always',
   markdown: {
-    // Astro 7 默认处理器为 Sätteri；本项目依赖 remark/rehype 插件（mermaid 图表、
-    // 图片缩放），按 v7 升级指南显式使用 unified 管线（插件直接传给处理器）
+    // Astro 7 默认处理器为 Sätteri；本项目依赖 remark/rehype 插件（写作语法
+    // 扩展、mermaid 图表、图片缩放），按 v7 升级指南显式使用 unified 管线
+    // （插件直接传给处理器）。
+    //
+    // 写作语法链（移植自 Shirone 的 Plume 兼容语法，顺序即 Shirone 链序）：
+    // - remarkIncludes：解析前展开 <!-- @include -->（整文件 / {10-25} 行切片 /
+    //   #region 命名区块），路径相对包含方文件
+    // - remarkMarker：解析前把 ==文本=={.variant} 重写为 :cpd-mark[文本] 指令
+    // - remarkAbbreviations：*[术语]: 释义 字典 + 正文自动 <abbr>
+    // - remarkContentAnnotations：[+tag] 行内引用 + 定义块 → Popover 旁注
+    // - remarkDirective：把上述指令解析为指令节点（remark-directive）
+    // - remarkCpdDirectives：指令节点落地为 HTML（mark/spoiler/bilibili/github）
     processor: unified({
-      remarkPlugins: [remarkMermaid],
+      remarkPlugins: [
+        remarkIncludes,
+        remarkMarker,
+        remarkAbbreviations,
+        remarkContentAnnotations,
+        remarkDirective,
+        remarkCpdDirectives,
+        remarkMermaid,
+      ],
       rehypePlugins: [rehypeImageZoom],
     }),
   },
@@ -229,19 +255,24 @@ export default defineConfig({
               link: '/contribution/design-system/',
             },
             {
+              label: 'Writing Syntax',
+              translations: { 'zh-CN': '写作语法' },
+              link: '/contribution/syntax/',
+            },
+            {
               label: 'Styles',
               translations: { 'zh-CN': '样式规范' },
               link: '/contribution/styles/',
             },
             {
-              label: 'Code Diffs',
-              translations: { 'zh-CN': '代码差异' },
-              link: '/contribution/diffs/',
-            },
-            {
               label: 'Components',
               translations: { 'zh-CN': '组件文档' },
               items: [{ autogenerate: { directory: 'contribution/components' } }],
+            },
+            {
+              label: 'Pages',
+              translations: { 'zh-CN': '页面文档' },
+              items: [{ autogenerate: { directory: 'contribution/pages' } }],
             },
           ],
         },
@@ -249,9 +280,14 @@ export default defineConfig({
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/CelPlume/CelestPlume' },
       ],
-      // 关闭 expressive-code 的 frame（macOS 红绿灯终端条等外壳）
+      // expressive-code：开启 frames（文件名标签页 / 终端标题条，title= 元数据），
+      // 复制按钮仍由 kit 注入（EC 自带按钮关闭）；行号与折叠段为显式元数据启用
+      // （showLineNumbers / collapse={1-5}），与 Shirone 的代码块能力对齐。
       expressiveCode: {
-        frames: false,
+        plugins: [pluginLineNumbers(), pluginCollapsibleSections()],
+        frames: {
+          showCopyToClipboardButton: false,
+        },
       // Diff 文本标记（ins/del/mark）对齐 Plumest 三色系：ins=成功绿（hue 150）、
       // del=错误红（hue 25）。mark 的淡金与 hue 必须走 customizeTheme：
       // Starlight 会经 applyStarlightUiThemeColors 在主题级把 mark 覆盖为中性色，
