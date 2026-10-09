@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../../components/kit/PropsTable.astro';
 import { button } from '../../../../../lib/ui';
 
 `button()` 构建按钮：`variant` 切换 Solid / Subtle / Surface /
@@ -134,16 +135,19 @@ button({ label: 'Info', variant: 'outline', color: 'info' });
 
 ## 参数
 
-| 参数 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `label` | `string` | — | 按钮文本（必填）。 |
-| `href` | `string` | — | 目标地址——渲染 `<a>` 而非 `<button>`。 |
-| `variant` | `'solid' \| 'subtle' \| 'surface' \| 'outline' \| 'ghost' \| 'plain'` | `'solid'` | 视觉风格。 |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | 高度与内边距（2rem / 2.5rem / 3rem）。 |
-| `color` | `'primary' \| 'info' \| 'success' \| 'warning' \| 'error' \| 'idea'` | `'primary'` | 色板，来自 Kit 语义色令牌。 |
-| `icon` | `string` | `''` | 置于文本前的原始 SVG 字符串。 |
-| `external` | `boolean` | `false` | 配合 `href`：在新标签页打开链接。 |
-| `attrs` | `Record<string, string>` | — | 附加 HTML 属性（如 `data-cpd-drawer-trigger`）。 |
+<PropsTable
+  labels={{ prop: '参数', type: '类型', default: '默认值' }}
+  type={{
+    label: { type: 'string', required: true, description: '按钮文本。' },
+    href: { type: 'string', description: '目标地址——渲染 <code>&lt;a&gt;</code> 而非 <code>&lt;button&gt;</code>。' },
+    variant: { type: "'solid' | 'subtle' | 'surface' | 'outline' | 'ghost' | 'plain'", default: "'solid'", description: '视觉风格。' },
+    size: { type: "'sm' | 'md' | 'lg'", default: "'md'", description: '高度与内边距（2rem / 2.5rem / 3rem）。' },
+    color: { type: "'primary' | 'info' | 'success' | 'warning' | 'error' | 'idea'", default: "'primary'", description: '色板，来自 Kit 语义色令牌。' },
+    icon: { type: 'string', default: "''", description: '置于文本前的原始 SVG 字符串。' },
+    external: { type: 'boolean', default: 'false', description: '配合 <code>href</code>：在新标签页打开链接。' },
+    attrs: { type: 'Record<string, string>', description: '附加 HTML 属性（如 <code>data-cpd-drawer-trigger</code>）。' },
+  }}
+/>
 
 ## 注意
 

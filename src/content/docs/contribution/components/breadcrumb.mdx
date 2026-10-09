@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
 import { breadcrumb } from '../../../../lib/ui';
 
 A breadcrumb shows where the current page sits. Items are separated by chevron
@@ -51,10 +52,13 @@ breadcrumb([
 
 ## Props
 
-| Option | Type | Description |
-| --- | --- | --- |
-| `name` | `string` | Display name. |
-| `href` | `string` | Link target; omit for the last (current) item. |
+<PropsTable
+  labels={{ prop: 'Option', type: 'Type' }}
+  type={{
+    name: { type: 'string', description: 'Display name.' },
+    href: { type: 'string', description: 'Link target; omit for the last (current) item.' },
+  }}
+/>
 
 ## Notes
 

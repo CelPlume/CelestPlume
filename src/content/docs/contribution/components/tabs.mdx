@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
 import { tabs, code } from '../../../../lib/ui';
 
 Tabs switch panels client-side via the runtime — no page reload. The tab list
@@ -74,12 +75,15 @@ tabs({
 
 ## Props
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `items` | `string[]` | — | Tab titles when `panels` is omitted. |
-| `panels` | `TabPanel[]` | — | `{ title?, value?, content }` — content can be HTML. |
-| `label` | `string` | `''` | Optional group label before the tab list. |
-| `defaultIndex` | `number` | `0` | Initially active tab. |
+<PropsTable
+  labels={{ prop: 'Option', type: 'Type', default: 'Default' }}
+  type={{
+    items: { type: 'string[]', description: 'Tab titles when <code>panels</code> is omitted.' },
+    panels: { type: 'TabPanel[]', description: '<code>{ title?, value?, content }</code> — content can be HTML.' },
+    label: { type: 'string', default: "''", description: 'Optional group label before the tab list.' },
+    defaultIndex: { type: 'number', default: '0', description: 'Initially active tab.' },
+  }}
+/>
 
 ## Notes
 

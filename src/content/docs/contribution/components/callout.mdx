@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
 import { callout, code } from '../../../../lib/ui';
 
 A callout surfaces a notice next to your prose. Each `type` maps to a semantic
@@ -69,12 +70,15 @@ callout('The default icon is replaced by a custom SVG.', {
 
 ## Props
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `content` | `string` | — | Body text (required, first argument). |
-| `type` | `'info' \| 'warning' \| 'error' \| 'success' \| 'idea'` | `'info'` | Semantic variant — drives accent bar, tint and icon. |
-| `title` | `string` | `''` | Optional bold title above the body. |
-| `icon` | `string` | auto | Raw SVG string replacing the default icon. |
+<PropsTable
+  labels={{ prop: 'Option', type: 'Type', default: 'Default' }}
+  type={{
+    content: { type: 'string', required: true, description: 'Body text (first argument).' },
+    type: { type: "'info' | 'warning' | 'error' | 'success' | 'idea'", default: "'info'", description: 'Semantic variant — drives accent bar, tint and icon.' },
+    title: { type: 'string', default: "''", description: 'Optional bold title above the body.' },
+    icon: { type: 'string', default: 'auto', description: 'Raw SVG string replacing the default icon.' },
+  }}
+/>
 
 ## Notes
 

@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../../components/kit/PropsTable.astro';
 import { callout, code } from '../../../../../lib/ui';
 
 Callout 在正文旁呈现提示信息。每种 `type` 对应一个语义令牌
@@ -68,12 +69,15 @@ callout('默认图标被替换为自定义 SVG。', {
 
 ## 参数
 
-| 参数 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `content` | `string` | — | 正文文本（必填，第一个参数）。 |
-| `type` | `'info' \| 'warning' \| 'error' \| 'success' \| 'idea'` | `'info'` | 语义变体——驱动左侧条、底色与图标。 |
-| `title` | `string` | `''` | 可选的加粗标题。 |
-| `icon` | `string` | 自动 | 替换默认图标的原始 SVG 字符串。 |
+<PropsTable
+  labels={{ prop: '参数', type: '类型', default: '默认值' }}
+  type={{
+    content: { type: 'string', required: true, description: '正文文本（第一个参数）。' },
+    type: { type: "'info' | 'warning' | 'error' | 'success' | 'idea'", default: "'info'", description: '语义变体——驱动左侧条、底色与图标。' },
+    title: { type: 'string', default: "''", description: '可选的加粗标题。' },
+    icon: { type: 'string', default: '自动', description: '替换默认图标的原始 SVG 字符串。' },
+  }}
+/>
 
 ## 注意
 

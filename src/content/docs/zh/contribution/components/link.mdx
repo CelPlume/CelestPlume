@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../../components/kit/PropsTable.astro';
 import { link } from '../../../../../lib/ui';
 
 `link()` 在正文内容中构建文本链接。内链带右
@@ -39,12 +40,15 @@ link({
 
 ## 参数
 
-| 参数 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `href` | `string` | — | 目标地址（必填）。 |
-| `label` | `string` | — | 链接文本（必填）。 |
-| `external` | `boolean` | `false` | 在新标签页打开并渲染 ↗ 箭头。 |
-| `icon` | `string` | `''` | 置于文本前的原始 SVG 字符串。 |
+<PropsTable
+  labels={{ prop: '参数', type: '类型', default: '默认值' }}
+  type={{
+    href: { type: 'string', required: true, description: '目标地址。' },
+    label: { type: 'string', required: true, description: '链接文本。' },
+    external: { type: 'boolean', default: 'false', description: '在新标签页打开并渲染 ↗ 箭头。' },
+    icon: { type: 'string', default: "''", description: '置于文本前的原始 SVG 字符串。' },
+  }}
+/>
 
 ## 注意
 

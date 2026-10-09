@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
 import { button } from '../../../../lib/ui';
 
 `button()` builds a button: `variant` switches between Solid / Subtle /
@@ -133,16 +134,19 @@ button({ label: 'Info', variant: 'outline', color: 'info' });
 
 ## Props
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `label` | `string` | — | Button text (required). |
-| `href` | `string` | — | Target URL — renders an `<a>` instead of `<button>`. |
-| `variant` | `'solid' \| 'subtle' \| 'surface' \| 'outline' \| 'ghost' \| 'plain'` | `'solid'` | Visual style. |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Height and padding (2rem / 2.5rem / 3rem). |
-| `color` | `'primary' \| 'info' \| 'success' \| 'warning' \| 'error' \| 'idea'` | `'primary'` | Color palette from the kit's semantic tokens. |
-| `icon` | `string` | `''` | Raw SVG string before the label. |
-| `external` | `boolean` | `false` | With `href`: opens the link in a new tab. |
-| `attrs` | `Record<string, string>` | — | Extra HTML attributes (e.g. `data-cpd-drawer-trigger`). |
+<PropsTable
+  labels={{ prop: 'Option', type: 'Type', default: 'Default' }}
+  type={{
+    label: { type: 'string', required: true, description: 'Button text.' },
+    href: { type: 'string', description: 'Target URL — renders an <code>&lt;a&gt;</code> instead of <code>&lt;button&gt;</code>.' },
+    variant: { type: "'solid' | 'subtle' | 'surface' | 'outline' | 'ghost' | 'plain'", default: "'solid'", description: 'Visual style.' },
+    size: { type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Height and padding (2rem / 2.5rem / 3rem).' },
+    color: { type: "'primary' | 'info' | 'success' | 'warning' | 'error' | 'idea'", default: "'primary'", description: "Color palette from the kit's semantic tokens." },
+    icon: { type: 'string', default: "''", description: 'Raw SVG string before the label.' },
+    external: { type: 'boolean', default: 'false', description: 'With <code>href</code>: opens the link in a new tab.' },
+    attrs: { type: 'Record<string, string>', description: 'Extra HTML attributes (e.g. <code>data-cpd-drawer-trigger</code>).' },
+  }}
+/>
 
 ## Notes
 

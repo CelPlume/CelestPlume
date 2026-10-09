@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
 import { kbd } from '../../../../lib/ui';
 
 `kbd()` renders a keyboard key chip styled with `--cpd-secondary` and a subtle
@@ -45,9 +46,12 @@ kbd('Ctrl');
 
 ## Props
 
-| Option | Type | Description |
-| --- | --- | --- |
-| `text` | `string` | Key label (first argument). |
+<PropsTable
+  labels={{ prop: 'Option', type: 'Type' }}
+  type={{
+    text: { type: 'string', description: 'Key label (first argument).' },
+  }}
+/>
 
 ## Notes
 

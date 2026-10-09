@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
 import { renderDrawer, button } from '../../../../lib/ui';
 
 A Drawer slides a panel in from the right edge. The base style has a blur
@@ -67,17 +68,20 @@ const drawer = renderDrawer({
 
 ## Props
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `title` | `string` | — | Panel title; also used as `aria-label`. |
-| `content` | `string` | `''` | Body HTML. |
-| `open` | `boolean` | `false` | Initial open state (`data-cpd-open`). |
-| `side` | `'right'` | `'right'` | Slide direction; RTL flips automatically. |
-| `width` | `string` | `var(--cpd-drawer-width, 28rem)` | Panel width (default 28rem). |
-| `maxWidth` | `string` | `100dvw` | Panel max width. |
-| `id` | `string` | — | Panel id; triggers reference it via `data-cpd-drawer-target`. |
-| `closeLabel` | `string` | `'Close'` | Close button `aria-label`. |
-| `fullscreen` | `boolean` | `false` | Fullscreen modal variant: 50% black backdrop (no blur), high shadow, 28rem width, 8px start radius. |
+<PropsTable
+  labels={{ prop: 'Option', type: 'Type', default: 'Default' }}
+  type={{
+    title: { type: 'string', description: 'Panel title; also used as <code>aria-label</code>.' },
+    content: { type: 'string', default: "''", description: 'Body HTML.' },
+    open: { type: 'boolean', default: 'false', description: 'Initial open state (<code>data-cpd-open</code>).' },
+    side: { type: "'right'", default: "'right'", description: 'Slide direction; RTL flips automatically.' },
+    width: { type: 'string', default: 'var(--cpd-drawer-width, 28rem)', description: 'Panel width (default 28rem).' },
+    maxWidth: { type: 'string', default: '100dvw', description: 'Panel max width.' },
+    id: { type: 'string', description: 'Panel id; triggers reference it via <code>data-cpd-drawer-target</code>.' },
+    closeLabel: { type: 'string', default: "'Close'", description: 'Close button <code>aria-label</code>.' },
+    fullscreen: { type: 'boolean', default: 'false', description: 'Fullscreen modal variant: 50% black backdrop (no blur), high shadow, 28rem width, 8px start radius.' },
+  }}
+/>
 
 ## Notes
 

@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../../components/kit/PropsTable.astro';
 import { accordion, accordions } from '../../../../../lib/ui';
 
 折叠面板在客户端展开/收起。给条目设置 `id` 会添加复制链接按钮，复制
@@ -45,12 +46,15 @@ accordion(
 
 ## 参数
 
-| 参数 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `title` | `string` | — | 折叠头（必填）。 |
-| `content` | `string` | `''` | 可折叠正文（允许 HTML）。 |
-| `id` | `string` | — | 锚点 id；同时启用复制链接按钮。 |
-| `defaultOpen` | `boolean` | `false` | 默认展开。 |
+<PropsTable
+  labels={{ prop: '参数', type: '类型', default: '默认值' }}
+  type={{
+    title: { type: 'string', required: true, description: '折叠头。' },
+    content: { type: 'string', default: "''", description: '可折叠正文（允许 HTML）。' },
+    id: { type: 'string', description: '锚点 id；同时启用复制链接按钮。' },
+    defaultOpen: { type: 'boolean', default: 'false', description: '默认展开。' },
+  }}
+/>
 
 ## 注意
 

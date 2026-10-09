@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../../components/kit/PropsTable.astro';
 import { kbd } from '../../../../../lib/ui';
 
 `kbd()` 渲染键盘按键小片，使用 `--cpd-secondary` 底色与细微内阴影。
@@ -44,9 +45,12 @@ kbd('Ctrl');
 
 ## 参数
 
-| 参数 | 类型 | 说明 |
-| --- | --- | --- |
-| `text` | `string` | 按键文本（第一个参数）。 |
+<PropsTable
+  labels={{ prop: '参数', type: '类型' }}
+  type={{
+    text: { type: 'string', description: '按键文本（第一个参数）。' },
+  }}
+/>
 
 ## 注意
 

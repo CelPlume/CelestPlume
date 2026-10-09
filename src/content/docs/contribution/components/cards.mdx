@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
 import { card, cards } from '../../../../lib/ui';
 
 `card()` builds a single card; `cards()` wraps any number of them in the
@@ -44,25 +45,28 @@ cards([
 
 <Preview
   label="External link card"
-  html={card({ title: 'Plumest', description: 'External links open in a new tab.', href: 'https://github.com/CelPlume/CelestPlume', external: true, icon: 'lucide:external-link' })}
+  html={card({ title: 'Plumest', description: 'External links open in a new tab.', href: 'https://GitHub.com/CelPlume/CelestPlume', external: true, icon: 'lucide:external-link' })}
 />
 
 ```ts
 card({ title: 'Getting started', description: 'A card that links somewhere.', href: '/guides/example/', icon: 'lucide:arrow-right' });
 card({ title: 'Plain card', description: 'No icon, no link — a bare block.', children: '<p>Extra HTML content inside.</p>' });
-card({ title: 'Plumest', description: 'External links open in a new tab.', href: 'https://github.com/CelPlume/CelestPlume', external: true, icon: 'lucide:external-link' });
+card({ title: 'Plumest', description: 'External links open in a new tab.', href: 'https://GitHub.com/CelPlume/CelestPlume', external: true, icon: 'lucide:external-link' });
 ```
 
 ## Props
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `title` | `string` | — | Card title (required). |
-| `description` | `string` | `''` | Supporting text. |
-| `href` | `string` | `''` | Target URL — with it the card renders as an `<a>`. |
-| `external` | `boolean` | `false` | Opens the link in a new tab. |
-| `icon` | `string` | `''` | Iconify name (e.g. `lucide:zap`) or raw SVG. |
-| `children` | `string` | `''` | Extra HTML below the description. |
+<PropsTable
+  labels={{ prop: 'Option', type: 'Type', default: 'Default' }}
+  type={{
+    title: { type: 'string', required: true, description: 'Card title.' },
+    description: { type: 'string', default: "''", description: 'Supporting text.' },
+    href: { type: 'string', default: "''", description: 'Target URL — with it the card renders as an <code>&lt;a&gt;</code>.' },
+    external: { type: 'boolean', default: 'false', description: 'Opens the link in a new tab.' },
+    icon: { type: 'string', default: "''", description: 'Iconify name (e.g. <code>lucide:zap</code>) or raw SVG.' },
+    children: { type: 'string', default: "''", description: 'Extra HTML below the description.' },
+  }}
+/>
 
 ## Notes
 

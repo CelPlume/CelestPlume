@@ -7,6 +7,7 @@ sidebar:
 
 import GitHubCard from '../../../../../components/kit/GitHubCard.astro';
 import GitHubCards from '../../../../../components/kit/GitHubCards.astro';
+import PropsTable from '../../../../../components/kit/PropsTable.astro';
 
 `githubCard()` 渲染单张 GitHub 仓库卡片；`githubCards()` 渲染网格（双列）或
 整行堆叠。整卡为链接，标题显示 `owner/repo`。描述、语言与 star/fork 数在
@@ -70,13 +71,16 @@ import GitHubCards from '../../../../../components/kit/GitHubCards.astro';
 `GitHubCard` 接受一组选项；`GitHubCards` 接受 `items`（同样的选项组成的数组）
 以及可选的 `layout`。
 
-| 选项 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `owner` | `string` | — | 仓库所有者（用户或组织）。 |
-| `repo` | `string` | — | 仓库名称。 |
-| `target` | `string` | `'_blank'` | 仓库链接的打开方式。 |
-| `auth` | `string` | `''` | 构建期请求使用的 GitHub token。 |
-| `layout` | `'grid' \| 'stack'` | `'grid'` | 仅 `GitHubCards`：双列或每行一卡。 |
+<PropsTable
+  labels={{ prop: '选项', type: '类型', default: '默认值' }}
+  type={{
+    owner: { type: 'string', description: '仓库所有者（用户或组织）。' },
+    repo: { type: 'string', description: '仓库名称。' },
+    target: { type: 'string', default: "'_blank'", description: '仓库链接的打开方式。' },
+    auth: { type: 'string', default: "''", description: '构建期请求使用的 GitHub token。' },
+    layout: { type: "'grid' | 'stack'", default: "'grid'", description: '仅 <code>GitHubCards</code>：双列或每行一卡。' },
+  }}
+/>
 
 ## 说明
 

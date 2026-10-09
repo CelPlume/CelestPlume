@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../../components/kit/PropsTable.astro';
 import { pagination } from '../../../../../lib/ui';
 
 分页渲染 Plumest 风格上一页/下一页卡片。任一侧都可省略；标签用于本地化
@@ -61,11 +62,14 @@ pagination(
 
 ## 参数
 
-| 参数 | 类型 | 说明 |
-| --- | --- | --- |
-| `previous` | `PaginationItem \| undefined` | 上一页卡片；省略即隐藏。 |
-| `next` | `PaginationItem \| undefined` | 下一页卡片；省略即隐藏。 |
-| `labels.previous` / `labels.next` | `string` | 本地化提示标签。 |
+<PropsTable
+  labels={{ prop: '参数', type: '类型' }}
+  type={{
+    previous: { type: 'PaginationItem | undefined', description: '上一页卡片；省略即隐藏。' },
+    next: { type: 'PaginationItem | undefined', description: '下一页卡片；省略即隐藏。' },
+    'labels.previous / labels.next': { type: 'string', description: '本地化提示标签。' },
+  }}
+/>
 
 `PaginationItem`：`{ title: string; description?: string; href: string }`。
 

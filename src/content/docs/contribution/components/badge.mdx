@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
 import { badge } from '../../../../lib/ui';
 
 A badge labels a short piece of content. Six variants share the semantic
@@ -54,10 +55,13 @@ badge('success', 'success');
 
 ## Props
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `text` | `string` | — | Badge label (first argument). |
-| `variant` | `'default' \| 'gold' \| 'info' \| 'warning' \| 'error' \| 'success'` | `'default'` | Semantic variant. |
+<PropsTable
+  labels={{ prop: 'Option', type: 'Type', default: 'Default' }}
+  type={{
+    text: { type: 'string', description: 'Badge label (first argument).' },
+    variant: { type: "'default' | 'gold' | 'info' | 'warning' | 'error' | 'success'", default: "'default'", description: 'Semantic variant.' },
+  }}
+/>
 
 ## Notes
 

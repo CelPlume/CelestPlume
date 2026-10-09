@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
 import { link } from '../../../../lib/ui';
 
 `link()` builds a text link inside article content. Inline links get a
@@ -40,12 +41,15 @@ link({
 
 ## Props
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `href` | `string` | — | Target URL (required). |
-| `label` | `string` | — | Link text (required). |
-| `external` | `boolean` | `false` | Opens in a new tab and renders the ↗ arrow. |
-| `icon` | `string` | `''` | Raw SVG string before the label. |
+<PropsTable
+  labels={{ prop: 'Option', type: 'Type', default: 'Default' }}
+  type={{
+    href: { type: 'string', required: true, description: 'Target URL.' },
+    label: { type: 'string', required: true, description: 'Link text.' },
+    external: { type: 'boolean', default: 'false', description: 'Opens in a new tab and renders the ↗ arrow.' },
+    icon: { type: 'string', default: "''", description: 'Raw SVG string before the label.' },
+  }}
+/>
 
 ## Notes
 

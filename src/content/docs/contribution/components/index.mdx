@@ -35,6 +35,7 @@ different states, the builder call that produced it, a props table and notes.
     { title: 'Dropdown', description: 'Menu with groups and separators.', href: '/contribution/components/dropdown/', icon: 'lucide:chevron-down' },
     { title: 'Drawer', description: 'Slide-in panel below the nav.', href: '/contribution/components/drawer/', icon: 'lucide:panel-right' },
     { title: 'Modal', description: 'Overlay dialog with blurred backdrop.', href: '/contribution/components/modal/', icon: 'lucide:message-square' },
+    { title: 'TypeTable', description: 'Structured props/API contract tables.', href: '/contribution/components/type-table/', icon: 'lucide:table' },
   ])}
 />
 
@@ -48,7 +49,7 @@ import { initCelestialUI } from '/src/lib/ui/runtime';
 initCelestialUI();
 ```
 
-It wires sidebar folders/collapse/drawer, ClerkTOC tracking, tabs, accordions,
+It wires sidebar folders/collapse/drawer, Plumest TOC tracking, tabs, accordions,
 copy buttons and the theme toggle. It is idempotent and safe to call on any
 page (no-ops when no `cpd-` elements exist). On the docs site it is injected
 into every page by the `celestialUiRuntime` integration in

@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../../components/kit/PropsTable.astro';
 import { tabs, code } from '../../../../../lib/ui';
 
 Tabs 由运行时在客户端切换面板，不刷新页面。标签列表为
@@ -74,12 +75,15 @@ tabs({
 
 ## 参数
 
-| 参数 | 类型 | 默认值 | 说明 |
-| --- | --- | --- | --- |
-| `items` | `string[]` | — | 省略 `panels` 时的标签标题。 |
-| `panels` | `TabPanel[]` | — | `{ title?, value?, content }`，content 可为 HTML。 |
-| `label` | `string` | `''` | 标签列表前的可选分组名。 |
-| `defaultIndex` | `number` | `0` | 初始激活的标签。 |
+<PropsTable
+  labels={{ prop: '参数', type: '类型', default: '默认值' }}
+  type={{
+    items: { type: 'string[]', description: '省略 <code>panels</code> 时的标签标题。' },
+    panels: { type: 'TabPanel[]', description: '<code>{ title?, value?, content }</code>，content 可为 HTML。' },
+    label: { type: 'string', default: "''", description: '标签列表前的可选分组名。' },
+    defaultIndex: { type: 'number', default: '0', description: '初始激活的标签。' },
+  }}
+/>
 
 ## 注意
 

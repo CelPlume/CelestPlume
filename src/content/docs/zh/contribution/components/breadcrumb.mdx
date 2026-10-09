@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../../components/kit/PropsTable.astro';
 import { breadcrumb } from '../../../../../lib/ui';
 
 面包屑展示当前页所在位置。条目间以 chevron 图标分隔；最后一项（无
@@ -51,10 +52,13 @@ breadcrumb([
 
 ## 参数
 
-| 参数 | 类型 | 说明 |
-| --- | --- | --- |
-| `name` | `string` | 显示名。 |
-| `href` | `string` | 链接目标；最后一项（当前页）省略。 |
+<PropsTable
+  labels={{ prop: '参数', type: '类型' }}
+  type={{
+    name: { type: 'string', description: '显示名。' },
+    href: { type: 'string', description: '链接目标；最后一项（当前页）省略。' },
+  }}
+/>
 
 ## 注意
 

@@ -35,6 +35,7 @@ Docs Kit 的每个组件都是一个**纯 TypeScript 函数**，返回 HTML 字�
     { title: 'Dropdown 下拉菜单', description: '带分组与分隔线的菜单。', href: '/zh/contribution/components/dropdown/', icon: 'lucide:chevron-down' },
     { title: 'Drawer 抽屉', description: '导航下方的滑入面板。', href: '/zh/contribution/components/drawer/', icon: 'lucide:panel-right' },
     { title: 'Modal 弹窗', description: '带模糊遮罩的覆盖式弹窗。', href: '/zh/contribution/components/modal/', icon: 'lucide:message-square' },
+    { title: 'TypeTable 契约表格', description: 'Props 与 API 参数的结构化表格。', href: '/zh/contribution/components/type-table/', icon: 'lucide:table' },
   ])}
 />
 
@@ -47,7 +48,7 @@ import { initCelestialUI } from '/src/lib/ui/runtime';
 initCelestialUI();
 ```
 
-它负责：侧边栏折叠分组/折叠/抽屉、ClerkTOC 追踪、标签页、折叠面板、复制
+它负责：侧边栏折叠分组/折叠/抽屉、Plumest TOC 追踪、标签页、折叠面板、复制
 按钮与主题切换。函数幂等，任何页面调用都安全（无 `cpd-` 元素时为空操作）。
 文档站通过 `astro.config.mjs` 里的 `celestialUiRuntime` 集成注入每个页面。
 

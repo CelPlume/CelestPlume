@@ -6,6 +6,7 @@ sidebar:
 ---
 
 import Preview from '../../../../components/kit/Preview.astro';
+import PropsTable from '../../../../components/kit/PropsTable.astro';
 import { accordion, accordions } from '../../../../lib/ui';
 
 Accordions collapse/expand client-side. Giving an item an `id` adds a copy-link
@@ -45,12 +46,15 @@ accordion(
 
 ## Props
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `title` | `string` | — | Accordion header (required). |
-| `content` | `string` | `''` | Collapsible body (HTML allowed). |
-| `id` | `string` | — | Anchor id; also enables the copy-link button. |
-| `defaultOpen` | `boolean` | `false` | Start expanded. |
+<PropsTable
+  labels={{ prop: 'Option', type: 'Type', default: 'Default' }}
+  type={{
+    title: { type: 'string', required: true, description: 'Accordion header.' },
+    content: { type: 'string', default: "''", description: 'Collapsible body (HTML allowed).' },
+    id: { type: 'string', description: 'Anchor id; also enables the copy-link button.' },
+    defaultOpen: { type: 'boolean', default: 'false', description: 'Start expanded.' },
+  }}
+/>
 
 ## Notes
 
