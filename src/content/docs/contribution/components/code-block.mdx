@@ -87,6 +87,121 @@ codeBlock({
   }}
 />
 
+## Markdown fences (Expressive Code)
+
+Real docs pages render fences through Expressive Code (Shiki-based), themed
+to match the kit: the frame follows `--cpd-*` tokens and the copy button is
+the kit one. The `codeBlock()` builder above is for demo pages and other
+non-Markdown surfaces; inside `.md`/`.mdx` prefer plain fences.
+
+### Titles, terminal frames and line numbers
+
+A `title` meta renders a filename tab; shell languages get a terminal frame.
+`showLineNumbers` enables line numbers per block:
+
+```js title="src/example.js" showLineNumbers
+export function greet(name) {
+  return `Hello, ${name}!`;
+}
+```
+
+### Line marks and diffs
+
+`{lines}` highlights whole lines or ranges; `del={}` / `ins={}` mark removed
+and added lines — with optional labels for "before vs after" without a fake
+diff fence:
+
+```js title="markers.js" del={2} ins={3-4} {6}
+const theme = 'light';
+const theme = 'dark';
+// keep an eye on this line
+```
+
+```ts ins={"new":2} del={"old":4}
+const retries = 3;
+const cache = new Map();
+const TIMEOUT_MS = 5000;
+const CACHE_SIZE = 100;
+```
+
+Use `diff` as the fence language for git-style blocks; `-`/`+` prefixes get
+removed/added styling. Attach a regular language to keep highlighting:
+
+```diff lang="ts"
+  function greet(name: string) {
+-   return "Hello, " + name;
++   return `Hello, ${name}!`;
+  }
+```
+
+Word marks highlight every occurrence of a quoted string; `ins=` / `del=`
+mark inline additions and removals:
+
+```js "retries" ins="attempts" del="retries"
+const retries = readConfig().attempts;
+log(`retrying, ${retries} attempts left`);
+```
+
+### Collapsible sections
+
+`collapse={ranges}` folds line ranges behind an expandable toggle:
+
+```js collapse={1-2, 7-8}
+// …long header comment…
+// …another boilerplate line…
+function main() {
+  console.log('visible');
+}
+// …trailing boilerplate…
+// …more trailing boilerplate…
+```
+
+### Theming
+
+Marker colors are driven by LCH hue tokens in `astro.config.mjs`
+(`insHue: 150`, `delHue: 25`, gold mark background via `customizeTheme`),
+aligned with the Plumest success / error / gold tokens — backgrounds, borders
+and indicators derive per theme, no CSS overrides needed.
+
+`````markdown
+```js title="src/example.js" showLineNumbers
+export function greet(name) {
+  return `Hello, ${name}!`;
+}
+```
+`````
+
+## File includes
+
+`<!-- @include: … -->` comments splice another file into the page at build
+time — whole files, line slices, or named `#region` blocks. Include comments
+are Markdown comments, so live expansion requires `.md` pages (MDX does not
+support HTML comments); the forms:
+
+```markdown
+<!-- @include: ./_snippets/prereq.md -->
+<!-- @include: ./src/config/site.ts{10-25} -->
+<!-- @include: ./src/config/site.ts{5-} -->
+<!-- @include: ./src/config/site.ts{-4} -->
+<!-- @include: ./src/example.ts#auth-config -->
+```
+
+| Form | Meaning |
+| --- | --- |
+| `path` | Whole file |
+| `path{10-25}` | Lines 10–25 (1-based, inclusive) |
+| `path{5-}` | Line 5 to the end |
+| `path{-4}` | Start to line 4 |
+| `path#region` | Between `#region name` and `#endregion` markers |
+
+Notes:
+
+- Paths resolve relative to the including file and must stay inside the workspace.
+- Markdown targets (`md`/`mdx`) splice as raw Markdown; any other target is
+  wrapped in a code fence tagged with its extension.
+- Includes nest (recursively, with cycle detection); include comments inside
+  fences stay literal; missing files and malformed ranges remain literal.
+
 ## Notes
 
 - The builder escapes `code` — raw markup is never executed.

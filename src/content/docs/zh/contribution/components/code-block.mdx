@@ -86,6 +86,116 @@ codeBlock({
   }}
 />
 
+## Markdown 围栏（Expressive Code）
+
+真实文档页的代码围栏经 Expressive Code（Shiki 内核）渲染并适配 Kit 主题：
+外框跟随 `--cpd-*` 令牌，复制按钮使用 Kit 版本。上方构建器面向 demo 页等
+非 Markdown 场景；`.md` / `.mdx` 内请直接写围栏。
+
+### 文件名、终端框与行号
+
+`title` 元数据渲染文件名标签页；shell 语言自动呈现终端框。`showLineNumbers`
+逐块开启行号：
+
+```js title="src/example.js" showLineNumbers
+export function greet(name) {
+  return `Hello, ${name}!`;
+}
+```
+
+### 行标记与差异
+
+`{lines}` 高亮整行或区间；`del={}` / `ins={}` 标记删除与新增的行——支持标签，
+无需伪造 diff 围栏即可表达「改前 vs 改后」：
+
+```js title="markers.js" del={2} ins={3-4} {6}
+const theme = 'light';
+const theme = 'dark';
+// 关注这一行
+```
+
+```ts ins={"new":2} del={"old":4}
+const retries = 3;
+const cache = new Map();
+const TIMEOUT_MS = 5000;
+const CACHE_SIZE = 100;
+```
+
+以 `diff` 作为围栏语言即得 git 风格差异块；`-` / `+` 前缀行获得删除/新增
+样式。附加常规语言可保留语法高亮：
+
+```diff lang="ts"
+  function greet(name: string) {
+-   return "Hello, " + name;
++   return `Hello, ${name}!`;
+  }
+```
+
+词级标记高亮引号包裹词的每次出现；`ins=` / `del=` 标记行内增删：
+
+```js "retries" ins="attempts" del="retries"
+const retries = readConfig().attempts;
+log(`retrying, ${retries} attempts left`);
+```
+
+### 折叠段
+
+`collapse={ranges}` 把行区间折叠进可展开的切换段：
+
+```js collapse={1-2, 7-8}
+// ……很长的头部注释……
+// ……另一行样板……
+function main() {
+  console.log('visible');
+}
+// ……尾部样板……
+// ……更多尾部样板……
+```
+
+### 主题
+
+标记颜色由 `astro.config.mjs` 中的 LCH 色相令牌驱动（`insHue: 150`、
+`delHue: 25`、经 `customizeTheme` 应用的淡金 mark 底色），对齐 Plumest 的
+success / error / gold 令牌——背景、边框与指示条随主题推导，无需额外 CSS。
+
+`````markdown
+```js title="src/example.js" showLineNumbers
+export function greet(name) {
+  return `Hello, ${name}!`;
+}
+```
+`````
+
+## 文件片段导入
+
+`<!-- @include: … -->` 注释在构建期把其他文件拼接进页面——整文件、行号切片
+或命名 `#region` 区块。导入注释是 Markdown 注释，实时展开需要 `.md` 页面
+（MDX 不支持 HTML 注释）。形态：
+
+```markdown
+<!-- @include: ./_snippets/prereq.md -->
+<!-- @include: ./src/config/site.ts{10-25} -->
+<!-- @include: ./src/config/site.ts{5-} -->
+<!-- @include: ./src/config/site.ts{-4} -->
+<!-- @include: ./src/example.ts#auth-config -->
+```
+
+| 形态 | 含义 |
+| --- | --- |
+| `path` | 整个文件 |
+| `path{10-25}` | 第 10–25 行（1 起始、闭区间） |
+| `path{5-}` | 第 5 行到结尾 |
+| `path{-4}` | 开头到第 4 行 |
+| `path#region` | `#region 名称` 与 `#endregion` 之间的区块 |
+
+注意：
+
+- 路径相对包含方文件解析，且必须位于工作区内。
+- Markdown 目标（`md` / `mdx`）按原始 Markdown 拼接；其他目标自动包一层
+  以扩展名标注语言的代码围栏。
+- 支持嵌套（递归展开、带环检测）；围栏内的导入注释保持字面量；缺失文件
+  与非法区间保持字面量。
+
 ## 注意
 
 - 构建器会转义 `code`——原始标记永不执行。
