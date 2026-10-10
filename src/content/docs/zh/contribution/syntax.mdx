@@ -96,10 +96,10 @@ Astro 的孤岛架构 [+islands] 让页面保持极速。渲染器也支持 [+di
   JavaScript。
 
 [+directive]:
-  以 `:::name{attrs}` 形式书写的容器指令。
+  行内引用由 remark-directive 解析，构建期映射为 HTML。
 
 [+directive]:
-  指令由 remark-directive 解析，构建期映射为 HTML。
+  内容型组件一律使用 MDX 组件（`<X />`）形态，不涉及容器语法。
 
 行内定义同样可用：[+inline] 一行写完。
 

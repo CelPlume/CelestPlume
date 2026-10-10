@@ -168,30 +168,4 @@ export function githubCard(
   );
 }
 
-/** githubCards 网格布局：默认双列；stack 为每行一卡铺满整行 */
-export type GithubCardsLayout = 'grid' | 'stack';
 
-/**
- * 多张 GitHub 卡片网格（2 列；`layout: 'stack'` 时为每行一卡铺满整行）。
- * 每张卡片在网格单元内铺满（不再 480px 居中），行高取同列最高卡片。
- * 同步构建器：静态数据由 fetchGithubRepo 逐项注入。
- */
-export function githubCards(
-  items: GithubCardOptions[],
-  dataList: (GithubRepoData | null)[] = [],
-  options: { layout?: GithubCardsLayout } = {},
-): string {
-  const inner = items
-    .map((item, i) => githubCard(item, dataList[i] ?? null))
-    .join('');
-  return el(
-    'div',
-    {
-      class:
-        options.layout === 'stack'
-          ? 'cpd-github-cards cpd-github-cards-stack'
-          : 'cpd-github-cards',
-    },
-    inner,
-  );
-}

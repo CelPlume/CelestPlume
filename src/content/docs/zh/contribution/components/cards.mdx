@@ -9,12 +9,10 @@ import Preview from '../../../../../components/kit/Preview.astro';
 import PropsTable from '../../../../../components/kit/PropsTable.astro';
 import { card, cards } from '../../../../../lib/ui';
 import GitHubCard from '../../../../../components/kit/GitHubCard.astro';
-import GitHubCards from '../../../../../components/kit/GitHubCards.astro';
 import BilibiliCard from '../../../../../components/kit/BilibiliCard.astro';
 
 `card()` 构建单张卡片；`cards()` 将任意数量卡片包进 Plumest 风格响应式网格。
-富信息链接卡片（仓库、视频）请使用下方的 `GitHubCard` / `GitHubCards` /
-`BilibiliCard`。
+富信息链接卡片（仓库、视频）请使用下方的 `GitHubCard` / `BilibiliCard`。
 
 ## 网格
 
@@ -79,15 +77,13 @@ card({ title: 'Plumest', description: '外链在新标签页打开。', href: 'h
 
 ## GitHub 仓库卡片
 
-`GitHubCard` 渲染单张 GitHub 仓库卡片；`GitHubCards` 渲染网格（双列）或整行
-堆叠。整卡为链接，标题显示 `owner/repo`。描述、语言与 star/fork 数在构建期
-抓取 GitHub API，并在浏览器中实时刷新。
-
-### 单个
-
-独立卡片上限 `480px`，水平居中。
+`GitHubCard` 每次使用渲染一张 GitHub 仓库卡片——整卡为链接，标题显示
+`owner/repo`。描述、语言与 star/fork 数在构建期抓取 GitHub API，并在浏览器
+中实时刷新。多个仓库重复使用组件即可。
 
 <GitHubCard owner="CelPlume" repo="CelestPlume" />
+
+<GitHubCard owner="CelPlume" repo="BookmarkHarbor" />
 
 ```astro
 ---
@@ -95,60 +91,18 @@ import GitHubCard from '../../../../../components/kit/GitHubCard.astro';
 ---
 
 <GitHubCard owner="CelPlume" repo="CelestPlume" />
-```
-
-### 网格（双列）
-
-`GitHubCards` 把任意数量的卡片渲染进响应式双列网格；同一行的卡片取最高者
-等高。
-
-<GitHubCards
-  items={[
-    { owner: 'CelPlume', repo: 'CelestPlume' },
-    { owner: 'CelPlume', repo: 'BookmarkHarbor' },
-  ]}
-/>
-
-```astro
----
-import GitHubCards from '../../../../../components/kit/GitHubCards.astro';
----
-
-<GitHubCards
-  items={[
-    { owner: 'CelPlume', repo: 'CelestPlume' },
-    { owner: 'CelPlume', repo: 'BookmarkHarbor' },
-  ]}
-/>
-```
-
-### 整行堆叠
-
-传入 `layout="stack"` 让每行一张卡片，铺满整行宽度。
-
-<GitHubCards items={[{ owner: 'CelPlume', repo: 'squoosh' }]} layout="stack" />
-
-```astro
----
-import GitHubCards from '../../../../../components/kit/GitHubCards.astro';
----
-
-<GitHubCards items={[{ owner: 'CelPlume', repo: 'squoosh' }]} layout="stack" />
+<GitHubCard owner="CelPlume" repo="BookmarkHarbor" />
 ```
 
 ### GitHub 卡片参数
 
-`GitHubCard` 接受一组选项；`GitHubCards` 接受 `items`（同样的选项组成的数组）
-以及可选的 `layout`。
-
 <PropsTable
   labels={{ prop: '选项', type: '类型', default: '默认值' }}
   type={{
-    owner: { type: 'string', description: '仓库所有者（用户或组织）。' },
-    repo: { type: 'string', description: '仓库名称。' },
+    owner: { type: 'string', required: true, description: '仓库所有者（用户或组织）。' },
+    repo: { type: 'string', required: true, description: '仓库名称。' },
     target: { type: 'string', default: "'_blank'", description: '仓库链接的打开方式。' },
     auth: { type: 'string', default: "''", description: '构建期请求使用的 GitHub token。' },
-    layout: { type: "'grid' | 'stack'", default: 'grid', description: '仅 <code>GitHubCards</code>：双列或每行一卡。' },
   }}
 />
 
@@ -165,14 +119,14 @@ import GitHubCards from '../../../../../components/kit/GitHubCards.astro';
 `BilibiliCard` 把 Bilibili 视频渲染为链接卡片：封面、标题、简介与 UP主。
 元数据在构建期经 Bilibili view API 抓取；请求失败时退化为纯链接卡片。
 
-<BilibiliCard bvid="BV1fK4y1s7Qf" />
+<BilibiliCard bvid="BV1DN411r7co" />
 
 ```astro
 ---
 import BilibiliCard from '../../../../../components/kit/BilibiliCard.astro';
 ---
 
-<BilibiliCard bvid="BV1fK4y1s7Qf" />
+<BilibiliCard bvid="BV1DN411r7co" />
 ```
 
 ### Bilibili 卡片参数

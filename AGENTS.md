@@ -352,7 +352,8 @@ data-cpd-theme → 写 data-theme"，**绝不回写 data-cpd-theme**（历史死
   `<BilibiliCard>`/`<BilibiliVideo>`/`<YouTubeVideo>`→视频页链接、
   `@include` 按 `basePath` 展开；新增语法时先改 `downlevelMarkdown` 再写文档。
 - **内容型组件一律走 Plumest MDX 组件规范（`<X />`），不新增 `::` 指令**；
-  `::` 家族已移除，残留叶子指令在 remark-cpd-directives 回退为字面量文本。
+  `::` 家族已移除，残留叶子指令在 remark-cpd-directives 回退为字面量文本；
+  同类组件只保留一个（`GitHubCards` 已删除，多卡重复使用 `<GitHubCard>`）。
 - 解析前重写类插件（include/marker/abbr/annotations）通过包装 `this.parser`
   实现；**包装链必须透传第二个参数（VFile）**，否则 `@include` 拿不到文件路径。
 - Expressive Code 经 Starlight `expressiveCode.plugins` 注册

@@ -7,7 +7,6 @@
  * 转换规则（与本项目内容实际用到的组件/语法对齐）：
  * - `import ...` 语句：剥离（ESM 是页面代码，不是内容）
  * - `<GitHubCard owner repo>`：转为 `[owner/repo](https://github.com/owner/repo)` 列表项
- * - `<GitHubCards items={[...]}>`：每个仓库一个列表项（`layout` 等展示属性丢弃）
  * - `<Preview ...>...</Preview>`：整块剔除（交互演示 HTML 对 agent 无意义）
  * - `<!-- @include: … -->`：按 remark-includes 同款规则展开（需 basePath）
  * - `==文本=={.variant}`：马克笔高亮 → `**文本**`
@@ -169,31 +168,6 @@ function extractBraceAttr(tagSource: string, attr: string): string | undefined {
   const closeIdx = matchBracket(tagSource, openIdx, '{', '}');
   if (closeIdx === -1) return undefined;
   return tagSource.slice(openIdx + 1, closeIdx);
-}
-
-/** 从对象字面量数组文本中逐个提取 `{ ... }` 分组 */
-function extractObjectGroups(arrayText: string): string[] {
-  const groups: string[] = [];
-  let i = 0;
-  for (;;) {
-    const open = arrayText.indexOf('{', i);
-    if (open === -1) break;
-    const close = matchBracket(arrayText, open, '{', '}');
-    if (close === -1) break;
-    groups.push(arrayText.slice(open + 1, close));
-    i = close + 1;
-  }
-  return groups;
-}
-
-/** GitHubCards 的 items 数组 → 仓库对列表 */
-function extractRepoPairs(itemsText: string): { owner: string; repo: string }[] {
-  return extractObjectGroups(itemsText)
-    .map((group) => ({
-      owner: /owner\s*:\s*['"]([^'"]+)['"]/.exec(group)?.[1] ?? '',
-      repo: /repo\s*:\s*['"]([^'"]+)['"]/.exec(group)?.[1] ?? '',
-    }))
-    .filter((pair) => pair.owner && pair.repo);
 }
 
 const repoLink = (owner: string, repo: string): string =>
@@ -382,19 +356,6 @@ export function downlevelMarkdown(
     const owner = extractStringAttr(el0.tagSource, 'owner');
     const repo = extractStringAttr(el0.tagSource, 'repo');
     const replacement = owner && repo ? repoLink(owner, repo) : '';
-    text = text.slice(0, el0.start) + replacement + text.slice(el0.end);
-  }
-
-  // GitHubCards（多卡）→ 每仓一个列表项
-  for (;;) {
-    const el0 = findJsxElement(text, 'GitHubCards');
-    if (!el0) break;
-    const items = extractBraceAttr(el0.tagSource, 'items');
-    const replacement = items
-      ? extractRepoPairs(items)
-          .map(({ owner, repo }) => repoLink(owner, repo))
-          .join('\n')
-      : '';
     text = text.slice(0, el0.start) + replacement + text.slice(el0.end);
   }
 

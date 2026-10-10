@@ -9,12 +9,11 @@ import Preview from '../../../../components/kit/Preview.astro';
 import PropsTable from '../../../../components/kit/PropsTable.astro';
 import { card, cards } from '../../../../lib/ui';
 import GitHubCard from '../../../../components/kit/GitHubCard.astro';
-import GitHubCards from '../../../../components/kit/GitHubCards.astro';
 import BilibiliCard from '../../../../components/kit/BilibiliCard.astro';
 
 `card()` builds a single card; `cards()` wraps any number of them in the
 Plumest-style responsive grid. For rich link cards — repositories and videos —
-use `GitHubCard` / `GitHubCards` / `BilibiliCard` below.
+use `GitHubCard` / `BilibiliCard` below.
 
 ## Grid
 
@@ -80,17 +79,14 @@ card({ title: 'Plumest', description: 'External links open in a new tab.', href:
 
 ## GitHub repository cards
 
-`GitHubCard` renders a single GitHub repository card; `GitHubCards` renders a
-grid (two columns) or a full-width stack. The whole card is a link and the
-title shows `owner/repo`. Metadata (description, language) and star/fork
-counts are fetched from the GitHub API at build time, then refreshed in the
-browser.
-
-### Single
-
-A standalone card is capped at `480px` and horizontally centered.
+`GitHubCard` renders one GitHub repository card per usage — the whole card is
+a link and the title shows `owner/repo`. Metadata (description, language) and
+star/fork counts are fetched from the GitHub API at build time, then
+refreshed in the browser. Repeat the component for multiple repositories.
 
 <GitHubCard owner="CelPlume" repo="CelestPlume" />
+
+<GitHubCard owner="CelPlume" repo="BookmarkHarbor" />
 
 ```astro
 ---
@@ -98,61 +94,18 @@ import GitHubCard from '../../../../components/kit/GitHubCard.astro';
 ---
 
 <GitHubCard owner="CelPlume" repo="CelestPlume" />
-```
-
-### Grid (two columns)
-
-`GitHubCards` renders any number of cards in a responsive two-column grid;
-cards in a row share the height of the tallest one.
-
-<GitHubCards
-  items={[
-    { owner: 'CelPlume', repo: 'CelestPlume' },
-    { owner: 'CelPlume', repo: 'BookmarkHarbor' },
-  ]}
-/>
-
-```astro
----
-import GitHubCards from '../../../../components/kit/GitHubCards.astro';
----
-
-<GitHubCards
-  items={[
-    { owner: 'CelPlume', repo: 'CelestPlume' },
-    { owner: 'CelPlume', repo: 'BookmarkHarbor' },
-  ]}
-/>
-```
-
-### Full-width stack
-
-Pass `layout="stack"` to render one card per row, each filling the full row
-width.
-
-<GitHubCards items={[{ owner: 'CelPlume', repo: 'squoosh' }]} layout="stack" />
-
-```astro
----
-import GitHubCards from '../../../../components/kit/GitHubCards.astro';
----
-
-<GitHubCards items={[{ owner: 'CelPlume', repo: 'squoosh' }]} layout="stack" />
+<GitHubCard owner="CelPlume" repo="BookmarkHarbor" />
 ```
 
 ### GitHub card props
 
-`GitHubCard` takes one set of options; `GitHubCards` takes `items` (an array
-of the same options) plus an optional `layout`.
-
 <PropsTable
   labels={{ prop: 'Option', type: 'Type', default: 'Default' }}
   type={{
-    owner: { type: 'string', description: 'Repository owner (user or organization).' },
-    repo: { type: 'string', description: 'Repository name.' },
+    owner: { type: 'string', required: true, description: 'Repository owner (user or organization).' },
+    repo: { type: 'string', required: true, description: 'Repository name.' },
     target: { type: 'string', default: "'_blank'", description: 'Link target for the repository URL.' },
     auth: { type: 'string', default: "''", description: 'GitHub token for the build-time request.' },
-    layout: { type: "'grid' | 'stack'", default: 'grid', description: '<code>GitHubCards</code> only: two columns or one card per row.' },
   }}
 />
 
@@ -171,14 +124,14 @@ Notes:
 description and the uploader. Metadata is fetched from the Bilibili view API
 at build time; a failed request degrades to a plain link card.
 
-<BilibiliCard bvid="BV1fK4y1s7Qf" />
+<BilibiliCard bvid="BV1DN411r7co" />
 
 ```astro
 ---
 import BilibiliCard from '../../../../components/kit/BilibiliCard.astro';
 ---
 
-<BilibiliCard bvid="BV1fK4y1s7Qf" />
+<BilibiliCard bvid="BV1DN411r7co" />
 ```
 
 ### Bilibili card props

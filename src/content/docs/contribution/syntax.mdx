@@ -107,10 +107,12 @@ Astro's islands [+islands] keep pages fast. The renderer also supports
   components; only the interactive regions ship JavaScript.
 
 [+directive]:
-  A container directive written as `:::name{attrs}`.
+  An inline reference parsed by remark-directive and mapped to HTML at
+  build time.
 
 [+directive]:
-  Directives are parsed by remark-directive and mapped to HTML at build time.
+  Content components ship as MDX components (`<X />`) — no container
+  syntax is involved.
 
 Inline definitions work too: [+inline] on a single line.
 

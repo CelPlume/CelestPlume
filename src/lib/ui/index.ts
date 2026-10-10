@@ -96,8 +96,8 @@ export type {
 } from './components';
 export { initCelestialUI } from './runtime';
 export type { CelestialUiOptions } from './runtime';
-export { githubCard, githubCards, fetchGithubRepo } from './github-card';
-export type { GithubCardOptions, GithubCardsLayout, GithubRepoData } from './github-card';
+export { githubCard, fetchGithubRepo } from './github-card';
+export type { GithubCardOptions, GithubRepoData } from './github-card';
 export { bilibiliCard, fetchBilibiliVideo } from './bilibili-card';
 export type { BilibiliCardOptions, BilibiliVideoData } from './bilibili-card';
 export { encryptedGate } from './encrypted';

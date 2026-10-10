@@ -1451,7 +1451,7 @@ a.cpd-card:hover {
 }
 
 /* —— GitHubCard（githubCard 构建器；整卡链接，标题 owner/repo；
-   单个水平居中；githubCards 网格 2 列或整行堆叠） —— */
+   单个水平居中） —— */
 .cpd-article a.cpd-github-card,
 a.cpd-github-card {
   display: block;
@@ -1471,27 +1471,6 @@ a.cpd-github-card:hover {
   background: var(--cpd-accent);
   border-color: var(--cpd-ring);
   text-decoration: none;
-}
-.cpd-github-cards {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-  margin-block: 0.25rem;
-}
-@media (max-width: 40rem) {
-  .cpd-github-cards {
-    grid-template-columns: 1fr;
-  }
-}
-/* 网格单元内的卡片铺满单元格，不再 480px 居中；行高取同列最高卡片 */
-.cpd-github-cards a.cpd-github-card {
-  max-width: none;
-  margin-inline: 0;
-  height: 100%;
-}
-/* 整行堆叠：每行一卡铺满整行 */
-.cpd-github-cards.cpd-github-cards-stack {
-  grid-template-columns: 1fr;
 }
 .cpd-github-card-head {
   display: flex;
