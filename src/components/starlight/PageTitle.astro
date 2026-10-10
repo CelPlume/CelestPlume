@@ -2,8 +2,9 @@
 // PageTitle 覆盖：Plumest 风格面包屑 + 标题 + 描述 + 页面操作条（Cloudflare 文档式）。
 // 操作条位于简介下方：左侧「最近更新」（自页脚上移，Footer 覆盖不再重复显示），
 // 右侧分裂按钮 —— 主按钮「复制 Markdown」（拉取与 agent 共享的 .md 降级管线），
-// 下拉菜单含「查看 .md」「PDF 打印」。
-import { breadcrumb, button, dropdown, dropdownItem, el, Icon } from '../../lib/ui';
+// 下拉菜单含「查看 .md」「PDF 打印」与「问 AI」分组（网页 AI + 本地应用，预填
+// 「阅读 <.md 地址> 回答相关问题」提示词，客户端重写为访问者当前源）。
+import { breadcrumb, button, dropdown, dropdownGroup, dropdownItem, dropdownSeparator, el, Icon } from '../../lib/ui';
 
 const { entry, sidebar, lang, lastUpdated } = Astro.locals.starlightRoute;
 
@@ -43,6 +44,57 @@ const mdUrl = `/${mdPath(entry.id)}`;
 // 需带尾斜杠；生产为静态文件托管，无尾斜杠才是真实文件（带斜杠反而 404）。
 const mdHref = import.meta.env.DEV ? `${mdUrl}/` : mdUrl;
 
+/* ============================================================
+   问 AI（预填提示词跳转）：统一模板「阅读 <.md 地址> 回答相关问题」，
+   模型自行抓取与 agent 共享的 .md 降级管线输出。
+   上组为 Web 平台，下组为本地应用（自定义协议由浏览器唤起）。
+   <.md 地址> 用**当前页面源**：构建期以站点域兜底，客户端
+   runtime 按 data-cpd-ai-pattern 重写为 location.origin（runtime.ts initPageActions）。
+   ============================================================ */
+const mdAbsolute = new URL(mdUrl, Astro.site ?? Astro.url.origin).href;
+const aiPrompt = `阅读${mdAbsolute}回答相关问题`;
+const aiHref = (pattern: string) => pattern.replace('{P}', encodeURIComponent(aiPrompt));
+
+interface AiChat {
+  /** URL 模板，{P} 为 encodeURIComponent 后的提示词 */
+  pattern: string;
+  icon: string;
+  label: string;
+}
+const aiWebChats: AiChat[] = [
+  { pattern: 'https://chatgpt.com/?q={P}', icon: Icon.openai(), label: zh ? '在 ChatGPT 打开' : 'Open in ChatGPT' },
+  { pattern: 'https://claude.ai/new?q={P}', icon: Icon.claude(), label: zh ? '在 Claude 打开' : 'Open in Claude' },
+  { pattern: 'https://grok.com/?q={P}', icon: Icon.grok(), label: zh ? '在 Grok 打开' : 'Open in Grok' },
+  { pattern: 'https://chat.deepseek.com/?q={P}', icon: Icon.deepseek(), label: zh ? '在 DeepSeek 打开' : 'Open in DeepSeek' },
+];
+const aiLocalChats: AiChat[] = [
+  { pattern: 'codex://new?prompt={P}', icon: Icon.codex(), label: zh ? '在 Codex 打开' : 'Open in Codex' },
+  { pattern: 'claude-cli://open?q={P}', icon: Icon.claude(), label: zh ? '在 Claude Code 打开' : 'Open in Claude Code' },
+  { pattern: 'claude://claude.ai/new?q={P}', icon: Icon.claude(), label: zh ? '在 Claude Desktop 打开' : 'Open in Claude Desktop' },
+];
+const aiItems = (chats: AiChat[]): string =>
+  chats
+    .map((chat) =>
+      el(
+        'a',
+        {
+          class: 'cpd-dropdown-item',
+          role: 'menuitem',
+          'data-cpd-dropdown-item': '',
+          href: aiHref(chat.pattern),
+          target: '_blank',
+          rel: 'noopener',
+          'data-cpd-ai-pattern': chat.pattern,
+          'data-cpd-ai-url': mdUrl,
+        },
+        [
+          el('span', { class: 'cpd-dropdown-item-icon' }, chat.icon),
+          el('span', { class: 'cpd-dropdown-item-label' }, chat.label),
+        ],
+      ),
+    )
+    .join('');
+
 // 「PDF 打印」菜单项：无 href 的 div + data-cpd-print 钩子（runtime 调 window.print()）
 const printItem = el(
   'div',
@@ -74,7 +126,11 @@ const actionsHtml = [
         label: zh ? '查看 .md' : 'View as Markdown',
         href: mdHref,
         icon: Icon.file(),
-      }) + printItem,
+      }) +
+      printItem +
+      dropdownSeparator() +
+      dropdownGroup(zh ? '问问 AI' : 'Ask AI', aiItems(aiWebChats)) +
+      dropdownGroup(zh ? '在 Agent 中阅读' : 'Read in agents', aiItems(aiLocalChats)),
     triggerClass: 'cpd-page-actions-trigger',
   }),
 ].join('');

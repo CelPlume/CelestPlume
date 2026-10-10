@@ -492,6 +492,17 @@ function initLang(root: ParentNode): void {
    ============================================================ */
 
 function initPageActions(root: ParentNode): void {
+  // 问 AI 链接重写：提示词内的 .md 地址始终指向访问者当前源
+  //（构建期以站点域兜底，这里覆盖为 location.origin，本地/预览域也能正确预填）
+  for (const link of root.querySelectorAll<HTMLAnchorElement>('a[data-cpd-ai-pattern][data-cpd-ai-url]')) {
+    const pattern = link.getAttribute('data-cpd-ai-pattern');
+    const url = link.getAttribute('data-cpd-ai-url');
+    if (!pattern || !url) continue;
+    const prompt = `阅读${window.location.origin}${url}回答相关问题`;
+    const next = pattern.replace('{P}', encodeURIComponent(prompt));
+    if (link.getAttribute('href') !== next) link.setAttribute('href', next);
+  }
+
   root.addEventListener('click', (event) => {
     const target = isElement(event.target) ? event.target : null;
     if (!target) return;

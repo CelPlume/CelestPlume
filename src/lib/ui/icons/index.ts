@@ -59,6 +59,11 @@ import { printer } from './printer';
 import { lock } from './lock';
 import { eye } from './eye';
 import { eyeOff } from './eye-off';
+import { openai } from './openai';
+import { claude } from './claude';
+import { deepseek } from './deepseek';
+import { grok } from './grok';
+import { codex } from './codex';
 
 export const Icon = {
   chevronDown: chevronDown,
@@ -115,6 +120,12 @@ export const Icon = {
   lock: lock,
   eye: eye,
   eyeOff: eyeOff,
+  // 品牌 Logo（填充式，非 lucide 线条风格）
+  openai: openai,
+  claude: claude,
+  deepseek: deepseek,
+  grok: grok,
+  codex: codex,
 } as const;
 
 export type IconName = keyof typeof Icon;
