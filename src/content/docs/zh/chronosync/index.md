@@ -772,6 +772,30 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 
 完整版本历史见 [完整更新日志](/zh/chronosync/about/changelog/)。
 
+### v3.7.0 (2026-10-22) - 校园统一认证重构、新版空教室系统与导入解耦
+
+**空教室系统重构**
+
+- 全面废弃旧版正方教务 cdjy 爬虫接口，接入学校新版空教室系统，支持长清湖与千佛山校区全量楼宇、楼层与教室实时状态
+- 实时上课与占用状态计算：基于周次（单双周）、当前星期、节次与时间精确识别上课中与课间，上课教室显示红色并在卡片上呈现正在上的课程名称（如“气象与气候学”、“线性代数”），空闲教室展示空座率
+- 楼宇实时概览：展示两张核心指标卡片（教室：空闲教室 + 上课或拥挤；座位：剩余空座 + 空座率），文案对齐置于数字下方
+- 教室实时状态面板：集成热力图、卡片、列表三种视图模式，移除重复的自主检索区域；右侧推荐栏精准联动当前楼宇与楼层（今日无课自习推荐与高频常用教室）
+- 教室详情排课时间线：复刻项目标准 Timeline 组件，已上完展示对号、正在上展示加载动画、未上课程展示虚线空心圆；支持点击展开班级与周数，自动合并合班排课
+
+**校园统一身份认证与教务登录**
+
+- 登录流程重构为解耦的步骤：Stage 1 山东师范大学E校园统一认证（CAS SSO）；Stage 2 山东师范大学教务系统登录（WebVPN 隧道内静默换票登录正方）；Stage 3 进入查询 / 导入操作
+- 空教室查询仅需完成 Stage 1（2 步），完成后呈现过度确认页；教务数据查询（考试/成绩）需完成 Stage 2（3 步），登录完成后呈现过度确认页，点击后进入查询
+- 支持微信与企业微信扫码登录：从真实学校 CAS 端点抓取二维码，支持状态轮询、120 秒超时与居中状态遮罩（手机确认提示与失效刷新）
+- 记住密码体验优化：默认不勾选，勾选时提示本地隐私说明并实时同步到本地缓存，再次打开弹窗自动回填并静默勾选
+- 会话失效统一兜底：上游会话超时（1 小时）或 401 时，统一弹出过期提示并自动跳转回第一步E校园登录重新生成二维码
+
+**教务课表导入两阶段分离**
+
+- 导入流程拆解为三步：第二步仅登录教务系统并持久化会话，第三步才进行目标课表配置与数据抓取写入，彻底避免每次导入重复登录
+- 第三步配置保留旧版设置：支持创建新课表（预填系统默认开学日期与新课表名）与导入到已有课表，点击“第三步：从教务系统获取并导入课表”后触发读取，并在当前步骤内展示进度与导入的学籍信息
+- 修复导入接口与会话验证码刷新认证标记缺陷，打通导入与查询的全局会话互通
+
 ### v3.6.5 (2026-08-16) - 教务查询统一模块：空教室 / 考试 / 成绩
 
 **教务查询入口统一**
@@ -1023,277 +1047,3 @@ WebVPN 登录链路为：WebVPN SSO 入口 -> 解析 CAS 登录 URL -> `/authser
 - 验证码响应必须为图片类型，避免将 WebVPN 登录页或其他 HTML 响应误当作验证码
 - WebVPN 与教务系统凭据仅在当前认证请求中使用，不写入数据库、环境变量、缓存或日志
 - 补充协议、路由、会话重试和前端阶段切换回归测试，并同步更新安全约定与使用文档
-
-### v3.4.3 (2026-05-29) - 时区一致性、团队热力图与调度可靠性修复
-
-**迁移脚本与文档整理**
-
-- 数据库迁移工作流统一归入 `scripts/migrations/` 目录
-- 历史 Alembic 迁移链完整归档到 `scripts/migrations/legacy_alembic/`
-- 同步更新[迁移脚本说明](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README.md)中的迁移清单与执行规则
-
-**管理员诊断与上传安全加固**
-
-- 管理员诊断端点增加访问控制与输入校验
-- 文件上传管线错误边界收紧，避免异常信息泄露到客户端
-
-**团队热力图与分享链接恢复**
-
-- 修复团队热力图数据聚合不准确的问题，恢复多人忙闲视图的正确展示
-- 分享链接管理能力回归：支持有效期、权限配置与二维码展示
-
-**默认课表解析一致性**
-
-- 当前课表解析统一遵循默认课表真相源，不再出现前后端判定不一致的情况
-
-**时区统一：日历与导出遵循上海墙钟时间**
-
-- 日历视图、ICS 导出/导入流程统一按 `Asia/Shanghai` 时区生成与解析事件
-- 修复跨时区场景下事件时间偏移导致的课表显示与导出不一致
-
-**调度回归测试场景保留**
-
-- 新增 Team1 调度回归测试场景文档，确保批量排班与智能排班可重复验证
-
-**团队排班预览延迟创建修复**
-
-- 团队排班预览不再提前展示尚未实际创建的事件，保持预览与最终结果一致
-
-**团队插入防漂移修复**
-
-- 批量排班与智能排班插入可复用课表时，事件不再跨周次或日期发生偏移
-- 修复复用已有课表写入目标时事件错位的根因
-
-### v3.4.2 (2026-05-28) - 默认课表、共享链接与排班稳定性发布
-
-**后端数据层与迁移**
-
-- `Schedule` 模型新增 `is_default` 字段，支持默认课表机制
-- `Schedule` 生命周期开始转向由 `start_date + total_weeks` 推导，隐藏态与默认态单独建模
-- 新增分享与协作相关数据结构，并补齐 CRUD / Schema 映射
-- 历史 Alembic 迁移链已归档到 `scripts/migrations/legacy_alembic/`；当前默认课表/隐藏课表数据纠偏统一由 `scripts/migrations/add_schedule_visibility_and_default_truth.py` 执行
-
-**默认课表选择与写入策略**
-
-- 后端 `admin`、`import_route`、`schedule`、`schedules` 路由统一默认课表规则
-- “当前课表”统一复用默认课表解析，不再单独维护一套判定
-- 前端 `ScheduleEditor` 新增“设为默认课表”交互
-- 前端课表 Store 在“我的课表”优先加载默认课表
-- `frontend/src/types/index.ts` 补充默认课表相关类型定义
-
-**批量排班与智能排班稳定性修复**
-
-- `batch_operations.py` 与 `smart_schedule.py` 支持一致的课表插入目标逻辑（new/default/specific）
-- 修复智能排班在冲突、容量与周次分配上的稳定性问题
-- 修复批量添加日程与智能排班弹窗首开输入不可直接聚焦的问题
-
-**临时约课与团队热力图分享能力**
-
-- 后端新增临时约课与团队热力图分享路由、公开访问能力与可复用可用性服务
-- 前端新增 `TeamAvailabilityShareModal`，支持图片/链接分享、权限与有效期配置、二维码展示
-- `AllTeamsViewPage`、`TeamViewPage`、`TemporaryTeamDrawer`、`TeamAvailabilityGrid`、`TeamHeatmapDrawer` 等页面完成分享链路接入
-- 新增分享页面入口 `frontend/src/pages/share.astro`，公开视图由 `PublicScheduleView` 承载
-
-**前端性能与层级修复**
-
-- `UserAvatar` 统一走本地缓存策略，基于更新时间控制失效，减少重复头像请求
-- 新增 `frontend/src/utils/avatarCache.ts`，在大量成员展示场景下降低带宽开销
-- `TeamSlotDetailDrawer` 层级修复，确保不被上层抽屉遮挡
-
-### v3.4.1 (2026-05-28) - UI 打磨、临时约课搜索重构与共同空闲增强
-
-**UI 去 AI 味与布局修复**
-
-- `ScheduleGanttWeekView` 卡片高度从 68px 提升至 82px，行间距 78px → 90px，最小行高 112px → 130px，修复"第 x 周"信息截断
-- 甘特图、周列表视图、日程列表统一采用 slate 调色板、rounded-2xl 圆角、柔和阴影，去除默认 AI 模板感
-- `TeamMemberStrip` 从圆形首字母头像改为 `UserAvatar` 组件，显示真实头像
-
-**临时约课搜索体验重构**
-
-- `TemporaryTeamDrawer` 移除 watch 自动搜索，改为按钮触发 + Enter 快捷键
-- 搜索结果展示：用户头像（`UserAvatar`）、姓名、学号、班级、学院
-- 后端 `team.py` 搜索接口和 `temporary.py` 忙闲接口返回 `avatar_url` 和 `college` 字段
-- 类型定义 `UserSearchResult`、`AvailabilitySlot` 成员数组同步新增 `avatar_url`、`college`
-
-**共同空闲功能增强**
-
-- `TeamAvailabilityGrid` 新增 PNG 导出功能，标题"第 x 周共同空闲"居中，底部右下角 logo 水印（`/logo.png`，140px，opacity 0.6）
-- 点击忙闲格子弹出 `TeamHeatmapDrawer` 详情抽屉，展示该时段空闲/忙碌成员列表（头像 + 姓名 + 课程信息）
-- `TeamAvailabilityGrid` 新增 `#header-left` 插槽，临时约课抽屉中周次输入与导出按钮纵向对齐
-
-**团队视图忙闲/热力图整合**
-
-- `TeamViewPage` 将"忙闲视图"与"热力图"合并为单一"闲"视图模式（周/月/闲），移除 `teamViewMode` 独立标签
-- `AllTeamsViewPage` 桌面端视图切换按钮组新增"闲"按钮，移动端下拉菜单同步新增"忙闲视图"选项
-- 忙闲视图新增成员多选头像选择器（支持全选/清空/单个切换），未选择成员时显示"请先选择要查看的成员"提示
-- 点击"应用筛选"立即同步筛选成员并刷新忙闲数据，仅显示筛选成员的忙闲状态
-- `getWeekNumber` 从 `TeamViewPage` 本地函数移至 `@/utils/date` 共享工具函数
-
-**导出与剪贴板修复**
-
-- `TeamSlotDetailDrawer` 导出区域重构为展开式面板：多选导出字段（姓名/学号/班级/学院/空闲时间）+ 格式选择（TXT/CSV/EXCEL）+ 独立复制区（姓名/学号/姓名+学号）
-- Excel 导出从动态 `import('xlsx')` 改为静态 `import * as XLSX from 'xlsx'`，`astro.config.mjs` 新增 `optimizeDeps.include: ['xlsx']`，修复 Vite 504 Outdated Optimize Dep
-- 剪贴板复制新增 `navigator.clipboard` 可用性检测，非 HTTPS 环境自动回退 `document.execCommand('copy')`，修复 `Cannot read properties of undefined (reading 'writeText')`
-- 忙碌成员显示简化为橙色姓名标签，移除课程/教室详情
-
-**层级修复**
-
-- `TeamSlotDetailDrawer` z-index 从 `z-50` → `z-[110]` → `z-[200]`，确保可靠覆盖 `TemporaryTeamDrawer`（Headless UI Dialog z-[100]）
-
-### v3.4.0 (2026-05-27) - 团队协作增强、批量排班与智能排班
-
-**团队协作数据层**
-
-- `models.py` 新增 Team 设置字段：`visibility_model`、`allow_member_invite`、`max_members`、`join_policy`、`shift_definitions`、`schedule_config`
-- 新增 7 个数据模型：`TeamScheduleTask`（排班任务）、`TeamShiftDefinition`（班次定义）、`TeamScheduledEvent`（排班事件关联）、`TeamBatchOperation`（批量操作记录）、`TeamBatchOperationItem`（批量操作明细）、`TeamRecurringEventRule`（周期排班规则）、`TemporaryTeam`（临时团队）
-- `schemas.py` 新增 16 个 Pydantic schema，覆盖排班任务、批量操作、临时团队等场景
-- `crud.py` 新增 `get_events_by_schedule_id()`、`create_batch_operation()`、`complete_batch_operation()`
-- 新增 Alembic 迁移 `b3c4d5e6f7a8`：teams 表新列 + 7 张新表
-
-**批量排班操作**
-
-- `POST /api/teams/{id}/batch-events/preview`：冲突预览，返回每用户的冲突详情（day_of_week + 时间重叠检测）
-- `POST /api/teams/{id}/batch-events/execute`：批量创建课程事件，支持跳过（skip）和强制（force）两种冲突策略
-- 冲突去重：按 `(user_id, week, day_of_week)` 去重，避免同一课程多 Event 行产生重复冲突
-- 自动为无课表成员创建「{团队名} 团队日程」Schedule，周一对齐 semester_start
-- `GET /api/teams/{id}/batch-operations/{id}`：详情按用户合并（merged weeks/days/title），每用户仅一行
-- 支持 `schedule_target` 参数：`default`（使用活跃课表）或 `new`（新建团队日程）
-
-**智能排班系统**
-
-- `POST /api/teams/{id}/schedule-tasks/preview`：预览时运行贪心算法，返回成员分配统计、失败 slot、用户名称映射
-- `POST /api/teams/{id}/schedule-tasks`：创建排班任务，自动写入批量操作日志
-- 支持两种模式：周次模式（selected_weeks + shifts）和按日期模式（specific_dates，每日期支持 required_count）
-- 稳定贪心算法：按 `(name, day_of_week)` 分组，取所有周次可用人员交集（稳定集合），选恰好 needed 人作为 primary，每周分配相同 primary，仅在冲突时替换
-- 替换候选排除已分配人员，max_per_member 全局生效
-- 自动推断 semester_start（从 selected_weeks 或 specific_dates）
-- FK 安全：失败记录使用 member_ids[0] 而非 user_id=0
-
-**临时团队查询**
-
-- `POST /api/temporary/availability`：查询任意用户组合的可用性，无需加入团队
-- 支持日期范围过滤、三级可见度（busy_only / course_title / full_detail）
-- 前端 TemporaryTeamDrawer：快速搜索成员、查看多人共同空闲时段
-
-**团队设置扩展**
-
-- 团队编辑模态框重构为 3 个标签页：团队信息、成员管理、团队操作
-- 支持配置：可见度模型、入队策略（自由/审批/邀请）、最大成员数、成员邀请开关
-- 团队操作标签页整合批量排班和智能排班入口
-
-**PostgreSQL 迁移修复**
-
-- 修复 Alembic 初始 schema 缺少新 teams 列和 7 张新表的问题（`create_all()` 不会 ALTER 已有表）
-- 新增 `repair_team_tables.py`：幂等 PG 修复脚本，处理新列、团队协作表及 `temporary_shares`、`team_heatmap_shares` 的完整 DDL和必要索引
-- `sqlite_to_postgres.py` 更新 `TABLES_IN_ORDER` 至 18 张表，完整覆盖 `temporary_shares` 与 `team_heatmap_shares`
-
-**前端组件新增**
-
-- `BatchTeamEventModal`：批量排班模态框，HeadlessUI Dialog，冲突预览面板、缺失课表蓝色提示条、课表写入目标选择
-- `TeamScheduleTaskModal`：智能排班模态框，药丸式星期选择器、周次/按日期双模式切换、结果展示（成员计数+列表/日历视图）
-- `BatchOperationsLog`：批量操作日志面板，内联详情展开（非底部浮层），按用户合并视图
-- `TemporaryTeamDrawer`：临时团队查询抽屉，快速搜索成员、共同空闲查看
-- `TeamAvailabilityGrid`：颜色编码可用性网格
-- `TeamMemberSchedulePanel`：成员个人课表面板
-- `TeamMemberStrip`：成员头像条（添加/移除/角色选择）
-- `TeamSlotDetailDrawer`：时段详情抽屉
-
-**UI 修复与统一**
-
-- 删除 `CreatorTeamManagement.vue`，功能整合到 `TeamEditorModal` 标签页
-- 所有模态框统一 HeadlessUI Dialog 模式（`ModalTitleCard`、`bg-slate-950/40 backdrop-blur-sm` 背景、`ring-1 ring-slate-200/80`、`rounded-xl`、`input-base` 输入框）
-- 嵌套模态框层级：父 Dialog 使用 `:static` 禁用 FocusTrap，子 Dialog 使用 `z-[200]`
-- `ScheduleEditor` 修复：删除确认弹窗打开时父 Dialog 加 `:static` 防止焦点抢占
-- `StackedEventsModal` 使用 `UserAvatar` 组件显示真实头像
-- `Navigation` 管理员区字体从 `font-medium` 改为 `font-semibold`
-
-### v3.3.1 (2026-05-27) - 应用内浏览器引导、CI/CD 自动打包与序列修复
-
-**应用内浏览器引导**
-
-- 新增 `frontend/src/utils/inAppBrowser.ts`：检测微信、QQ、企业微信、钉钉、支付宝等应用内浏览器
-- 新增 `frontend/src/components/InAppBrowserPrompt.vue`：双模式引导组件（dialog 弹窗 + toast 通知）
-- Dialog 模式：首次从应用内打开链接时弹出操作步骤引导，标题前显示地球图标，步骤中显示横排三点菜单图标
-- Toast 模式：Dialog 已展示过的当天内再次打开时，以 Toast 通知轻提示
-- localStorage 记录弹窗展示时间戳，24 小时内不重复弹出 Dialog；sessionStorage 阻止内链跳转时重复触发
-- 接入页面：首页、登录、注册、找回密码、分享课表、我的课表、团队视图（共 7 个页面）
-- Toast 系统扩展：`Toast` 接口新增 `iconSvg` 和 `inlineSvg` 字段，`ToastItem` 支持自定义图标和描述内联 SVG 渲染
-
-**CI/CD 自动打包**
-
-- 新增 `.github/workflows/docker-publish.yml`：推送到 main 分支时自动构建 Docker 镜像并打 `latest` + `x.y.z` tag
-- 推送 `v*` 格式 git tag 时额外追加该 tag 作为镜像 tag
-- AGENTS.md 新增版本号管理章节：列出发布时必须同步修改的 4 处版本号及手动发版流程
-
-**PostgreSQL 序列修复**
-
-- `scripts/migrations/sqlite_to_postgres.py` 新增序列重置步骤：数据导入完成后自动将所有含 `id` 列的表的序列设为 `MAX(id)`
-- 修复从 SQLite 迁移数据后新插入记录因序列未重置导致的 `UniqueViolation` 错误
-
-### v3.3.0 (2026-05-26) - PostgreSQL 支持、Alembic 迁移与数据迁移工具
-
-**PostgreSQL 数据库支持**
-
-- 新增 `psycopg[binary]` 驱动依赖，后端支持连接 PostgreSQL 数据库
-- `database.py` 新增 `pool_recycle` 参数（默认 1800 秒），防止长时间空闲连接被服务端断开
-- 引擎创建时输出数据库类型日志（SQLite/PostgreSQL），不泄露连接串或密码
-- `models.py` 关联表 `user_teams` 和 `team_admins` 添加 `ondelete=CASCADE`，PG 删除用户/团队时自动清理关联数据
-- `models.py` 索引字段统一添加显式 `String(N)` 长度（student_id=50、full_name=100 等），提升 PG 索引效率
-
-**Alembic 数据库迁移体系**
-
-- 初始化 Alembic，配置从 `DATABASE_URL` 环境变量动态读取连接串
-- 新增 `initial_schema` 迁移：PostgreSQL 上创建全部表，SQLite 上跳过（由 `create_all` 处理）
-- 新增 `add_performance_indexes` 迁移：为 `schedules(owner_id, status)`、`events(schedule_id, day_of_week)`、`login_records(user_id, login_time)` 创建组合索引
-- 后续模型变更统一走 Alembic 迁移，不再使用手动 SQL 脚本
-
-**SQLite 到 PostgreSQL 数据迁移工具**
-
-- 新增 `scripts/migrations/sqlite_to_postgres.py`：当前工具会先校验 SQLite 完整性与 PostgreSQL 目标 schema，再按外键依赖顺序迁移全部 18 张 tracked tables（包括 `temporary_shares` 与 `team_heatmap_shares`）
-- 支持 boolean 字段自动转换（SQLite 的 0/1 转为 PG 的 true/false）
-- 导入期间保持 PostgreSQL 外键检查开启，`schedule_adjustments` 先于 `events`，不使用 `session_replication_role`
-- 当前工具仅接受所有 tracked tables 均为空的目标库，不提供 `--force` 或清表模式；全部插入、序列修复和计数校验位于同一事务，失败会整体回滚并非零退出
-- 新增[迁移 Runbook](https://github.com/CelPlume/SDNUChronoSync/blob/main/scripts/migrations/README_PG.md)：完整的迁移步骤、验证方法和回滚方案
-
-**Docker Compose 改造**
-
-- `docker-compose.yml` 新增 `db` 服务（`postgres:latest`），带健康检查和 `postgres_data` 持久化卷
-- 应用服务 `DATABASE_URL` 改为 PostgreSQL 连接串，`depends_on` 加入数据库健康检查
-- 删除废弃的 `version` 属性和未定义的网络引用
-- 新增 `.env.example` 和 `backend/.env.example`，提供 `POSTGRES_PASSWORD`、`SECRET_KEY`、连接池等配置模板
-
-**文档更新**
-
-- [部署指南](/zh/chronosync/dev/deployment/)新增“数据库配置”章节：PostgreSQL 连接池参数、`pg_dump`/`pg_restore` 备份恢复、从 SQLite 迁移的步骤
-- [项目说明](/zh/chronosync/)技术栈更新：数据库从 SQLite 改为 SQLite/PostgreSQL（推荐生产环境使用 PostgreSQL）
-
-### v3.2.0 (2026-05-18) - UI视觉收敛、认证表单统一与移动端导航优化
-
-**UI视觉收敛与排版优化**
-
-- 移除基础输入框/按钮/下拉组件的默认阴影，仅保留浮层与模态框阴影，界面更加简洁清爽
-- 圆角体系统一：输入框统一为 rounded-lg(8px)、列表卡统一为 rounded-xl(12px)，移除 22px/28px/32px 大圆角
-- 删除 BaseLayout 中全局强制 `border-radius: 1rem` 规则，恢复组件自主控制圆角
-- 标题字重从 font-black/font-bold 统一降为 font-semibold，正文对比度从 gray-500 提升至 slate-600，提升可读性
-- 移除全大写标签与高 tracking（Day Agenda 改为当日安排），恢复中文界面正常词形
-- PageHeaderCard 移除渐变背景/阴影/ring，改为纯边线容器，视觉更轻量
-- Navigation 侧边栏从 shadow-sm ring 改为 border-r 分隔，管理员区 red 改为更低饱和的 rose
-- MyTeamsPage 指标区与团队代码区去除卡片嵌套，改为扁平信息展示
-- 危险操作色从 red 统一改为 rose，降低饱和度，减少视觉攻击性
-
-**认证表单UI统一**
-
-- 登录/注册/找回密码表单统一使用 input-base CSS 类，替换内联样式
-- 标准化圆角从 rounded-xl 统一为 rounded-lg，保持视觉一致性
-- 简化按钮样式，移除渐变背景和阴影效果
-- 移除 AuthShell 装饰性背景元素和丝带动画，回归简洁设计
-- 统一颜色变量从 gray 改为 slate，保持调色板一致性
-- 简化卡片样式，移除 backdrop-blur 和毛玻璃效果
-
-**移动端底部标签栏**
-
-- 新增 MobileBottomTabBar 移动端底部快速导航栏，包含课表、团队、空教室、个人四个高频功能入口
-- 标签栏固定在视口底部，仅在 lg 断点以下显示（`lg:hidden`）
-- 支持 iPhone 安全区域适配（env(safe-area-inset-bottom)），避免遮挡 Home 指示器
-- 主内容区域自动添加 pb-20 底部间距，防止标签栏遮挡内容
-- 现有移动端顶部栏、抽屉、侧边栏和桌面端布局保持不变

@@ -52,7 +52,7 @@ SDNUChronoSync/
 │       ├── profile.py      # Personal profile routes (includes login history)
 │       ├── share.py        # Schedule sharing routes
 │       ├── temporary.py    # Temporary team availability query routes
-│       ├── classroom.py    # Empty classroom query routes
+│       ├── query.py        # Unified academic and classroom query routes
 │       ├── batch_operations.py # Batch scheduling operation routes (conflict detection, skip/force strategies)
 │       └── smart_schedule.py   # Smart scheduling routes (greedy algorithm, week/date dual mode)
 ├── frontend/               # Frontend code
@@ -158,7 +158,7 @@ SDNUChronoSync/
 │   │   │   └── dashboard/                # Dashboard pages
 │   │   │       ├── my-schedule.astro     # Personal schedule (includes schedule adjustment management)
 │   │   │       ├── my-teams.astro        # My team management
-│   │   │       ├── classroom.astro       # Empty classroom query
+│   │   │       ├── query.astro           # Academic and classroom query
 │   │   │       ├── team-view.astro       # Team view (dynamic team ID passed via query parameter)
 │   │   │       ├── profile.astro         # Personal profile (includes login history)
 │   │   │       └── admin/                # Admin pages
@@ -410,17 +410,34 @@ All endpoints require JWT authentication, passed via the `Authorization: Bearer 
 - `GET /api/admin/settings` - Get complete system settings (includes site configuration)
 - `POST /api/admin/settings` - Update system settings (includes `[site]` section of site configuration)
 
-### Academic Affairs Connection and Empty Classroom Endpoints
+### Unified Campus Query and Timetable Import Endpoints
 
-- `GET /api/import/zfw/session?connection_mode=webvpn|direct` - Create schedule import academic affairs session
-- `GET /api/import/zfw/refresh/{session_id}?connection_mode=webvpn|direct` - Refresh verification code for current import session
-- `POST /api/import/zfw` - Log in and import schedule using session-bound connection mode
-- `GET /api/classroom/session?connection_mode=webvpn|direct` - Create empty classroom query academic affairs session
-- `GET /api/classroom/refresh-captcha/{session_id}?connection_mode=webvpn|direct` - Refresh verification code for current empty classroom session
-- `POST /api/classroom/login` - Log in to academic affairs system using session-bound connection mode
-- `POST /api/classroom/query` - Query empty classrooms using an authenticated session
+#### Campus Query (/api/query/*)
+- `GET /api/query/session` - Retrieve current campus authentication status (E-Campus SSO, empty classrooms, and academic system status with available semesters)
+- `DELETE /api/query/session` - Invalidate and clear current campus authentication session
+- `GET /api/query/sso/challenge` - Probe if Stage 1 E-Campus login requires a captcha
+- `POST /api/query/sso/login` - Stage 1: Shandong Normal University E-Campus Unified Authentication (CAS SSO)
+- `POST /api/query/sso/qr/start` - Request WeChat / Enterprise WeChat QR code for login
+- `GET /api/query/sso/qr/status` - Poll QR code login status and credentials
+- `GET /api/query/classrooms/workspace` - Fetch empty classroom campuses, buildings, floors, and semester week configs
+- `GET /api/query/classrooms/rooms` - Query real-time schedule, vacancy rate, and in-class status by building/floor
+- `GET /api/query/classrooms/recommendations` - Query recommended self-study classrooms (no classes, top vacancy rates)
+- `GET /api/query/classrooms/frequent` - Query frequently visited classrooms
+- `GET /api/query/jwxt/challenge` - Establish WebVPN tunnel and retrieve educational system captcha
+- `POST /api/query/jwxt/login` - Stage 2: Educational Administration System login (strictly validates and persists session)
+- `POST /api/query/jwxt/enter` - Stage 3: Confirm and enter academic query page
+- `POST /api/query/exams` - Query semester exam schedules
+- `POST /api/query/grades` - Query semester grades, official cumulative GPA, and semester GPA
 
-`connection_mode` defaults to `webvpn`; the mode cannot be switched after session creation, and a mode mismatch returns HTTP 400. The backend currently retains the `direct` protocol implementation for campus network deployments, but the frontend displays the direct connection option as disabled.
+#### Timetable Import (/api/import/*)
+- `GET /api/import/schedules` - Retrieve all schedules for current user
+- `GET /api/import/zfw/session` - Create import session (reusing shared campus authentication state)
+- `POST /api/import/zfw/sso-login` - Stage 1: E-Campus Unified Authentication
+- `POST /api/import/zfw/jwxt-login` - Stage 2: Educational administration login (strictly authenticates session without reading/writing timetable)
+- `POST /api/import/zfw` - Stage 3: Configure target schedule and execute timetable retrieval and ingestion
+- `GET /api/import/zfw/refresh/{session_id}` - Refresh import captcha
+
+The backend retains the dormant `connection_mode="direct"` direct protocol capability for future public direct access; current frontend strictly routes through the WebVPN tunnel.
 
 ### Changelog
 

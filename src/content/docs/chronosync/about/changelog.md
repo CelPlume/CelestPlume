@@ -8,6 +8,30 @@ All versions are archived here; the homepage only displays the last three months
 
 ## Changelog
 
+### v3.7.0 (2026-10-22) - Campus Unified Authentication Overhaul, New Empty Classroom System & Decoupled Import
+
+**Empty Classroom System Overhaul**
+
+- Fully deprecated the legacy educational system cdjy scraper, integrating the school's new empty classroom system with full support for Changqinghu and Qianfoshan campuses, buildings, floors, and real-time room status
+- Real-time in-class and occupancy status calculation: accurately detects in-class and break times based on week parity (odd/even), current weekday, section periods, and time; in-class rooms display in red with current course names (e.g., "Meteorology and Climatology", "Linear Algebra"), while available rooms display seat vacancy rates
+- Real-time building overview: dual core metric cards (Classrooms: available + busy/occupied; Seats: vacant seats + vacancy rate) with labels aligned beneath numbers
+- Real-time classroom panel: integrates heatmap, card, and list view modes, eliminating duplicate search sections; right-side recommendation panel dynamically links to current building and floor (self-study recommendations and frequent rooms)
+- Classroom schedule timeline: mirrors the standard Timeline component with checkmarks for completed classes, loading spinners for ongoing classes, and dashed circles for upcoming classes; supports expanding class and week details with auto-merged joint classes
+
+**Campus Unified Authentication & Academic Login**
+
+- Refactored login into decoupled steps: Stage 1 Shandong Normal University E-Campus Unified Authentication (CAS SSO); Stage 2 Educational Administration System login (tunnel login via silent ticket exchange); Stage 3 Enter query / start import
+- Empty classroom queries require only Stage 1 (2 steps total) followed by a confirmation transition view; academic queries (exams/grades) require Stage 2 (3 steps total) followed by a confirmation transition view before entering
+- WeChat and Enterprise WeChat QR code login: fetches genuine QR codes from official CAS endpoints with polling, 120s timeout, and centered status overlays (mobile confirmation prompt and refresh on expiry)
+- Remember password UX: unchecked by default, displays local privacy notice upon check and immediately syncs to local encrypted cache; silent prefill upon reopening dialog
+- Unified session expiration fallback: upstream timeout (1 hour) or 401 triggers an expiry toast and automatically routes back to Stage 1 E-Campus login to generate a new QR code
+
+**Decoupled Timetable Import Workflow**
+
+- Separated import into three distinct steps: Step 2 strictly authenticates and persists the educational administration session; Step 3 handles target schedule selection and timetable retrieval/writing, eliminating redundant logins
+- Step 3 configuration retains legacy settings: create new schedule (pre-filled with system default start date and schedule name) or import into existing schedule; clicking "Step 3: Fetch and Import Timetable from Educational System" triggers fetching and displays progress alongside parsed student info
+- Fixed import endpoint routing and captcha refresh authentication flags, unifying session interoperability between import and query modules
+
 ### v3.6.5 (2026-08-16) - Unified academic query module: empty classrooms / exams / grades
 
 **Unified academic query entry**

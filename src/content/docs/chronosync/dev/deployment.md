@@ -579,6 +579,22 @@ JWXT_WEBVPN_SSO_LOGIN_URL=https://webvpn.sdnu.edu.cn/enlink/sso/login
 
 WebVPN and academic affairs system accounts can differ; credentials are entered by the user each time and must not be written to environment variables, config files, or logs.
 
+**Direct Educational System Mode (Dormant Backup)**:
+The backend retains direct connection capabilities (`connection_mode="direct"`) in `importer.py` and `jwxt_connection.py`. Because the school's educational administration system is not open to the public internet, the frontend strictly exposes WebVPN access. If public direct access is enabled in the future, it can be re-enabled without code changes.
+
+**Concurrency Control and Rate Limiting (No Queue Wait)**:
+The legacy global 30s serialization gate was replaced with:
+- Per-user rate limiting: maximum 10 attempts per 10 minutes to mitigate credential brute-forcing;
+- Upstream request concurrency limit: global maximum of 10 concurrent requests to school CAS/WebVPN to prevent IP bans;
+- Failure circuit breaker: automatically opens and returns user-friendly error messages during upstream outages.
+
+**Local Development PostgreSQL Container**:
+Run PostgreSQL locally with Docker:
+```bash
+docker run -d --name sdnu-local-pg -p 55432:5432 -e POSTGRES_USER=chronosync -e POSTGRES_PASSWORD=localdev -e POSTGRES_DB=chronosync postgres:16-alpine
+cd backend && DATABASE_URL="postgresql+psycopg://chronosync:localdev@127.0.0.1:55432/chronosync" uv run alembic upgrade head
+```
+
 ## 🔐 Controlled code injection (analytics scripts / stylesheets / meta)
 
 This project supports injecting third-party analytics or style resources into the page `head` / `body`, but to avoid XSS risk, "code injection" has been narrowed to a **controlled whitelist mechanism**.

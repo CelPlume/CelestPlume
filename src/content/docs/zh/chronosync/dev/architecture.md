@@ -52,7 +52,7 @@ SDNUChronoSync/
 │       ├── profile.py      # 个人资料路由（含登录历史）
 │       ├── share.py        # 课表分享路由
 │       ├── temporary.py    # 临时团队可用性查询路由
-│       ├── classroom.py    # 空教室查询路由
+│       ├── query.py        # 统一教务与空教室查询路由
 │       ├── batch_operations.py # 批量排班操作路由（冲突检测、跳过/强制策略）
 │       └── smart_schedule.py   # 智能排班路由（贪心算法、周次/按日期双模式）
 ├── frontend/               # 前端代码
@@ -158,7 +158,7 @@ SDNUChronoSync/
 │   │   │   └── dashboard/                # 仪表板页面
 │   │   │       ├── my-schedule.astro     # 个人课表（含调休管理）
 │   │   │       ├── my-teams.astro        # 我的团队管理
-│   │   │       ├── classroom.astro       # 空教室查询
+│   │   │       ├── query.astro           # 教务与空教室查询
 │   │   │       ├── team-view.astro       # 团队视图（动态团队ID通过 query 参数传递）
 │   │   │       ├── profile.astro         # 个人资料（含登录历史）
 │   │   │       └── admin/                # 管理员页面
@@ -410,17 +410,34 @@ SDNUChronoSync/
 - `GET /api/admin/settings` - 获取完整系统设置（含站点配置）
 - `POST /api/admin/settings` - 更新系统设置（含站点配置 `[site]` 部分）
 
-### 教务连接与空教室接口
+### 统一校园查询与课表导入接口
 
-- `GET /api/import/zfw/session?connection_mode=webvpn|direct` - 创建课表导入教务会话
-- `GET /api/import/zfw/refresh/{session_id}?connection_mode=webvpn|direct` - 刷新当前导入会话验证码
-- `POST /api/import/zfw` - 使用会话绑定的连接方式登录并导入课表
-- `GET /api/classroom/session?connection_mode=webvpn|direct` - 创建空教室查询教务会话
-- `GET /api/classroom/refresh-captcha/{session_id}?connection_mode=webvpn|direct` - 刷新当前空教室会话验证码
-- `POST /api/classroom/login` - 使用会话绑定的连接方式登录教务系统
-- `POST /api/classroom/query` - 使用已登录会话查询空教室
+#### 校园查询（/api/query/*）
+- `GET /api/query/session` - 获取当前校园认证状态（E校园 SSO、空教室、教务系统登录状态与可用学期）
+- `DELETE /api/query/session` - 清空当前校园认证会话（全部阶段失效）
+- `GET /api/query/sso/challenge` - 探测第一阶段 E校园登录是否需要验证码
+- `POST /api/query/sso/login` - 第一阶段：山东师范大学E校园统一身份认证（CAS SSO）
+- `POST /api/query/sso/qr/start` - 申请微信/企业微信扫码登录二维码
+- `GET /api/query/sso/qr/status` - 轮询扫码登录状态与结果
+- `GET /api/query/classrooms/workspace` - 获取空教室校区、楼宇、楼层及学期周次配置
+- `GET /api/query/classrooms/rooms` - 按楼宇/楼层查询教室实时排课、空座率与上课状态
+- `GET /api/query/classrooms/recommendations` - 查询自习推荐教室（无课且空座率前列）
+- `GET /api/query/classrooms/frequent` - 查询高频常用教室
+- `GET /api/query/jwxt/challenge` - 建立 WebVPN 隧道并获取正方教务验证码
+- `POST /api/query/jwxt/login` - 第二阶段：登录正方教务系统（仅验证凭据并保存会话）
+- `POST /api/query/jwxt/enter` - 第三阶段：确认进入教务数据查询
+- `POST /api/query/exams` - 查询学期考试安排
+- `POST /api/query/grades` - 查询学期成绩明细、学籍正式 GPA 与学期 GPA
 
-`connection_mode` 默认为 `webvpn`；会话创建后不能切换模式，模式不匹配返回 HTTP 400。后端暂时保留 `direct` 协议实现供校园网部署使用，但当前前端将直连选项显示为禁用。
+#### 课表导入（/api/import/*）
+- `GET /api/import/schedules` - 获取当前用户的所有课表列表
+- `GET /api/import/zfw/session` - 创建课表导入会话（共享当前用户的统一校园认证状态）
+- `POST /api/import/zfw/sso-login` - 第一阶段：山东师范大学E校园登录
+- `POST /api/import/zfw/jwxt-login` - 第二阶段：正方教务系统登录（仅认证会话，不读取/不写入课表）
+- `POST /api/import/zfw` - 第三阶段：配置目标课表并执行教务系统课表抓取与写入
+- `GET /api/import/zfw/refresh/{session_id}` - 刷新导入流程验证码
+
+后端保留 `connection_mode="direct"` 直连正方教务协议实现作为休眠备用能力供校园网或公网开放直连时使用；当前前端统一使用稳定的 WebVPN 隧道接入。
 
 ### 更新日志
 

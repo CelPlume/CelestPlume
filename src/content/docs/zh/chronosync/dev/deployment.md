@@ -581,6 +581,22 @@ JWXT_WEBVPN_SSO_LOGIN_URL=https://webvpn.sdnu.edu.cn/enlink/sso/login
 
 WebVPN 与教务系统账号可不同，凭据由用户每次输入，禁止写入环境变量、配置文件或日志。
 
+**正方教务直连模式（休眠备用）**：
+系统后端在 `importer.py` 与 `jwxt_connection.py` 中完整保留了直连正方教务系统（`connection_mode="direct"`）的能力。由于当前学校正方教务未对校外公网开放，前端目前默认且唯一暴露 WebVPN 接入。未来若学校开放公网直连，只需调整连接方式即可立即恢复直连，无需重新开发。
+
+**并发控制与登录限频（无排队等待）**：
+已移除旧版全局 30 秒串行排队闸门，升级为：
+- 单用户登录频控：每用户每 10 分钟最多允许 10 次登录尝试，防止凭据爆破；
+- 上游请求并发限制：全局最多允许 10 个并发请求同时访问学校 CAS/WebVPN，避免上游封禁；
+- 失败熔断保护：短时间内遭遇持续网络阻断或学校维护时自动熔断并提示友好文案。
+
+**本地开发 PostgreSQL 容器**：
+本地开发推荐使用 Docker 快速拉起 PostgreSQL：
+```bash
+docker run -d --name sdnu-local-pg -p 55432:5432 -e POSTGRES_USER=chronosync -e POSTGRES_PASSWORD=localdev -e POSTGRES_DB=chronosync postgres:16-alpine
+cd backend && DATABASE_URL="postgresql+psycopg://chronosync:localdev@127.0.0.1:55432/chronosync" uv run alembic upgrade head
+```
+
 ## 🔐 受控代码注入（统计脚本 / 样式表 / Meta）
 
 本项目支持在页面 `head` / `body` 注入第三方统计或样式资源，但为避免 XSS 风险，已将“代码注入”收敛为**受控白名单机制**。
